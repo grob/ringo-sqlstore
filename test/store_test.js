@@ -6,21 +6,21 @@ var Transaction = require("ringo/storage/sql/transaction").Transaction;
 var sqlUtils = require("ringo/storage/sql/util");
 
 var dbProps = {
-//    "url": "jdbc:mysql://localhost/test",
-//    "driver": "com.mysql.jdbc.Driver",
-//    "username": "test",
-//    "password": "test"
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver",
+    "url": "jdbc:mysql://localhost/test",
+    "driver": "com.mysql.jdbc.Driver",
     "username": "test",
     "password": "test"
+//    "url": "jdbc:h2:mem:test",
+//    "driver": "org.h2.Driver",
+//    "username": "test",
+//    "password": "test"
 };
 
 const mapping = {
     "table": "book",
     "id": {
         "column": "book_id", // optional
-        // "sequence": "id" // optional
+        "sequence": "book_id" // optional
     },
     "properties": {
         "title": {
@@ -47,6 +47,13 @@ const mapping = {
         }
     }
 };
+
+function dropObjects(store) {
+    sqlUtils.dropTable(store.getConnection(), store.dialect, mapping.table);
+    if (store.dialect.hasSequenceSupport()) {
+        sqlUtils.dropSequence(store.getConnection(), store.dialect, mapping.id.sequence);
+    }
+}
 
 exports.testKey = function() {
     var key = new Key("Book", 1);
@@ -81,7 +88,7 @@ exports.testEntityRegistry = function() {
     assert.strictEqual(ctor, store.getEntityConstructor("Book"));
     
     // cleanup
-    sqlUtils.dropTable(store.getConnection(), "Book");
+    dropObjects(store);
     return;
 };
 
@@ -112,8 +119,14 @@ exports.testCRUD = function() {
     }
     // readCount is by default zero
     assert.strictEqual(book.readCount, 0);
-    // compare publishDate
-    assert.strictEqual(props.publishDate.getTime(), book.publishDate.getTime());
+    // compare publishDate - unfortunately MySQL doesn't support millis
+    // in timestamp columns, so compare all except millis
+    assert.strictEqual(props.publishDate.getFullYear(), book.publishDate.getFullYear());
+    assert.strictEqual(props.publishDate.getMonth(), book.publishDate.getMonth());
+    assert.strictEqual(props.publishDate.getDate(), book.publishDate.getDate());
+    assert.strictEqual(props.publishDate.getHours(), book.publishDate.getHours());
+    assert.strictEqual(props.publishDate.getMinutes(), book.publishDate.getMinutes());
+    assert.strictEqual(props.publishDate.getSeconds(), book.publishDate.getSeconds());
     assert.isTrue(book.publishDate instanceof Date);
     
     // update
@@ -132,7 +145,7 @@ exports.testCRUD = function() {
     assert.strictEqual(Book.get(1), null);
     
     // cleanup
-    sqlUtils.dropTable(store.getConnection(), mapping.table);
+    dropObjects(store);
 };
 
 /*
