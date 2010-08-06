@@ -6,14 +6,14 @@ var Transaction = require("ringo/storage/sql/transaction").Transaction;
 var sqlUtils = require("ringo/storage/sql/util");
 
 var dbProps = {
-    "url": "jdbc:mysql://localhost/test",
-    "driver": "com.mysql.jdbc.Driver",
-    "username": "test",
-    "password": "test"
-//    "url": "jdbc:h2:mem:test",
-//    "driver": "org.h2.Driver",
+//    "url": "jdbc:mysql://localhost/test",
+//    "driver": "com.mysql.jdbc.Driver",
 //    "username": "test",
 //    "password": "test"
+    "url": "jdbc:h2:mem:test",
+    "driver": "org.h2.Driver",
+    "username": "test",
+    "password": "test"
 };
 
 const mapping = {
