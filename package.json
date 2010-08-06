@@ -1,0 +1,12 @@
+{
+    "name": "ringo-sqlstore",
+    "version": "0.1",
+    "description": "SQL-Storage implementation for RingoJS",
+    "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
+    "author": "Robert Gaggl (http://nomatic.org/) <robert@nomatic.org>",
+    "contributors": [],
+    "jars": [
+        "jars/h2-1.2.138.jar",
+        "jars/mysql-connector-java-5.1.6-bin.jar"
+    ]
+}
