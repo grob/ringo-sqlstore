@@ -55,6 +55,23 @@ function dropObjects(store) {
     }
 }
 
+function populate(store) {
+    var transaction = store.createTransaction();
+    var Book = store.defineEntity("Book", mapping);
+    for (var i=1; i<=10; i+=1) {
+        var props = {
+            "title": "Book " + i,
+            "isbn": "AT-" + i,
+            "publishDate": new Date(),
+            "summary": "This is the book no. " + i
+        };
+        var book = new Book(props);
+        book.save(transaction);
+    }
+    transaction.commit();
+    return;
+};
+
 exports.testKey = function() {
     var key = new Key("Book", 1);
     assert.strictEqual(key.type, "Book");
@@ -146,6 +163,163 @@ exports.testCRUD = function() {
     
     // cleanup
     dropObjects(store);
+};
+
+exports.testQueryAll = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.all();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryEquals = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var book = Book.query().equals("id", 1).select();
+    assert.strictEqual(book.constructor, Book);
+    assert.strictEqual(book.title, "Book " + 1);
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryGreaterThan = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().greater("id", 5).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 6);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryGreaterThanOrEquals = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().greaterEquals("id", 6).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 6);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryLessThan = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().less("id", 6).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryLessThanOrEquals = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().lessEquals("id", 5).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryOrder = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().orderBy("id desc").select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, 10 - idx);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryLimit = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().limit(5).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryOffset = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().offset(5).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 6);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryRange = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().range(3, 8).select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 4);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
+};
+
+exports.testQueryCombined = function() {
+    var store = new Store(dbProps);
+    var Book = store.defineEntity("Book", mapping);
+    populate(store);
+    var result = Book.query().greater("id", 5).orderBy("id desc").select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, 10 - idx);
+    });
+    var result = Book.query().lessEquals("id", 5).orderBy("id").select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    // cleanup
+    dropObjects(store);
+    return;
 };
 
 /*
