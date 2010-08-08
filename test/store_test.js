@@ -177,9 +177,9 @@ exports.testQueryAll = function() {
 exports.testQueryEquals = function() {
     var Book = store.defineEntity("Book", mapping);
     populate(store);
-    var book = Book.query().equals("id", 1).select();
-    assert.strictEqual(book.constructor, Book);
-    assert.strictEqual(book.title, "Book " + 1);
+    var result = Book.query().equals("id", 1).select();
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0]._id, 1);
     return;
 };
 
