@@ -18,8 +18,10 @@ var dbProps = {
 };
 
 var store = null;
+var Book = null;
+var Author = null;
 
-const mapping = {
+const MAPPING_BOOK = {
     "table": "book",
     "id": {
         "column": "book_id", // optional
@@ -47,19 +49,52 @@ const mapping = {
         },
         "summary": {
             "type": "text",
+        },
+        "author": {
+            "type": "object",
+            "entity": "Author",
+            "column": "book_f_author"
+        }
+    }
+};
+
+const MAPPING_AUTHOR = {
+    "table": "author",
+    "id": {
+        "column": "author_id",
+        "sequence": "author_id"
+    },
+    "properties": {
+        "name": {
+            "type": "string",
+            "nullable": false
+//        },
+//        "books": {
+//            "type": "collection",
+//            "entity": "Book",
+//            "local": "id",
+//            "foreign": "author"
         }
     }
 };
 
 function populate(store) {
     var transaction = store.createTransaction();
-    var Book = store.defineEntity("Book", mapping);
+    var authors = [];
+    for (var i=1; i<=5; i+=1) {
+        var author = new Author({
+            "name": "Author " + i
+        });
+        author.save();
+        authors.push(author);
+    }
     for (var i=1; i<=10; i+=1) {
         var props = {
             "title": "Book " + i,
             "isbn": "AT-" + i,
             "publishDate": new Date(),
-            "summary": "This is the book no. " + i
+            "summary": "This is the book no. " + i,
+            "author": authors[Math.min(i / 2)]
         };
         var book = new Book(props);
         book.save(transaction);
@@ -70,16 +105,20 @@ function populate(store) {
 
 exports.setUp = function() {
     store = new Store(dbProps);
+    Book = store.defineEntity("Book", MAPPING_BOOK);
+    Author = store.defineEntity("Author", MAPPING_AUTHOR);
     assert.isNotNull(store);
+    assert.isTrue(Book instanceof Function);
+    assert.isTrue(Author instanceof Function);
     return;
 };
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    if (sqlUtils.tableExists(conn, mapping.table)) {
-        sqlUtils.dropTable(conn, store.dialect, mapping.table);
+    if (sqlUtils.tableExists(conn, MAPPING_BOOK.table)) {
+        sqlUtils.dropTable(conn, store.dialect, MAPPING_BOOK.table);
         if (store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, mapping.id.sequence);
+            sqlUtils.dropSequence(conn, store.dialect, MAPPING_BOOK.id.sequence);
         }
     }
     return;
@@ -100,7 +139,7 @@ exports.testKey = function() {
 
 exports.testEntityRegistry = function() {
     // this creates a table "book"
-    var ctor = store.defineEntity("Book", mapping);
+    var ctor = store.defineEntity("Book", MAPPING_BOOK);
     assert.isNotNull(ctor);
     assert.strictEqual(typeof(ctor), "function");
 
@@ -114,12 +153,16 @@ exports.testEntityRegistry = function() {
 
 exports.testCRUD = function() {
     // create
-    var Book = store.defineEntity("Book", mapping);
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
     var props = {
         "title": "Building a Javascript ORM with RingoJS",
         "isbn": "AT-123456",
         "publishDate": new Date(),
-        "summary": "TL:DR"
+        "summary": "TL:DR",
+        "author": author
     };
     var book = new Book(props);
     assert.isUndefined(book._key);
@@ -127,6 +170,7 @@ exports.testCRUD = function() {
     assert.isTrue(book._key instanceof Key);
     assert.strictEqual(book._key.type, "Book");
     assert.strictEqual(book._id, 1);
+    assert.strictEqual(book.author, author);
 
     // read
     book = Book.get(1);
@@ -146,25 +190,42 @@ exports.testCRUD = function() {
     assert.strictEqual(props.publishDate.getMinutes(), book.publishDate.getMinutes());
     assert.strictEqual(props.publishDate.getSeconds(), book.publishDate.getSeconds());
     assert.isTrue(book.publishDate instanceof Date);
+
+    // compare mapped author
+    assert.isNotNull(book.author);
+    assert.isTrue(book.author instanceof Author);
+    assert.strictEqual(book.author._key.toString(), author._key.toString());
     
-    // update
+    // update properties
     var newTitle = "Inside RingoJS SQL Store";
     book.title = newTitle;
     book.readCount = 1234;
+    var newAuthor = new Author({
+        "name": "Jane Doe"
+    });
+    book.author = newAuthor;
     book.save();
     
-    // read
+    // read again
     book = Book.get(1);
     assert.strictEqual(book.title, newTitle);
     assert.strictEqual(book.readCount, 1234);
+    // newAuthor must have been persisted when saving book above
+    assert.isNotNull(newAuthor._id);
+    assert.strictEqual(book.author._key.toString(), newAuthor._key.toString());
     
     // remove
     book.remove();
     assert.strictEqual(Book.get(1), null);
+    author.remove();
+    assert.strictEqual(Author.get(1), null);
+    newAuthor.remove();
+    assert.strictEqual(Author.get(2), null);
+    return;
 };
 
 exports.testQueryAll = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.all();
     assert.strictEqual(result.length, 10);
@@ -175,7 +236,7 @@ exports.testQueryAll = function() {
 };
 
 exports.testQueryEquals = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().equals("id", 1).select();
     assert.strictEqual(result.length, 1);
@@ -184,7 +245,7 @@ exports.testQueryEquals = function() {
 };
 
 exports.testQueryGreaterThan = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greater("id", 5).select();
     assert.strictEqual(result.length, 5);
@@ -195,7 +256,7 @@ exports.testQueryGreaterThan = function() {
 };
 
 exports.testQueryGreaterThanOrEquals = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greaterEquals("id", 6).select();
     assert.strictEqual(result.length, 5);
@@ -206,7 +267,7 @@ exports.testQueryGreaterThanOrEquals = function() {
 };
 
 exports.testQueryLessThan = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().less("id", 6).select();
     assert.strictEqual(result.length, 5);
@@ -217,7 +278,7 @@ exports.testQueryLessThan = function() {
 };
 
 exports.testQueryLessThanOrEquals = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().lessEquals("id", 5).select();
     assert.strictEqual(result.length, 5);
@@ -228,7 +289,7 @@ exports.testQueryLessThanOrEquals = function() {
 };
 
 exports.testQueryOrder = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().orderBy("id desc").select();
     assert.strictEqual(result.length, 10);
@@ -239,7 +300,7 @@ exports.testQueryOrder = function() {
 };
 
 exports.testQueryLimit = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().limit(5).select();
     assert.strictEqual(result.length, 5);
@@ -249,7 +310,7 @@ exports.testQueryLimit = function() {
 };
 
 exports.testQueryOffset = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().offset(5).select();
     assert.strictEqual(result.length, 5);
@@ -260,7 +321,7 @@ exports.testQueryOffset = function() {
 };
 
 exports.testQueryRange = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().range(3, 8).select();
     assert.strictEqual(result.length, 5);
@@ -271,7 +332,7 @@ exports.testQueryRange = function() {
 };
 
 exports.testQueryCombined = function() {
-    var Book = store.defineEntity("Book", mapping);
+    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greater("id", 5).orderBy("id desc").select();
     assert.strictEqual(result.length, 5);
@@ -287,10 +348,6 @@ exports.testQueryCombined = function() {
 };
 
 /*
-exports.testQuery = function() {
-    throw new Error("TBD");
-};
-
 exports.testCreateTable = function() {
     throw new Error("TBD");
 };
