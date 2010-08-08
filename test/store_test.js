@@ -110,6 +110,12 @@ exports.setUp = function() {
     assert.isNotNull(store);
     assert.isTrue(Book instanceof Function);
     assert.isTrue(Author instanceof Function);
+    // static constructor functions
+    assert.strictEqual(typeof(Book.get), "function");
+    assert.strictEqual(typeof(Book.all), "function");
+    assert.strictEqual(typeof(Book.query), "function");
+    assert.strictEqual(Book, store.getEntityConstructor("Book"));
+    assert.strictEqual(Author, store.getEntityConstructor("Author"));
     return;
 };
 
@@ -134,20 +140,6 @@ exports.testKey = function() {
     assert.isFalse(key.isPersistent());
     key = new Key("Book");
     assert.isFalse(key.isPersistent());
-    return;
-};
-
-exports.testEntityRegistry = function() {
-    // this creates a table "book"
-    var ctor = store.defineEntity("Book", MAPPING_BOOK);
-    assert.isNotNull(ctor);
-    assert.strictEqual(typeof(ctor), "function");
-
-    // static constructor functions
-    assert.strictEqual(typeof(ctor.get), "function");
-    
-    // getEntityConstructor
-    assert.strictEqual(ctor, store.getEntityConstructor("Book"));
     return;
 };
 
@@ -225,7 +217,6 @@ exports.testCRUD = function() {
 };
 
 exports.testQueryAll = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.all();
     assert.strictEqual(result.length, 10);
@@ -236,7 +227,6 @@ exports.testQueryAll = function() {
 };
 
 exports.testQueryEquals = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().equals("id", 1).select();
     assert.strictEqual(result.length, 1);
@@ -245,7 +235,6 @@ exports.testQueryEquals = function() {
 };
 
 exports.testQueryGreaterThan = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greater("id", 5).select();
     assert.strictEqual(result.length, 5);
@@ -256,7 +245,6 @@ exports.testQueryGreaterThan = function() {
 };
 
 exports.testQueryGreaterThanOrEquals = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greaterEquals("id", 6).select();
     assert.strictEqual(result.length, 5);
@@ -267,7 +255,6 @@ exports.testQueryGreaterThanOrEquals = function() {
 };
 
 exports.testQueryLessThan = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().less("id", 6).select();
     assert.strictEqual(result.length, 5);
@@ -278,7 +265,6 @@ exports.testQueryLessThan = function() {
 };
 
 exports.testQueryLessThanOrEquals = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().lessEquals("id", 5).select();
     assert.strictEqual(result.length, 5);
@@ -289,7 +275,6 @@ exports.testQueryLessThanOrEquals = function() {
 };
 
 exports.testQueryOrder = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().orderBy("id desc").select();
     assert.strictEqual(result.length, 10);
@@ -300,7 +285,6 @@ exports.testQueryOrder = function() {
 };
 
 exports.testQueryLimit = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().limit(5).select();
     assert.strictEqual(result.length, 5);
@@ -310,7 +294,6 @@ exports.testQueryLimit = function() {
 };
 
 exports.testQueryOffset = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().offset(5).select();
     assert.strictEqual(result.length, 5);
@@ -321,7 +304,6 @@ exports.testQueryOffset = function() {
 };
 
 exports.testQueryRange = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().range(3, 8).select();
     assert.strictEqual(result.length, 5);
@@ -332,7 +314,6 @@ exports.testQueryRange = function() {
 };
 
 exports.testQueryCombined = function() {
-    var Book = store.defineEntity("Book", MAPPING_BOOK);
     populate(store);
     var result = Book.query().greater("id", 5).orderBy("id desc").select();
     assert.strictEqual(result.length, 5);
