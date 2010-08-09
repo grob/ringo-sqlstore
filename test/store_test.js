@@ -91,6 +91,7 @@ function populate(store) {
         var author = new Author({
             "name": "Author " + i
         });
+        author.save();
         authors.push(author);
     }
     for (var i=1; i<=10; i+=1) {
