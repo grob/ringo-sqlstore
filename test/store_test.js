@@ -196,6 +196,14 @@ exports.testCRUD = function() {
     assert.isTrue(book.author instanceof Author);
     assert.strictEqual(book.author._key.toString(), author._key.toString());
     
+    // null author property
+    book.author = null;
+    book.save();
+
+    // read again
+    book = Book.get(1);
+    assert.isNull(book.author);
+    
     // update properties
     var newTitle = "Inside RingoJS SQL Store";
     book.title = newTitle;
@@ -204,8 +212,11 @@ exports.testCRUD = function() {
         "name": "Jane Doe"
     });
     book.author = newAuthor;
+    assert.isUndefined(book.author._id);
     book.save();
-    
+    // author must have been persisted
+    assert.strictEqual(book.author._id, 2);
+
     // read again
     book = Book.get(1);
     assert.strictEqual(book.title, newTitle);
