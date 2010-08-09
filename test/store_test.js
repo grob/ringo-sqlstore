@@ -30,25 +30,30 @@ const MAPPING_BOOK = {
     "properties": {
         "title": {
             "type": "string",
+            "column": "book_title",
             "length": 255,
             "nullable": false,
         },
         "isbn": {
             "type": "string",
+            "column": "book_isbn",
             "length": 255,
             "nullable": false,
         },
         "publishDate": {
             "type": "timestamp",
+            "column": "book_timestamp",
             "nullable": false,
         },
         "readCount": {
             "type": "integer",
+            "column": "book_readcount",
             "nullable": false,
             "default": 0
         },
         "summary": {
             "type": "text",
+            "column": "book_text",
         },
         "author": {
             "type": "object",
@@ -67,6 +72,7 @@ const MAPPING_AUTHOR = {
     "properties": {
         "name": {
             "type": "string",
+            "column": "author_name",
             "nullable": false
 //        },
 //        "books": {
@@ -85,7 +91,6 @@ function populate(store) {
         var author = new Author({
             "name": "Author " + i
         });
-        author.save();
         authors.push(author);
     }
     for (var i=1; i<=10; i+=1) {
@@ -121,12 +126,14 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    if (sqlUtils.tableExists(conn, MAPPING_BOOK.table)) {
-        sqlUtils.dropTable(conn, store.dialect, MAPPING_BOOK.table);
-        if (store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, MAPPING_BOOK.id.sequence);
+    [MAPPING_BOOK, MAPPING_AUTHOR].forEach(function(mapping) {
+        if (sqlUtils.tableExists(conn, mapping.table)) {
+            sqlUtils.dropTable(conn, store.dialect, mapping.table);
+            if (store.dialect.hasSequenceSupport()) {
+                sqlUtils.dropSequence(conn, store.dialect, mapping.id.sequence);
+            }
         }
-    }
+    });
     return;
 };
 
