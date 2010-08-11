@@ -15,6 +15,10 @@ var dbProps = {
     "driver": "org.h2.Driver",
     "username": "test",
     "password": "test"
+//    "url": "jdbc:oracle:thin:@192.164.192.176:1523:ORFON4",
+//    "driver": "oracle.jdbc.driver.OracleDriver",
+//    "username": "orf_test",
+//    "password": "orf_test"
 };
 
 var store = null;
@@ -22,6 +26,7 @@ var Book = null;
 var Author = null;
 
 const MAPPING_BOOK = {
+    // "schema": "test",
     "table": "book",
     "id": {
         "column": "book_id", // optional
@@ -51,6 +56,16 @@ const MAPPING_BOOK = {
             "nullable": false,
             "default": 0
         },
+        "price": {
+            "type": "float",
+            "column": "book_price",
+            "nullable": false
+        },
+        "available": {
+            "type": "boolean",
+            "column": "book_available",
+            "default": true
+        },
         "summary": {
             "type": "text",
             "column": "book_text",
@@ -58,12 +73,14 @@ const MAPPING_BOOK = {
         "author": {
             "type": "object",
             "entity": "Author",
-            "column": "book_f_author"
+            "column": "book_f_author",
+            "foreignProperty": "id" // optional, defines the name of the property in the related entity
         }
     }
 };
 
 const MAPPING_AUTHOR = {
+    // "schema": "test",
     "table": "author",
     "id": {
         "column": "author_id",
@@ -74,12 +91,12 @@ const MAPPING_AUTHOR = {
             "type": "string",
             "column": "author_name",
             "nullable": false
-//        },
-//        "books": {
-//            "type": "collection",
-//            "entity": "Book",
-//            "local": "id",
-//            "foreign": "author"
+        },
+        "books": {
+            "type": "collection",
+            "entity": "Book",
+            "localProperty": "id",
+            "foreignProperty": "author" // optional, defines the name of the property in the related entity
         }
     }
 };
@@ -94,13 +111,15 @@ function populate(store) {
         author.save();
         authors.push(author);
     }
-    for (var i=1; i<=10; i+=1) {
+    for (var i=0; i<10; i+=1) {
+        var nr = i + 1;
         var props = {
-            "title": "Book " + i,
-            "isbn": "AT-" + i,
+            "title": "Book " + nr,
+            "isbn": "AT-" + nr,
             "publishDate": new Date(),
-            "summary": "This is the book no. " + i,
-            "author": authors[Math.min(i / 2)]
+            "price": 12.95,
+            "summary": "This is the book no. " + nr,
+            "author": authors[Math.floor(i / 2)]
         };
         var book = new Book(props);
         book.save(transaction);
@@ -127,11 +146,12 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    [MAPPING_BOOK, MAPPING_AUTHOR].forEach(function(mapping) {
-        if (sqlUtils.tableExists(conn, mapping.table)) {
-            sqlUtils.dropTable(conn, store.dialect, mapping.table);
+    [Book, Author].forEach(function(ctor) {
+        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
+        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
+            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
             if (store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, mapping.id.sequence);
+                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.idSequenceName, schemaName);
             }
         }
     });
@@ -161,6 +181,8 @@ exports.testCRUD = function() {
         "title": "Building a Javascript ORM with RingoJS",
         "isbn": "AT-123456",
         "publishDate": new Date(),
+        "price": 12.95,
+        "available": false,
         "summary": "TL:DR",
         "author": author
     };
@@ -176,7 +198,7 @@ exports.testCRUD = function() {
     book = Book.get(1);
     assert.isNotNull(book);
     assert.isTrue(!isNaN(book._id));
-    for (var propName in ["title", "isbn", "summary"]) {
+    for (var propName in ["title", "isbn", "summary", "price", "available"]) {
         assert.strictEqual(props[propName], book[propName]);
     }
     // readCount is by default zero
@@ -195,7 +217,7 @@ exports.testCRUD = function() {
     assert.isNotNull(book.author);
     assert.isTrue(book.author instanceof Author);
     assert.strictEqual(book.author._key.toString(), author._key.toString());
-    
+
     // null author property
     book.author = null;
     book.save();
@@ -203,7 +225,7 @@ exports.testCRUD = function() {
     // read again
     book = Book.get(1);
     assert.isNull(book.author);
-    
+
     // update properties
     var newTitle = "Inside RingoJS SQL Store";
     book.title = newTitle;
@@ -224,7 +246,7 @@ exports.testCRUD = function() {
     // newAuthor must have been persisted when saving book above
     assert.isNotNull(newAuthor._id);
     assert.strictEqual(book.author._key.toString(), newAuthor._key.toString());
-    
+
     // remove
     book.remove();
     assert.strictEqual(Book.get(1), null);
@@ -232,6 +254,105 @@ exports.testCRUD = function() {
     assert.strictEqual(Author.get(1), null);
     newAuthor.remove();
     assert.strictEqual(Author.get(2), null);
+    return;
+};
+
+exports.testTypes = function() {
+    var mapping = {
+        "table": "typetest",
+        "properties": {
+            "typeInteger": {
+                "type": "integer"
+            },
+            "typeLong": {
+                "type": "long"
+            },
+            "typeShort": {
+                "type": "short"
+            },
+            "typeFloat": {
+                "type": "float"
+            },
+            "typeDouble": {
+                "type": "double"
+            },
+            "typeCharacter": {
+                "type": "character"
+            },
+            "typeString": {
+                "type": "string"
+            },
+            "typeByte": {
+                "type": "byte"
+            },
+            "typeBoolean": {
+                "type": "boolean"
+            },
+            "typeDate": {
+                "type": "date"
+            },
+            "typeTime": {
+                "type": "time"
+            },
+            "typeTimestamp": {
+                "type": "timestamp"
+            },
+            "typeBinary": {
+                "type": "binary"
+            },
+            "typeText": {
+                "type": "text"
+            }
+        }
+    };
+    var props = {
+        "typeInteger": 12345678,
+        "typeLong": 12345678910,
+        "typeShort": 12345,
+        "typeFloat": 10.99,
+        "typeDouble": 2199.99,
+        "typeCharacter": "T",
+        "typeString": "Test",
+        "typeByte": 5,
+        "typeBoolean": true,
+        "typeDate": new Date(2010, 7, 11),
+        "typeTime": new Date(0, 0, 0, 17, 36, 04, 723),
+        "typeTimestamp": new Date(2010, 7, 11, 36, 04, 723),
+        "typeBinary": java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 10),
+        "typeText": "Testing all possible data types"
+    };
+    var Type = store.defineEntity("TypeTest", mapping);
+    var type = new Type(props);
+    type.save();
+
+    // read again
+    type = Type.get(1);
+    for (var propName in props) {
+        var origValue = props[propName];
+        var value = type[propName];
+        switch (propName) {
+            case "typeDate":
+                assert.strictEqual(origValue.getFullYear(), value.getFullYear());
+                assert.strictEqual(origValue.getMonth(), value.getMonth());
+                assert.strictEqual(origValue.getDate(), value.getDate());
+                break;
+            case "typeTime":
+                assert.strictEqual(origValue.getHours(), value.getHours());
+                assert.strictEqual(origValue.getMinutes(), value.getMinutes());
+                assert.strictEqual(origValue.getSeconds(), value.getSeconds());
+                break;
+            case "typeTimestamp":
+                assert.strictEqual(origValue.getFullYear(), value.getFullYear());
+                assert.strictEqual(origValue.getMonth(), value.getMonth());
+                assert.strictEqual(origValue.getDate(), value.getDate());
+                break;
+            case "typeBinary":
+                assert.isTrue(java.util.Arrays.equals(origValue, value)); 
+                break;
+            default:
+                assert.strictEqual(origValue, value);
+        }
+    }
     return;
 };
 
@@ -342,6 +463,25 @@ exports.testQueryCombined = function() {
     var result = Book.query().lessEquals("id", 5).orderBy("id").select();
     assert.strictEqual(result.length, 5);
     result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+    return;
+};
+
+exports.testCollection = function() {
+    populate(store);
+    var author = Author.get(1);
+    assert.isNotNull(author.books);
+    assert.strictEqual(author.books.length, 2);
+    for (var i=0; i<author.books.length; i+=1) {
+        var book = author.books.get(i);
+        assert.strictEqual(book.constructor, Book);
+    }
+    for each (var book in author.books) {
+        assert.strictEqual(book.constructor, Book);
+    }
+    author.books.forEach(function(book, idx) {
+        assert.strictEqual(book.constructor, Book);
         assert.strictEqual(book._id, idx + 1);
     });
     return;
