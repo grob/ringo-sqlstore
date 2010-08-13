@@ -11,14 +11,14 @@ var dbProps = {
 //    "driver": "com.mysql.jdbc.Driver",
 //    "username": "test",
 //    "password": "test"
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver",
+//    "url": "jdbc:h2:mem:test",
+//    "driver": "org.h2.Driver",
+//    "username": "test",
+//    "password": "test"
+    "url": "jdbc:oracle:thin:@192.168.1.212:1524:XE",
+    "driver": "oracle.jdbc.driver.OracleDriver",
     "username": "test",
     "password": "test"
-//    "url": "jdbc:oracle:thin:@192.164.192.176:1523:ORFON4",
-//    "driver": "oracle.jdbc.driver.OracleDriver",
-//    "username": "orf_test",
-//    "password": "orf_test"
 };
 
 var store = null;
@@ -63,12 +63,13 @@ const MAPPING_BOOK = {
         },
         "available": {
             "type": "boolean",
-            "column": "book_available",
-            "default": true
+            "column": "book_available"
+            // FIXME: doesn't work with oracle
+            // "default": true
         },
         "summary": {
             "type": "text",
-            "column": "book_text",
+            "column": "book_text"
         },
         "author": {
             "type": "object",
@@ -151,7 +152,7 @@ exports.tearDown = function() {
         if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
             sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
             if (store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.idSequenceName, schemaName);
+                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
             }
         }
     });
@@ -299,9 +300,9 @@ exports.testTypes = function() {
             },
             "typeBinary": {
                 "type": "binary"
-            },
-            "typeText": {
-                "type": "text"
+//            },
+//            "typeText": {
+//                "type": "text"
             }
         }
     };
@@ -319,7 +320,7 @@ exports.testTypes = function() {
         "typeTime": new Date(0, 0, 0, 17, 36, 04, 723),
         "typeTimestamp": new Date(2010, 7, 11, 36, 04, 723),
         "typeBinary": java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 10),
-        "typeText": "Testing all possible data types"
+        // "typeText": "Testing all possible data types"
     };
     var Type = store.defineEntity("TypeTest", mapping);
     var type = new Type(props);
@@ -332,25 +333,25 @@ exports.testTypes = function() {
         var value = type[propName];
         switch (propName) {
             case "typeDate":
-                assert.strictEqual(origValue.getFullYear(), value.getFullYear());
-                assert.strictEqual(origValue.getMonth(), value.getMonth());
-                assert.strictEqual(origValue.getDate(), value.getDate());
+                assert.strictEqual(value.getFullYear(), origValue.getFullYear());
+                assert.strictEqual(value.getMonth(), origValue.getMonth());
+                assert.strictEqual(value.getDate(), origValue.getDate());
                 break;
             case "typeTime":
-                assert.strictEqual(origValue.getHours(), value.getHours());
-                assert.strictEqual(origValue.getMinutes(), value.getMinutes());
-                assert.strictEqual(origValue.getSeconds(), value.getSeconds());
+                assert.strictEqual(value.getHours(), origValue.getHours());
+                assert.strictEqual(value.getMinutes(), origValue.getMinutes());
+                assert.strictEqual(value.getSeconds(), origValue.getSeconds());
                 break;
             case "typeTimestamp":
-                assert.strictEqual(origValue.getFullYear(), value.getFullYear());
-                assert.strictEqual(origValue.getMonth(), value.getMonth());
-                assert.strictEqual(origValue.getDate(), value.getDate());
+                assert.strictEqual(value.getFullYear(), origValue.getFullYear());
+                assert.strictEqual(value.getMonth(), origValue.getMonth());
+                assert.strictEqual(value.getDate(), origValue.getDate());
                 break;
             case "typeBinary":
-                assert.isTrue(java.util.Arrays.equals(origValue, value)); 
+                assert.isTrue(java.util.Arrays.equals(value, origValue)); 
                 break;
             default:
-                assert.strictEqual(origValue, value);
+                assert.strictEqual(value, origValue);
         }
     }
     return;
