@@ -5,25 +5,15 @@ var Store = require("ringo/storage/sql/store").Store;
 var Key = require("ringo/storage/sql/key").Key;
 var Transaction = require("ringo/storage/sql/transaction").Transaction;
 var sqlUtils = require("ringo/storage/sql/util");
-
-var dbProps = {
-//    "url": "jdbc:mysql://localhost/test",
-//    "driver": "com.mysql.jdbc.Driver",
-//    "username": "test",
-//    "password": "test"
-//    "url": "jdbc:h2:mem:test",
-//    "driver": "org.h2.Driver",
-//    "username": "test",
-//    "password": "test"
-    "url": "jdbc:oracle:thin:@192.168.1.212:1524:XE",
-    "driver": "oracle.jdbc.driver.OracleDriver",
-    "username": "test",
-    "password": "test"
-};
+var strings = require("ringo/utils/strings.js");
 
 var store = null;
 var Book = null;
 var Author = null;
+var dbProps = {
+        "url": "jdbc:h2:mem:test",
+        "driver": "org.h2.Driver"
+    };
 
 const MAPPING_BOOK = {
     // "schema": "test",
@@ -127,6 +117,10 @@ function populate(store) {
     }
     transaction.commit();
     return;
+};
+
+exports.setDbProps = function(props) {
+    dbProps = props;
 };
 
 exports.setUp = function() {
@@ -300,9 +294,9 @@ exports.testTypes = function() {
             },
             "typeBinary": {
                 "type": "binary"
-//            },
-//            "typeText": {
-//                "type": "text"
+            },
+            "typeText": {
+                "type": "text"
             }
         }
     };
@@ -319,8 +313,8 @@ exports.testTypes = function() {
         "typeDate": new Date(2010, 7, 11),
         "typeTime": new Date(0, 0, 0, 17, 36, 04, 723),
         "typeTimestamp": new Date(2010, 7, 11, 36, 04, 723),
-        "typeBinary": java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 10),
-        // "typeText": "Testing all possible data types"
+        "typeBinary": java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 100000),
+        "typeText": strings.repeat("abcdefghij", 10000)
     };
     var Type = store.defineEntity("TypeTest", mapping);
     var type = new Type(props);
@@ -354,6 +348,9 @@ exports.testTypes = function() {
                 assert.strictEqual(value, origValue);
         }
     }
+
+    // drop the table
+    sqlUtils.dropTable(store.getConnection(), store.dialect, mapping.table);
     return;
 };
 
@@ -557,5 +554,6 @@ exports.testGetById = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    require('test').run(exports);
+    dbProps = databases.h2;
+    require("test").run(exports);
 }
