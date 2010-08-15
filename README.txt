@@ -22,12 +22,12 @@ SQLstore was heavily inspired by
 Status
 ======
 
-Ringo SQL-Store should be considered Beta, and you should expect bugs hindering you when using it. Most likely also the mapping format will change (slightly) in the near future.
+Ringo SQL-Store should be considered experimental beta. Parts of it (i.e. mapping format) will probably change in the near future.
 
 Supported data types
 ====================
 
-Ringo SQLstore currently supports the following data types for use in mappings:
+Ringo SQLstore supports the following data types for use in mappings:
 
 * integer
 * long
