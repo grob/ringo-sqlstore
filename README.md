@@ -1,7 +1,7 @@
 About Ringo SQLstore
 ===============
 
-Ringo SQLstore is a storage implementation allowing [RingoJS] applications to store data in a relational database. It is entirely implemented in Javascript and uses standard JDBC for interactions with the underlying database. It currently features
+Ringo SQLstore is a lightweight ORM/storage implementation for [RingoJS]. It uses JDBC for communication with databases. Current features are:
 
 * Creation of tables and sequences
 * Transaction support
@@ -41,7 +41,7 @@ Ringo SQLstore supports the following data types for use in mappings:
 * binary
 * text
 
-See the various [database] files for details about the mapping of these data types to column types.
+See the various [database] files for details about the mapping of these data types to specific column types.
 
 Basic Usage
 ===========
@@ -128,6 +128,6 @@ Also supported is iterating over collections using for, for each and forEach.
 
  [RingoJS]: http://ringojs.org/
  [ringo-hibernate]: http://github.com/robi42/ringo-hibernate/
- [Hibernate]: http://hibernate.org/
  [Helma]: http://helma.org
+ [Hibernate]: http://hibernate.org/
  [database]: http://github.com/grob/ringo-sqlstore/tree/master/lib/ringo/storage/sql/databases/
