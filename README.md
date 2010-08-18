@@ -1,23 +1,20 @@
 About Ringo SQLstore
 ===============
 
-Ringo SQLstore is a storage implementation allowing [RingoJS] applications to store data in a relational database. It is entirely implemented in Javascript and uses standard JDBC for interactions with the underlying database. Main features are:
+Ringo SQLstore is a storage implementation allowing [RingoJS] applications to store data in a relational database. It is entirely implemented in Javascript and uses standard JDBC for interactions with the underlying database. It currently features
 
 * Creation of tables and sequences
 * Transaction support
 * Lazy loading
 * Simple one-to-one and one-to-many mappings (see below)
 * Connection pooling
-* Easy addition of other databases or custom column mappings
-* Switching between databases just by modifying the connection properties
-* Multiple SQL stores simultaneously in one application
 
-Currently supported databases are H2, MySQL 5.x and Oracle XE. PostgreSQL will follow soon.
+Currently supported databases are H2, MySQL (5.x) and Oracle (XE).
 
-SQLstore was heavily inspired by
+SQLstore is heavily inspired by
 * [ringo-hibernate] by Robert Thurnher
-* [Hibernate] Project
 * [Helma] (the predecessor of RingoJS)
+* [Hibernate] Project
 
 Status
 ======
