@@ -75,9 +75,6 @@ Basic Usage
 Mapping Definition
 ==================
 
-Basics
-------
-
 A basic mapping definition looks like:
 
     {
