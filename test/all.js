@@ -1,3 +1,4 @@
+exports.testCache = require("./cache_test");
 exports.testH2 = require("./h2_test");
 exports.testMysql = require("./mysql_test");
 exports.testOracle = require("./oracle_test");

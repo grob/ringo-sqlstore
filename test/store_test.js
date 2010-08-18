@@ -1,5 +1,4 @@
 var assert = require("assert");
-var profile = require("ringo/profiler").profile;
 
 var Store = require("ringo/storage/sql/store").Store;
 var Key = require("ringo/storage/sql/key").Key;
@@ -471,6 +470,8 @@ exports.testCollection = function() {
     var author = Author.get(1);
     assert.isNotNull(author.books);
     assert.strictEqual(author.books.length, 2);
+
+    // iteration tests
     for (var i=0; i<author.books.length; i+=1) {
         var book = author.books.get(i);
         assert.strictEqual(book.constructor, Book);
@@ -480,77 +481,9 @@ exports.testCollection = function() {
     }
     author.books.forEach(function(book, idx) {
         assert.strictEqual(book.constructor, Book);
-        assert.strictEqual(book._id, idx + 1);
     });
     return;
 };
-
-/*
-exports.testCreateTable = function() {
-    throw new Error("TBD");
-};
-
-exports.testGenerateId = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetIdColumnName = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetIdSequenceName = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetId = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetKey = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetEntity = function() {
-    throw new Error("TBD");
-};
-
-exports.testRemove = function() {
-    throw new Error("TBD");
-};
-
-exports.testUpdateEntity = function() {
-    throw new Error("TBD");
-};
-
-exports.testInsert = function() {
-    throw new Error("TBD");
-};
-
-exports.testUpdate = function() {
-    throw new Error("TBD");
-};
-
-exports.testSave = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetProperties = function() {
-    throw new Error("TBD");
-};
-
-exports.testLoadEntity = function() {
-    throw new Error("TBD");
-};
-
-exports.testIsEntityExisting = function() {
-    throw new Error("TBD");
-};
-
-exports.testGetById = function() {
-    throw new Error("TBD");
-};
-*/
-
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
