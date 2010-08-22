@@ -9,9 +9,10 @@ Ringo SQLstore is a lightweight ORM/storage implementation for [RingoJS]. It use
 * Simple one-to-one and one-to-many mappings (see below)
 * Connection pooling
 
-Currently supported databases are H2, MySQL (5.x) and Oracle (XE).
+Currently supported databases are H2, MySQL (5.x), Oracle (XE) and PostgreSQL (8.x).
 
 SQLstore is heavily inspired by
+
 * [ringo-hibernate] by Robert Thurnher
 * [Helma] (the predecessor of RingoJS)
 * [Hibernate] Project
