@@ -7,7 +7,8 @@
     "contributors": [],
     "jars": [
         "jars/h2-1.2.138.jar",
-        "jars/mysql-connector-java-5.1.6-bin.jar",
-        "jars/ojdbc6.jar"
+        "jars/mysql.jar",
+        "jars/ojdbc6.jar",
+        "jars/postgresql.jar"
     ]
 }
