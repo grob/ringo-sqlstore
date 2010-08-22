@@ -20,7 +20,7 @@ const MAPPING_AUTHOR = {
 };
 
 var dbProps = {
-    "url": "jdbc:h2:mem:test",
+    "url": "jdbc:h2:mem:test;MVCC=TRUE",
     "driver": "org.h2.Driver"
 };
 
@@ -51,9 +51,6 @@ exports.tearDown = function() {
 
 exports.testTransaction = function() {
     var transaction = store.createTransaction();
-    assert.strictEqual(transaction.inserted.length, 0);
-    assert.strictEqual(transaction.updated.length, 0);
-    assert.strictEqual(transaction.deleted.length, 0);
     assert.isFalse(transaction.isDirty());
 
     var authors = [];
@@ -67,9 +64,10 @@ exports.testTransaction = function() {
     }
     assert.strictEqual(transaction.inserted.length, authors.length);
     assert.isTrue(transaction.isDirty());
+    assert.strictEqual(Author.all().length, 0);
     transaction.commit();
     assert.isFalse(transaction.isDirty());
-    assert.strictEqual(transaction.inserted.length, 0);
+    assert.strictEqual(Author.all().length, 5);
     
     // re-use the transaction
     var author = new Author({
@@ -80,6 +78,7 @@ exports.testTransaction = function() {
     assert.strictEqual(transaction.inserted.length, 1);
     transaction.commit();
     assert.isFalse(transaction.isDirty());
+    assert.strictEqual(Author.all().length, 6);
     return;
 };
 
