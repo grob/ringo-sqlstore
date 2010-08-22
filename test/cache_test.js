@@ -35,7 +35,7 @@ exports.testCache = function() {
 
 exports.testRotation = function() {
     var cache = new Cache();
-    for (var i=0; i<1001; i+=1) {
+    for (var i=1; i<=1001; i+=1) {
         cache.put("obj" + i, i);
     }
     assert.strictEqual(cache.size(), 501);
