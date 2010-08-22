@@ -92,7 +92,6 @@ const MAPPING_AUTHOR = {
 };
 
 function populate(store) {
-    var transaction = store.createTransaction();
     var authors = [];
     for (var i=1; i<=5; i+=1) {
         var author = new Author({
@@ -101,6 +100,7 @@ function populate(store) {
         author.save();
         authors.push(author);
     }
+    var transaction = store.createTransaction();
     for (var i=0; i<10; i+=1) {
         var nr = i + 1;
         var props = {
@@ -144,11 +144,13 @@ exports.tearDown = function() {
         var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
         if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
             sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (store.dialect.hasSequenceSupport()) {
+            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
                 sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
             }
         }
     });
+    conn.close();
+    store.closeConnections();
     return;
 };
 
