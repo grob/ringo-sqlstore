@@ -55,7 +55,7 @@ Basic Usage
     });
     // define the entity, passing the mapping as second argument
     var Author = store.defineEntity("Author", {
-        "table": "author",
+        "table": "author", // optional, defaults to entity name
         "properties": {
             "name": {
                 "type": "string",
@@ -76,7 +76,7 @@ Mapping Definition
 A basic mapping definition looks like:
 
     {
-        "table": "mytable",
+        "table": "mytable", // optional, defaults to entity name
         "schema": "myschema", // optional, is not created on-the-fly
         "id": { // optional
             "column": "mytable_id", // optional, defaults to "id"
