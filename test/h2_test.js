@@ -1,5 +1,5 @@
 var dbProps = {
-    "url": "jdbc:h2:mem:test;MVCC=TRUE",
+    "url": "jdbc:h2:mem:test",
     "driver": "org.h2.Driver"
 };
 

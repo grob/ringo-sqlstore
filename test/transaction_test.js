@@ -1,5 +1,6 @@
 var assert = require("assert");
 var Store = require("ringo/storage/sql/store").Store;
+var Transaction = require("ringo/storage/sql/transaction").Transaction;
 var sqlUtils = require("ringo/storage/sql/util");
 
 var store = null;
@@ -20,7 +21,7 @@ const MAPPING_AUTHOR = {
 };
 
 var dbProps = {
-    "url": "jdbc:h2:mem:test;MVCC=TRUE",
+    "url": "jdbc:h2:mem:test",
     "driver": "org.h2.Driver"
 };
 
@@ -43,14 +44,17 @@ exports.tearDown = function() {
             sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
         }
     }
-    store.closeConnections();
+    store.connectionPool.closeConnections();
     store = null;
     Author = null;
     return;
 };
 
 exports.testTransaction = function() {
-    var transaction = store.createTransaction();
+    assert.isNull(store.getTransaction());
+    store.beginTransaction();
+    var transaction = store.getTransaction();
+    assert.isNotNull(transaction);
     assert.isFalse(transaction.isDirty());
 
     var authors = [];
@@ -64,21 +68,23 @@ exports.testTransaction = function() {
     }
     assert.strictEqual(transaction.inserted.length, authors.length);
     assert.isTrue(transaction.isDirty());
-    assert.strictEqual(Author.all().length, 0);
-    transaction.commit();
-    assert.isFalse(transaction.isDirty());
     assert.strictEqual(Author.all().length, 5);
-    
-    // re-use the transaction
+    store.commitTransaction();
+    assert.isNull(store.getTransaction());
+    assert.strictEqual(Author.all().length, 5);
+
+    // abort transaction
+    store.beginTransaction();
+    transaction = store.getTransaction();
     var author = new Author({
         "name": "Author " + (authors.length + 1)
     });
     author.save(transaction);
     assert.isTrue(transaction.isDirty());
     assert.strictEqual(transaction.inserted.length, 1);
-    transaction.commit();
-    assert.isFalse(transaction.isDirty());
-    assert.strictEqual(Author.all().length, 6);
+    store.abortTransaction();
+    assert.isNull(Transaction.getInstance());
+    assert.strictEqual(Author.all().length, 5);
     return;
 };
 

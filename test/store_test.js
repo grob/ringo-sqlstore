@@ -149,8 +149,10 @@ exports.tearDown = function() {
             }
         }
     });
-    conn.close();
-    store.closeConnections();
+    store.connectionPool.closeConnections();
+    store = null;
+    Author = null;
+    Book = null;
     return;
 };
 
