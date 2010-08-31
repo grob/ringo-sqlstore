@@ -44,6 +44,7 @@ exports.tearDown = function() {
             sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
         }
     }
+    store.connectionPool.stopScheduler();
     store.connectionPool.closeConnections();
     store = null;
     Author = null;

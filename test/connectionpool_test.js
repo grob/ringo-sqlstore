@@ -5,8 +5,20 @@ var dbProps = {
     "driver": "org.h2.Driver"
 };
 
+var pool = null;
+
+exports.setUp = function() {
+    pool = new ConnectionPool(dbProps);
+    return;
+};
+
+exports.tearDown = function() {
+    pool.stopScheduler();
+    pool = null;
+    return;
+};
+
 exports.testGetConnection = function() {
-    var pool = new ConnectionPool(dbProps);
     // first connection
     var conn1 = pool.getConnection();
     assert.strictEqual(pool.size(), 1);
@@ -29,6 +41,13 @@ exports.testGetConnection = function() {
     assert.notStrictEqual(conn2, conn3);
     assert.isFalse(conn1.getConnection().equals(conn3.getConnection()));
     assert.isFalse(conn2.getConnection().equals(conn3.getConnection()));
+    return;
+};
+
+exports.testIsStale = function() {
+    var conn = pool.getConnection();
+    assert.isTrue(conn.isStale(0));
+    assert.isFalse(conn.isStale(1000));
     return;
 };
 

@@ -149,6 +149,7 @@ exports.tearDown = function() {
             }
         }
     });
+    store.connectionPool.stopScheduler();
     store.connectionPool.closeConnections();
     store = null;
     Author = null;
