@@ -470,10 +470,11 @@ exports.testQueryCombined = function() {
     return;
 };
 
-exports.testCollection = function() {
+exports.testMappedCollection = function() {
     populate(store);
     var author = Author.get(1);
     assert.isNotNull(author.books);
+    assert.strictEqual(author.books.constructor, Array);
     assert.strictEqual(author.books.length, 2);
 
     // iteration tests
@@ -492,6 +493,5 @@ exports.testCollection = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    dbProps = databases.h2;
     require("test").run(exports);
 }
