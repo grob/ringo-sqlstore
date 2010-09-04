@@ -1,7 +1,6 @@
 var assert = require("assert");
 
 var Store = require("ringo/storage/sql/store").Store;
-var Collection = require("ringo/storage/sql/collection").Collection;
 var sqlUtils = require("ringo/storage/sql/util");
 var store = null;
 var Book = null;
@@ -12,29 +11,30 @@ var dbProps = {
 };
 
 const MAPPING_BOOK = {
-    "table": "book",
-    "id": {
-        "column": "book_id",
-        "sequence": "book_id"
-    },
     "properties": {
         "title": {
             "type": "string",
             "column": "book_title",
             "length": 255,
             "nullable": false,
+        },
+        "authorId": {
+            "type": "integer",
+            "column": "book_f_author",
+            "nullable": false
         }
     }
 };
 
-function populate() {
+function populate(nrOfBooks) {
     var transaction = store.createTransaction();
-    for (var i=0; i<101; i+=1) {
+    for (var i=0; i<nrOfBooks; i+=1) {
         var nr = i + 1;
-        var props = {
-            "title": "Book " + nr
-        };
-        var book = new Book(props);
+        var authorId = (i % 2) + 1;
+        var book = new Book({
+            "title": "Book " + nr,
+            "authorId": authorId
+        });
         book.save(transaction);
     }
     transaction.commit();
@@ -53,40 +53,160 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    var schemaName = Book.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-    if (sqlUtils.tableExists(conn, Book.mapping.tableName, schemaName)) {
-        sqlUtils.dropTable(conn, store.dialect, Book.mapping.tableName, schemaName);
-        if (Book.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, Book.mapping.id.sequence, schemaName);
+    [Book, Author].forEach(function(ctor) {
+        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
+        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
+            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
+            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
+                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
+            }
         }
-    }
+    });
     store.connectionPool.stopScheduler();
     store.connectionPool.closeConnections();
     store = null;
     Book = null;
+    Author = null;
     return;
 };
 
-exports.testCollectionPartitioning = function() {
-    populate();
-    var query = store.query("Book");
-    var collection = new Collection("allBooks", query, 10);
-    assert.strictEqual(collection.partitions.length, 0);
-    // accessing length populates the ids of the collection
-    assert.strictEqual(collection.length, 101);
-    assert.strictEqual(collection.partitions.length, 11);
-    var book = collection.get(0);
-    assert.isNotNull(book);
-    assert.strictEqual(book._id, 1);
-    assert.isNotUndefined(collection.partitions[0]);
-    book = collection.get(10);
-    assert.isNotUndefined(collection.partitions[1]);
-    book = collection.get(99);
-    assert.isNotUndefined(collection.partitions[9]);
-    book = collection.get(100);
-    assert.isNotUndefined(collection.partitions[10]);
-    for (var i=2; i<9; i+=1) {
-        assert.isUndefined(collection.partitions[i], "Partition " + i + " should be undefined");
+/**
+ * Basic collection test, including iteration
+ */
+exports.testBasics = function() {
+    populate(11);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "entity": "Book"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of all books"
+    });
+    author.save();
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 11);
+    // iteration tests
+    for (var i=0; i<author.books.length; i+=1) {
+        assert.strictEqual(author.books.get(i)._id, i + 1);
+    }
+    for each (var book in author.books) {
+        assert.strictEqual(book.constructor, Book);
+    }
+    author.books.forEach(function(book, idx) {
+        assert.strictEqual(book.constructor, Book);
+    });
+    return;
+};
+
+/**
+ * Collection with filtering via foreignProperty and ordering
+ */
+exports.testWithForeignProperty = function() {
+    populate(11);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "entity": "Book",
+                "foreignProperty": "authorId",
+                "orderBy": "id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 6);
+    // due to ordering first book is the last one
+    assert.strictEqual(author.books.get(0)._id, 11);
+    return;
+};
+
+/**
+ * Collection with filtering via local- and foreignProperty and ordering
+ */
+exports.testWithLocalAndForeignProperty = function() {
+    populate(11);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "realId": {
+                "type": "integer"
+            },
+            "books": {
+                "type": "collection",
+                "entity": "Book",
+                "localProperty": "realId",
+                "foreignProperty": "authorId",
+                "orderBy": "id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books",
+        "realId": 2 // mimick other author
+    });
+    author.save();
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 5);
+    // due to ordering first book is the last one
+    assert.strictEqual(author.books.get(0)._id, 10);
+    return;
+};
+
+/**
+ * Partitioned collection with custom partition size, ordering and filtering
+ * with foreignProperty
+ */
+exports.testPartitionedCollection = function() {
+    populate(101);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "entity": "Book",
+                "isPartitioned": true,
+                "partitionSize": 10,
+                "foreignProperty": "authorId",
+                "orderBy": "id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+    author = Author.get(1);
+
+    assert.strictEqual(author.books.length, 51);
+    // due to ordering first book is the last one
+    assert.strictEqual(author.books.get(0)._id, 101);
+    assert.isNotUndefined(author.books.partitions[0]);
+    var book = author.books.get(10);
+    assert.isNotUndefined(author.books.partitions[1]);
+    assert.strictEqual(book._id, 81);
+    book = author.books.get(50);
+    assert.isNotUndefined(author.books.partitions[5]);
+    for (var i=2; i<5; i+=1) {
+        assert.isUndefined(author.books.partitions[i], "Partition " + i +
+                " should be undefined");
     }
     return;
 };

@@ -197,8 +197,8 @@ exports.testCRUD = function() {
     book = Book.get(1);
     assert.isNotNull(book);
     assert.isTrue(!isNaN(book._id));
-    for (var propName in ["title", "isbn", "summary", "price", "available"]) {
-        assert.strictEqual(props[propName], book[propName]);
+    for each (var propName in ["title", "isbn", "summary", "price", "available"]) {
+        assert.strictEqual(book[propName], props[propName]);
     }
     // readCount is by default zero
     assert.strictEqual(book.readCount, 0);
@@ -358,12 +358,58 @@ exports.testTypes = function() {
     return;
 };
 
+exports.testQuerySelectLazy = function() {
+    populate(store);
+    var result = Book.query().select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+};
+
+exports.testQuerySelectAggressive = function() {
+    populate(store);
+    var result = Book.query().select("*");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+};
+
+exports.testQuerySelectProperty = function() {
+    populate(store);
+    var result = Book.query().select("id");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(id, idx) {
+        assert.strictEqual(id, idx + 1);
+    });
+    return;
+};
+
 exports.testQueryAll = function() {
     populate(store);
     var result = Book.all();
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
+    });
+};
+
+exports.testQueryAllAggressive = function() {
+    populate(store);
+    var result = Book.all("*");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+    });
+};
+
+exports.testQueryAllProperty = function() {
+    populate(store);
+    var result = Book.all("id");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(id, idx) {
+        assert.strictEqual(id, idx + 1);
     });
     return;
 };
@@ -466,27 +512,6 @@ exports.testQueryCombined = function() {
     assert.strictEqual(result.length, 5);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
-    });
-    return;
-};
-
-exports.testMappedCollection = function() {
-    populate(store);
-    var author = Author.get(1);
-    assert.isNotNull(author.books);
-    assert.strictEqual(author.books.constructor, Array);
-    assert.strictEqual(author.books.length, 2);
-
-    // iteration tests
-    for (var i=0; i<author.books.length; i+=1) {
-        var book = author.books.get(i);
-        assert.strictEqual(book.constructor, Book);
-    }
-    for each (var book in author.books) {
-        assert.strictEqual(book.constructor, Book);
-    }
-    author.books.forEach(function(book, idx) {
-        assert.strictEqual(book.constructor, Book);
     });
     return;
 };
