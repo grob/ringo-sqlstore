@@ -42,8 +42,7 @@ const MAPPING_BOOK = {
         "readCount": {
             "type": "integer",
             "column": "book_readcount",
-            "nullable": false,
-            "default": 0
+            "nullable": false
         },
         "price": {
             "type": "float",
@@ -53,8 +52,6 @@ const MAPPING_BOOK = {
         "available": {
             "type": "boolean",
             "column": "book_available"
-            // FIXME: doesn't work with oracle
-            // "default": true
         },
         "summary": {
             "type": "text",
@@ -107,6 +104,7 @@ function populate(store) {
             "title": "Book " + nr,
             "isbn": "AT-" + nr,
             "publishDate": new Date(),
+            "readCount": 0,
             "price": 12.95,
             "summary": "This is the book no. " + nr,
             "author": authors[Math.floor(i / 2)]
@@ -180,6 +178,7 @@ exports.testCRUD = function() {
         "title": "Building a Javascript ORM with RingoJS",
         "isbn": "AT-123456",
         "publishDate": new Date(),
+        "readCount": 0,
         "price": 12.95,
         "available": false,
         "summary": "TL:DR",
@@ -197,11 +196,9 @@ exports.testCRUD = function() {
     book = Book.get(1);
     assert.isNotNull(book);
     assert.isTrue(!isNaN(book._id));
-    for each (var propName in ["title", "isbn", "summary", "price", "available"]) {
+    for each (var propName in ["title", "isbn", "summary", "readCount", "price", "available"]) {
         assert.strictEqual(book[propName], props[propName]);
     }
-    // readCount is by default zero
-    assert.strictEqual(book.readCount, 0);
     // compare publishDate - unfortunately MySQL doesn't support millis
     // in timestamp columns, so compare all except millis
     assert.strictEqual(props.publishDate.getFullYear(), book.publishDate.getFullYear());
