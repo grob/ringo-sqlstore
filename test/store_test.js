@@ -15,7 +15,7 @@ var dbProps = {
     };
 
 const MAPPING_BOOK = {
-    // "schema": "test",
+    // "schema": "TEST",
     "table": "book",
     "id": {
         "column": "book_id", // optional
@@ -67,7 +67,7 @@ const MAPPING_BOOK = {
 };
 
 const MAPPING_AUTHOR = {
-    // "schema": "test",
+    // "schema": "TEST",
     "table": "author",
     "id": {
         "column": "author_id",
@@ -416,6 +416,12 @@ exports.testQueryEquals = function() {
     var result = Book.query().equals("id", 1).select();
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0]._id, 1);
+    // storable as argument
+    result = Book.query().equals("author", Author.get(1)).select();
+    assert.strictEqual(result.length, 2);
+    // multiple storables as argument
+    result = Book.query().equals("author", Author.all()).select();
+    assert.strictEqual(result.length, 10);
     return;
 };
 
