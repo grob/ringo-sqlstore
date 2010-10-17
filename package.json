@@ -4,7 +4,10 @@
     "description": "SQL-Storage implementation for RingoJS",
     "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
     "author": "Robert Gaggl (http://nomatic.org/) <robert@nomatic.org>",
-    "contributors": [],
+    "contributors": [
+        "Robert Thurnher (http://robert42.com/) <r.thurnher@gmail.com>",
+        "Hannes Wallnoefer (http://henso.com/) <hannes@helma.at>"
+    ],
     "jars": [
         "jars/h2-1.2.138.jar",
         "jars/mysql.jar",
