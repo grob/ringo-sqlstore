@@ -110,7 +110,7 @@ exports.testSimpleManyToMany = function() {
     var books = [];
     for (var i=1; i<3; i+=1) {
         var author = new Author({
-            "name": "Author " + 1
+            "name": "Author " + i
         });
         author.save(transaction);
         authors.push(author);
@@ -135,13 +135,13 @@ exports.testSimpleManyToMany = function() {
     var book = Book.get(1);
     assert.isNotNull(book);
     assert.strictEqual(book.authors.length, 2);
-    assert.strictEqual(book.authors.get(0)._id, authors[0]._id);
-    assert.strictEqual(book.authors.get(1)._id, authors[1]._id);
+    assert.equal(book.authors.get(0), authors[0]);
+    assert.equal(book.authors.get(1), authors[1]);
     var author = Author.get(2);
     assert.isNotNull(author);
-    assert.strictEqual(author.books.length, 2);
-    assert.strictEqual(author.books.get(0)._id, books[0]._id);
-    assert.strictEqual(author.books.get(1)._id, books[1]._id);
+    assert.equal(author.books.length, 2);
+    assert.equal(author.books.get(0), books[0]);
+    assert.equal(author.books.get(1), books[1]);
     return;
 };
 
