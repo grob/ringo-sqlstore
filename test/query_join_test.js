@@ -53,10 +53,6 @@ const MAPPING_RELATION = {
             "entity": "Book",
             "column": "rel_book",
             "nullable": false
-        },
-        "isEditor": {
-            "type": "boolean",
-            "nullable": false
         }
     }
 };
@@ -67,7 +63,7 @@ var populate = function() {
     var books = [];
     for (var i=1; i<3; i+=1) {
         var author = new Author({
-            "name": "Author " + 1
+            "name": "Author " + i
         });
         author.save(transaction);
         authors.push(author);
@@ -140,16 +136,6 @@ exports.testSimpleJoinQuery = function() {
     assert.strictEqual(result[1]._id, authors[1]._id);
     return;
 };
-
-exports.testJoinQueryWithAdditionalCriteria = function() {
-    var [authors, books, relations] = populate();
-    // all editors of book 1
-    var result = Author.query().join(Relation, "Relation.author = Author.id").equals("Relation.book", 1).equals("Relation.isEditor", true).select();
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0]._id, authors[0]._id);
-    return;
-};
-
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

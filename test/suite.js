@@ -3,7 +3,9 @@
 exports = [
     "transaction_test",
     "store_test",
+    "object_test",
+    "query_test",
+    "query_join_test",
     "collection_test",
-    "collection_manytomany_test",
-    "query_join_test"
+    "collection_manytomany_test"
 ];
