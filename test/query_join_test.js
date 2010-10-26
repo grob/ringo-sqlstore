@@ -125,12 +125,12 @@ exports.tearDown = function() {
 exports.testSimpleJoinQuery = function() {
     var [authors, books, relations] = populate();
     // all books by author 1
-    var result = Book.query().join(Relation, "Relation.book = Book.id").equals("Relation.author", 1).select();
+    var result = Book.query().join(Relation, "Relation.book == Book.id").equals("Relation.author", 1).select();
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, books[0]._id);
     assert.strictEqual(result[1]._id, books[1]._id);
     // all authors of book 1
-    result = Author.query().join(Relation, "Relation.author = Author.id").equals("Relation.book", 1).select();
+    result = Author.query().join(Relation, "Relation.author == Author.id").equals("Relation.book", 1).select();
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, authors[0]._id);
     assert.strictEqual(result[1]._id, authors[1]._id);

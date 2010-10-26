@@ -6,6 +6,7 @@ exports = [
     "object_test",
     "query_test",
     "query_join_test",
+    "query_jsToSql",
     "collection_test",
     "collection_manytomany_test"
 ];

@@ -24,7 +24,7 @@ const MAPPING_AUTHOR = {
             "type": "collection",
             "entity": "Book",
             "through": "Relation",
-            "join": "Relation.book = Book.id",
+            "join": "Relation.book == Book.id",
             "foreignProperty": "Relation.author"
          }
     }
@@ -45,7 +45,7 @@ const MAPPING_BOOK = {
             "type": "collection",
             "entity": "Author",
             "through": "Relation",
-            "join": "Relation.author = Author.id",
+            "join": "Relation.author == Author.id",
             "foreignProperty": "Relation.book"
         }
     }

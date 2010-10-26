@@ -248,13 +248,13 @@ exports.testQueryCombined = function() {
 exports.testQueryFilter = function() {
     var [authors, books] = populate();
     // string argument(s)
-    var result = Book.query().filter("title = $1", books[0].title).select();
+    var result = Book.query().filter("title == " + sqlUtils.quote(books[0].title)).select();
     assert.strictEqual(result[0]._id, books[0]._id);
-    var result = Book.query().filter("title = $1 or title = $2", books[0].title, books[1].title).select();
+    var result = Book.query().filter("title == " + sqlUtils.quote(books[0].title) + " || title == " + sqlUtils.quote(books[1].title)).select();
     assert.strictEqual(result[0]._id, books[0]._id);
     assert.strictEqual(result[1]._id, books[1]._id);
     // explicit entity plus numeric argument
-    var result = Book.query().filter("Book.id = $1", books[0]._id).select();
+    var result = Book.query().filter("Book.id == " + books[0]._id).select();
     assert.strictEqual(result[0]._id, books[0]._id);
     return;
 };
