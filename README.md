@@ -188,14 +188,14 @@ In addition to one-to-many collections SQLstore also supports many-to-many mappi
         }
     });
 
-Not that SQLstore will add an additional "id" column since it currently doesn't support combined keys. With this prerequisite fulfilled you can define a many-to-many collection as follows:
+Note that SQLstore will add an additional "id" column since it currently doesn't support combined keys. With this prerequisite fulfilled you can define a many-to-many collection as follows:
 
     "properties": {
         "books": {
             "type": "collection",
             "entity": "Book",
             "through": "RelAuthorBook", // the entity to join with
-            "join": "RelAuthorBook.book = Book.id", // the join predicate
+            "join": "RelAuthorBook.book == Book.id", // the join predicate
             "localProperty": "id", // optional, defaults to the "id" value as local key
             "foreignProperty": "RelAuthorBook.author" // the column containing the foreign key
             "orderBy": "publishDate desc" // optional, specified as "propertyName[ (asc|desc)[ending]]"
