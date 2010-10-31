@@ -47,6 +47,13 @@ const MAPPING_BOOK = {
             "through": "Relation",
             "join": "Relation.author == Author.id",
             "foreignProperty": "Relation.book"
+        },
+        "editors": {
+            "type": "collection",
+            "entity": "Author",
+            "through": "Relation",
+            "join": "Relation.author == Author.id && Relation.isEditor == true",
+            "foreignProperty": "Relation.book"
         }
     }
 };
@@ -67,7 +74,8 @@ const MAPPING_RELATION = {
             "entity": "Book",
             "column": "rel_book",
             "nullable": false
-        }
+        },
+        "isEditor": "boolean"
     }
 };
 
@@ -104,7 +112,7 @@ exports.tearDown = function() {
     return;
 };
 
-exports.testSimpleManyToMany = function() {
+exports.testSimpleCollection = function() {
     var transaction = store.createTransaction();
     var authors = [];
     var books = [];
@@ -142,6 +150,35 @@ exports.testSimpleManyToMany = function() {
     assert.equal(author.books.length, 2);
     assert.equal(author.books.get(0), books[0]);
     assert.equal(author.books.get(1), books[1]);
+    return;
+};
+
+exports.testAdditionalCriteria = function() {
+    var transaction = store.createTransaction();
+    var authors = [];
+    for (var i=1; i<2; i+=1) {
+        var author = new Author({
+            "name": "Author " + i
+        });
+        author.save(transaction);
+        authors.push(author);
+    }
+    var book = new Book({
+        "title": "Book " + i
+    });
+    book.save(transaction);
+    authors.forEach(function(author, idx) {
+        var relation = new Relation({
+            "book": book,
+            "author": author,
+            "isEditor": idx % 2 === 0
+        });
+        relation.save(transaction);
+    });
+    transaction.commit();
+    var book = Book.get(1);
+    assert.strictEqual(book.editors.length, 1);
+    assert.equal(book.editors.get(0), Author.get(1));
     return;
 };
 
