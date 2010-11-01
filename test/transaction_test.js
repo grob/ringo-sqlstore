@@ -51,7 +51,25 @@ exports.tearDown = function() {
     return;
 };
 
-exports.testTransaction = function() {
+exports.testManualTransaction = function() {
+    var transaction = store.createTransaction();
+    var authors = [];
+    // insert some test objects
+    for (var i=0; i<5; i+=1) {
+        var author = new Author({
+            "name": "Author " + (i + 1)
+        });
+        author.save(transaction);
+        authors.push(author);
+    }
+    assert.strictEqual(transaction.inserted.length, authors.length);
+    assert.isTrue(transaction.isDirty());
+    transaction.commit();
+    assert.strictEqual(Author.all().length, 5);
+    return;
+};
+
+exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
     store.beginTransaction();
     var transaction = store.getTransaction();
@@ -64,7 +82,7 @@ exports.testTransaction = function() {
         var author = new Author({
             "name": "Author " + (i + 1)
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
     }
     assert.strictEqual(transaction.inserted.length, authors.length);
@@ -74,6 +92,18 @@ exports.testTransaction = function() {
     assert.isNull(store.getTransaction());
     assert.strictEqual(Author.all().length, 5);
 
+    // remove test objects
+    store.beginTransaction();
+    transaction = store.getTransaction();
+    assert.isFalse(transaction.isDirty());
+    authors.forEach(function(author) {
+        author.remove();
+    });
+    assert.isTrue(transaction.isDirty());
+    assert.strictEqual(transaction.deleted.length, 5);
+    store.commitTransaction();
+    assert.isNull(store.getTransaction());
+    
     // abort transaction
     store.beginTransaction();
     transaction = store.getTransaction();
@@ -85,7 +115,7 @@ exports.testTransaction = function() {
     assert.strictEqual(transaction.inserted.length, 1);
     store.abortTransaction();
     assert.isNull(Transaction.getInstance());
-    assert.strictEqual(Author.all().length, 5);
+    assert.strictEqual(Author.all().length, 0);
     return;
 };
 
