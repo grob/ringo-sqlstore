@@ -259,6 +259,34 @@ exports.testQueryFilter = function() {
     return;
 };
 
+exports.testCount = function() {
+    var [authors, books] = populate();
+    assert.strictEqual(Book.query().count(), books.length);
+    return;
+};
+
+exports.testMax = function() {
+    var [authors, books] = populate();
+    assert.strictEqual(Book.query().max("id"), books.length);
+    assert.strictEqual(Book.query().equals("author", authors[1]).max("id"), books[1]._id);
+    return;
+};
+
+exports.testMin = function() {
+    var [authors, books] = populate();
+    assert.strictEqual(Book.query().min("id"), books[0]._id);
+    assert.strictEqual(Book.query().equals("author", authors[1]).min("id"), books[1]._id);
+    return;
+};
+
+exports.testSum = function() {
+    var [authors, books] = populate();
+    assert.strictEqual(Book.query().sum("id"), books.reduce(function(sum, book) {
+        return sum + book._id
+    }, 0));
+    return;
+};
+
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
     require("test").run(exports);
