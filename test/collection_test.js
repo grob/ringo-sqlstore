@@ -96,12 +96,18 @@ exports.testBasics = function() {
     for (var i=0; i<author.books.length; i+=1) {
         assert.strictEqual(author.books.get(i)._id, i + 1);
     }
+    var cnt = 0;
     for each (var book in author.books) {
-        assert.strictEqual(book.constructor, Book);
+        assert.isTrue(book instanceof Book);
+        cnt += 1;
     }
+    assert.strictEqual(cnt, author.books.length);
+    cnt = 0;
     author.books.forEach(function(book, idx) {
-        assert.strictEqual(book.constructor, Book);
+        assert.isTrue(book instanceof Book);
+        cnt += 1;
     });
+    assert.strictEqual(cnt, author.books.length);
     return;
 };
 
