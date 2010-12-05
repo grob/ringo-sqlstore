@@ -1,3 +1,4 @@
+var runner = require("./runner");
 var assert = require("assert");
 
 var Store = require("ringo/storage/sql/store").Store;
@@ -5,10 +6,6 @@ var sqlUtils = require("ringo/storage/sql/util");
 var store = null;
 var Book = null;
 var Author = null;
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
 
 const MAPPING_BOOK = {
     "properties": {
@@ -41,12 +38,8 @@ function populate(nrOfBooks) {
     return;
 };
 
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     Book = store.defineEntity("Book", MAPPING_BOOK);
     return;
 };
@@ -220,5 +213,5 @@ exports.testPartitionedCollection = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  require("test").run(exports);
+    system.exit(runner.run(exports, arguments));
 }

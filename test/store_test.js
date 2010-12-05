@@ -1,3 +1,4 @@
+var runner = require("./runner");
 var assert = require("assert");
 
 var Store = require("ringo/storage/sql/store").Store;
@@ -8,10 +9,6 @@ var strings = require("ringo/utils/strings.js");
 
 var store = null;
 var Author = null;
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
 
 const MAPPING_AUTHOR = {
     // "schema": "TEST",
@@ -29,12 +26,8 @@ const MAPPING_AUTHOR = {
     }
 };
 
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     assert.isNotNull(store);
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     assert.isTrue(Author instanceof Function);
@@ -212,5 +205,5 @@ exports.testTypes = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    require("test").run(exports);
+    system.exit(runner.run(exports, arguments));
 }

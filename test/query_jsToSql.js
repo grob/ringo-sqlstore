@@ -1,3 +1,4 @@
+var runner = require("./runner");
 var assert = require("assert");
 
 var Store = require("ringo/storage/sql/store").Store;
@@ -11,12 +12,8 @@ var store = null;
 var Author = null;
 var Book = null;
 
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     Author = store.defineEntity("Author", {
         "properties": {
             "name": "string",
@@ -131,5 +128,5 @@ exports.testIn = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  require("test").run(exports);
+    system.exit(runner.run(exports, arguments));
 }

@@ -1,11 +1,16 @@
-exports.testConnectionPool = require("./connectionpool_test");
-exports.testCache = require("./cache_test");
-exports.testH2 = require("./h2_test");
-exports.testMysql = require("./mysql_test");
-exports.testOracle = require("./oracle_test");
-exports.testPostgreSQL = require("./postgresql_test");
+var runner = require("./runner");
 
-//start the test runner if we're called directly from command line
+exports.testCache = require("./cache_test");
+exports.testConnectionPool = require("./connectionpool_test");
+exports.testStore = require("./store_test");
+exports.testQuery = require("./query_test");
+exports.testTransaction = require("./transaction_test");
+exports.testObject = require("./object_test");
+exports.testQueryJoin = require("./query_join_test");
+exports.testQueryJsToSql = require("./query_jsToSql");
+exports.testCollection = require("./collection_test");
+exports.testCollectionManyToMany = require("./collection_manytomany_test");
+
 if (require.main == module.id) {
-  require('test').run(exports);
+    system.exit(runner.run(exports, arguments));
 }

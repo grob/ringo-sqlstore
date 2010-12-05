@@ -1,14 +1,11 @@
+var runner = require("./runner");
 var assert = require("assert");
 var ConnectionPool = require("ringo/storage/sql/connectionpool").ConnectionPool;
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
 
 var pool = null;
 
 exports.setUp = function() {
-    pool = new ConnectionPool(dbProps);
+    pool = new ConnectionPool(runner.getDbProps());
     return;
 };
 
@@ -53,5 +50,5 @@ exports.testIsStale = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  require('test').run(exports);
+    system.exit(runner.run(exports, arguments));
 }

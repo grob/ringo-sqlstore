@@ -1,3 +1,4 @@
+var runner = require("./runner");
 var assert = require("assert");
 
 var Store = require("ringo/storage/sql/store").Store;
@@ -6,10 +7,6 @@ var store = null;
 var Author = null;
 var Book = null;
 var Relation = null;
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
 
 const MAPPING_AUTHOR = {
     "id": {
@@ -79,13 +76,8 @@ const MAPPING_RELATION = {
     }
 };
 
-exports.setDbProps = function(props) {
-    dbProps = props;
-    return;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Relation = store.defineEntity("Relation", MAPPING_RELATION);
@@ -185,5 +177,5 @@ exports.testAdditionalCriteria = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    require("test").run(exports);
+    runner.run(exports, arguments);
 }
