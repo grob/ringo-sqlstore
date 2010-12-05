@@ -19,6 +19,9 @@ const MAPPING_BOOK = {
             "type": "integer",
             "column": "book_f_author",
             "nullable": false
+        },
+        "available": {
+            "type": "boolean"
         }
     }
 };
@@ -30,7 +33,8 @@ function populate(nrOfBooks) {
         var authorId = (i % 2) + 1;
         var book = new Book({
             "title": "Book " + nr,
-            "authorId": authorId
+            "authorId": authorId,
+            "available": (i % 2) === 0
         });
         book.save(transaction);
     }
@@ -210,6 +214,29 @@ exports.testPartitionedCollection = function() {
     return;
 };
 
+exports.testCollectionFilter = function() {
+    populate(5);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": "string",
+            "books": {
+                "type": "collection",
+                "entity": "Book",
+                "foreignProperty": "authorId",
+                "filter": "available == true",
+                "orderBy": "id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 3);
+    assert.strictEqual(author.books.get(0)._id, 5);
+    return;
+}
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
