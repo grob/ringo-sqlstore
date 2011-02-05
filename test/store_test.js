@@ -75,9 +75,11 @@ exports.testCRUD = function() {
         "name": name
     });
     assert.isUndefined(author._key);
+    assert.isUndefined(author._id);
     author.save();
     assert.isTrue(author._key instanceof Key);
     assert.strictEqual(author._key.type, "Author");
+    assert.strictEqual(author._key.id, 1);
     assert.strictEqual(author._id, 1);
     
     // read

@@ -86,8 +86,10 @@ exports.testBasics = function() {
     var author = new Author({
         "name": "Author of all books"
     });
+    // "books" collection is undefined as long as author is transient
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    // after persisting "books" collection is existing and populated at first access
     assert.strictEqual(author.books.length, 11);
     // iteration tests
     for (var i=0; i<author.books.length; i+=1) {
@@ -129,8 +131,9 @@ exports.testWithForeignProperty = function() {
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 6);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0)._id, 11);
@@ -163,8 +166,9 @@ exports.testWithLocalAndForeignProperty = function() {
         "name": "Author of just a bunch of books",
         "realId": 2 // mimick other author
     });
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 5);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0)._id, 10);
@@ -196,7 +200,6 @@ exports.testPartitionedCollection = function() {
         "name": "Author of just a bunch of books"
     });
     author.save();
-    author = Author.get(1);
 
     assert.strictEqual(author.books.length, 51);
     // due to ordering first book is the last one
@@ -232,7 +235,6 @@ exports.testCollectionFilter = function() {
         "name": "John Doe"
     });
     author.save();
-    author = Author.get(1);
     assert.strictEqual(author.books.length, 3);
     assert.strictEqual(author.books.get(0)._id, 5);
     return;

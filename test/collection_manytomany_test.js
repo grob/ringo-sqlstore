@@ -170,7 +170,7 @@ exports.testAdditionalCriteria = function() {
     transaction.commit();
     var book = Book.get(1);
     assert.strictEqual(book.editors.length, 1);
-    assert.equal(book.editors.get(0), Author.get(1));
+    assert.equal(book.editors.get(0)._id, Author.get(1)._id);
     return;
 };
 
