@@ -3,6 +3,7 @@ var runner = require("./runner");
 exports.testCache = require("./cache_test");
 exports.testConnectionPool = require("./connectionpool_test");
 exports.testStore = require("./store_test");
+exports.testMapping = require("./mapping_test");
 exports.testQuery = require("./query_test");
 exports.testTransaction = require("./transaction_test");
 exports.testObject = require("./object_test");
