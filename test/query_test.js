@@ -73,6 +73,7 @@ exports.testQuerySelectLazy = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.title, "Book " + idx);
     });
 };
 
@@ -82,6 +83,7 @@ exports.testQuerySelectAggressive = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.title, "Book " + idx);
     });
 };
 
@@ -101,6 +103,7 @@ exports.testQueryAll = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.title, "Book " + idx);
     });
 };
 
@@ -110,6 +113,7 @@ exports.testQueryAllAggressive = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.title, "Book " + idx);
     });
 };
 
