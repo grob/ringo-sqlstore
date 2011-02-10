@@ -10,7 +10,12 @@ var Editor = null;
 
 const MAPPING_AUTHOR = {
     "properties": {
-        "name": "string"
+        "name": "string",
+        "books": {
+            "type": "collection",
+            "entity": "Book",
+            "foreignProperty": "author"
+        }
     }
 };
 
@@ -103,6 +108,23 @@ exports.testAssignWrongObject = function() {
     assert.throws(function() {
         book.save();
     });
+    return;
+};
+
+exports.testAssignLazyLoaded = function() {
+    (new Author({
+        "name": "John Doe"
+    })).save();
+    // re-get all authors from db, but don't touch it
+    var authors = Author.query().select();
+    var book = new Book({
+        "title": "foo",
+        "author": authors[0]
+    });
+    book.save();
+    // after persisting the book, the author's book collection
+    // must be populated
+    assert.strictEqual(authors[0].books.length, 1);
     return;
 };
 
