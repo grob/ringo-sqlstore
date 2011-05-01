@@ -1,8 +1,8 @@
 var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("ringo/storage/sql/store").Store;
-var sqlUtils = require("ringo/storage/sql/util");
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
 var store = null;
 var Book = null;
 var Author = null;
@@ -13,7 +13,7 @@ const MAPPING_BOOK = {
             "type": "string",
             "column": "book_title",
             "length": 255,
-            "nullable": false,
+            "nullable": false
         },
         "authorId": {
             "type": "integer",

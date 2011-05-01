@@ -1,5 +1,5 @@
 var assert = require("assert");
-var Cache = require("ringo/storage/sql/cache").Cache;
+var Cache = require("../lib/ringo/storage/sql/cache").Cache;
 
 exports.testCache = function() {
     var cache = new Cache();

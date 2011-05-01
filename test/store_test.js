@@ -1,10 +1,10 @@
 var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("ringo/storage/sql/store").Store;
-var Key = require("ringo/storage/sql/key").Key;
-var Transaction = require("ringo/storage/sql/transaction").Transaction;
-var sqlUtils = require("ringo/storage/sql/util");
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var Key = require("../lib/ringo/storage/sql/key").Key;
+var Transaction = require("../lib/ringo/storage/sql/transaction").Transaction;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
 var strings = require("ringo/utils/strings.js");
 
 var store = null;

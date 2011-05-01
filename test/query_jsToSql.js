@@ -1,9 +1,9 @@
 var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("ringo/storage/sql/store").Store;
-var sqlUtils = require("ringo/storage/sql/util");
-var jsToSql = require("ringo/storage/sql/query").jsToSql;
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
+var jsToSql = require("../lib/ringo/storage/sql/query").jsToSql;
 var dbProps = {
     "url": "jdbc:h2:mem:test",
     "driver": "org.h2.Driver"

@@ -1,6 +1,6 @@
 var runner = require("./runner");
 var assert = require("assert");
-var ConnectionPool = require("ringo/storage/sql/connectionpool").ConnectionPool;
+var ConnectionPool = require("../lib/ringo/storage/sql/connectionpool").ConnectionPool;
 
 var pool = null;
 
