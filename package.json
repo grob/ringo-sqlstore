@@ -9,7 +9,7 @@
         "Hannes Wallnoefer (http://henso.com/) <hannes@helma.at>"
     ],
     "jars": [
-        "jars/h2-1.2.138.jar",
+        "jars/h2-1.3.154.jar",
         "jars/mysql.jar",
         "jars/ojdbc6.jar",
         "jars/postgresql.jar"
