@@ -44,7 +44,7 @@ exports.tearDown = function() {
     return;
 };
 
-exports.testManualTransaction = function() {
+exports.testCommit = function() {
     var transaction = store.createTransaction();
     var authors = [];
     // insert some test objects
@@ -62,6 +62,7 @@ exports.testManualTransaction = function() {
     return;
 };
 
+/*
 exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
     store.beginTransaction();
@@ -111,6 +112,7 @@ exports.testBeginTransaction = function() {
     assert.strictEqual(Author.all().length, 0);
     return;
 };
+*/
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

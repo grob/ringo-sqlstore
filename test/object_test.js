@@ -11,6 +11,10 @@ var Editor = null;
 const MAPPING_AUTHOR = {
     "properties": {
         "name": "string",
+        "latestBook": {
+            "type": "object",
+            "entity": "Book"
+        },
         "books": {
             "type": "collection",
             "entity": "Book",
@@ -127,6 +131,18 @@ exports.testAssignLazyLoaded = function() {
     assert.strictEqual(authors[0].books.length, 1);
     return;
 };
+
+exports.testSimpleCircularReference = function() {
+    var author = new Author({
+        "name": "John Doe"
+    });
+    var book = new Book({
+        "title": "foo",
+        "author": author
+    });
+    author.latestBook = book;
+    author.save();
+}
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
