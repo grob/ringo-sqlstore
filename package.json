@@ -3,15 +3,36 @@
     "version": "0.1",
     "description": "SQL-Storage implementation for RingoJS",
     "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
-    "author": "Robert Gaggl (http://nomatic.org/) <robert@nomatic.org>",
-    "contributors": [
-        "Robert Thurnher (http://robert42.com/) <r.thurnher@gmail.com>",
-        "Hannes Wallnoefer (http://henso.com/) <hannes@helma.at>"
-    ],
-    "jars": [
-        "jars/h2-1.3.154.jar",
-        "jars/mysql.jar",
-        "jars/ojdbc6.jar",
-        "jars/postgresql.jar"
-    ]
+    "homepage": "https://github.com/grob/ringo-semver",
+    "maintainers": [{
+        "name": "Robert Gaggl",
+        "web": "http://nomatic.org/",
+        "email": "robert@nomatic.org"
+    }],
+    "contributors": [{
+        "name": "Robert Gaggl",
+        "web": "http://nomatic.org/",
+        "email": "robert@nomatic.org"
+    },
+    {
+        "name": "Robert Thurnher",
+        "web": "http://robert42.com/",
+        "email": "r.thurnher@gmail.com>"
+    },
+    {
+        "name": "Hannes Wallnoefer",
+        "web": "http://henso.com/",
+        "email": "hannes@helma.at"
+    }],
+    "bugs": "http://github.com/grob/ringo-sqlstore/issues",
+    "licences": [{
+        "type": "Apache License Version 2.0",
+        "url": "http://www.apache.org/licenses/"
+    }],
+    "repositories": [{
+        "type": "git",
+        "url": "https://github.com/grob/ringo-sqlstore.git"
+    }],
+    "engine": "rhino",
+    "main": "./lib/ringo/storage/sql/store.js"
 }
