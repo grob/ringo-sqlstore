@@ -142,6 +142,18 @@ exports.testSimpleCircularReference = function() {
     });
     author.latestBook = book;
     author.save();
+    assert.strictEqual(author._id, 1);
+    assert.strictEqual(book._id, 1);
+    assert.strictEqual(author.latestBook._id, book._id);
+    assert.strictEqual(author.latestBook.author._id, author._id);
+    assert.strictEqual(book.author._id, author._id);
+    assert.strictEqual(author.books.length, 1);
+    author = Author.get(1);
+    assert.strictEqual(author._id, 1);
+    assert.strictEqual(book._id, 1);
+    assert.strictEqual(author.latestBook._id, book._id);
+    assert.strictEqual(author.latestBook.author._id, author._id);
+    assert.strictEqual(book.author._id, author._id);
 }
 
 //start the test runner if we're called directly from command line
