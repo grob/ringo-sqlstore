@@ -1,14 +1,11 @@
+var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("ringo/storage/sql/store").Store;
-var sqlUtils = require("ringo/storage/sql/util");
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
 var store = null;
 var Book = null;
 var Author = null;
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
 
 const MAPPING_BOOK = {
     "properties": {
@@ -16,12 +13,15 @@ const MAPPING_BOOK = {
             "type": "string",
             "column": "book_title",
             "length": 255,
-            "nullable": false,
+            "nullable": false
         },
         "authorId": {
             "type": "integer",
             "column": "book_f_author",
             "nullable": false
+        },
+        "available": {
+            "type": "boolean"
         }
     }
 };
@@ -33,7 +33,8 @@ function populate(nrOfBooks) {
         var authorId = (i % 2) + 1;
         var book = new Book({
             "title": "Book " + nr,
-            "authorId": authorId
+            "authorId": authorId,
+            "available": (i % 2) === 0
         });
         book.save(transaction);
     }
@@ -41,12 +42,8 @@ function populate(nrOfBooks) {
     return;
 };
 
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     Book = store.defineEntity("Book", MAPPING_BOOK);
     return;
 };
@@ -89,19 +86,27 @@ exports.testBasics = function() {
     var author = new Author({
         "name": "Author of all books"
     });
+    // "books" collection is undefined as long as author is transient
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    // after persisting "books" collection is existing and populated at first access
     assert.strictEqual(author.books.length, 11);
     // iteration tests
     for (var i=0; i<author.books.length; i+=1) {
         assert.strictEqual(author.books.get(i)._id, i + 1);
     }
+    var cnt = 0;
     for each (var book in author.books) {
-        assert.strictEqual(book.constructor, Book);
+        assert.isTrue(book instanceof Book);
+        cnt += 1;
     }
+    assert.strictEqual(cnt, author.books.length);
+    cnt = 0;
     author.books.forEach(function(book, idx) {
-        assert.strictEqual(book.constructor, Book);
+        assert.isTrue(book instanceof Book);
+        cnt += 1;
     });
+    assert.strictEqual(cnt, author.books.length);
     return;
 };
 
@@ -126,8 +131,9 @@ exports.testWithForeignProperty = function() {
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 6);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0)._id, 11);
@@ -160,8 +166,9 @@ exports.testWithLocalAndForeignProperty = function() {
         "name": "Author of just a bunch of books",
         "realId": 2 // mimick other author
     });
+    assert.isUndefined(author.books);
     author.save();
-    author = Author.get(1);
+    assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 5);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0)._id, 10);
@@ -193,7 +200,6 @@ exports.testPartitionedCollection = function() {
         "name": "Author of just a bunch of books"
     });
     author.save();
-    author = Author.get(1);
 
     assert.strictEqual(author.books.length, 51);
     // due to ordering first book is the last one
@@ -211,8 +217,30 @@ exports.testPartitionedCollection = function() {
     return;
 };
 
+exports.testCollectionFilter = function() {
+    populate(5);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": "string",
+            "books": {
+                "type": "collection",
+                "entity": "Book",
+                "foreignProperty": "authorId",
+                "filter": "available == true",
+                "orderBy": "id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    assert.strictEqual(author.books.length, 3);
+    assert.strictEqual(author.books.get(0)._id, 5);
+    return;
+}
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  require("test").run(exports);
+    system.exit(runner.run(exports, arguments));
 }

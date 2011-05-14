@@ -1,7 +1,9 @@
+var runner = require("./runner");
 var assert = require("assert");
-var Store = require("ringo/storage/sql/store").Store;
-var Transaction = require("ringo/storage/sql/transaction").Transaction;
-var sqlUtils = require("ringo/storage/sql/util");
+
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var Transaction = require("../lib/ringo/storage/sql/transaction").Transaction;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
 
 var store = null;
 var Author = null;
@@ -20,17 +22,8 @@ const MAPPING_AUTHOR = {
     }
 };
 
-var dbProps = {
-    "url": "jdbc:h2:mem:test",
-    "driver": "org.h2.Driver"
-};
-
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
+    store = new Store(runner.getDbProps());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     return;
 };
@@ -51,7 +44,26 @@ exports.tearDown = function() {
     return;
 };
 
-exports.testTransaction = function() {
+exports.testCommit = function() {
+    var transaction = store.createTransaction();
+    var authors = [];
+    // insert some test objects
+    for (var i=0; i<5; i+=1) {
+        var author = new Author({
+            "name": "Author " + (i + 1)
+        });
+        author.save(transaction);
+        authors.push(author);
+    }
+    assert.strictEqual(transaction.inserted.length, authors.length);
+    assert.isTrue(transaction.isDirty());
+    transaction.commit();
+    assert.strictEqual(Author.all().length, 5);
+    return;
+};
+
+/*
+exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
     store.beginTransaction();
     var transaction = store.getTransaction();
@@ -64,7 +76,7 @@ exports.testTransaction = function() {
         var author = new Author({
             "name": "Author " + (i + 1)
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
     }
     assert.strictEqual(transaction.inserted.length, authors.length);
@@ -74,6 +86,18 @@ exports.testTransaction = function() {
     assert.isNull(store.getTransaction());
     assert.strictEqual(Author.all().length, 5);
 
+    // remove test objects
+    store.beginTransaction();
+    transaction = store.getTransaction();
+    assert.isFalse(transaction.isDirty());
+    authors.forEach(function(author) {
+        author.remove();
+    });
+    assert.isTrue(transaction.isDirty());
+    assert.strictEqual(transaction.deleted.length, 5);
+    store.commitTransaction();
+    assert.isNull(store.getTransaction());
+    
     // abort transaction
     store.beginTransaction();
     transaction = store.getTransaction();
@@ -85,11 +109,12 @@ exports.testTransaction = function() {
     assert.strictEqual(transaction.inserted.length, 1);
     store.abortTransaction();
     assert.isNull(Transaction.getInstance());
-    assert.strictEqual(Author.all().length, 5);
+    assert.strictEqual(Author.all().length, 0);
     return;
 };
+*/
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  require('test').run(exports);
+    system.exit(runner.run(exports, arguments));
 }

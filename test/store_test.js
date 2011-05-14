@@ -1,70 +1,14 @@
+var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("ringo/storage/sql/store").Store;
-var Key = require("ringo/storage/sql/key").Key;
-var Transaction = require("ringo/storage/sql/transaction").Transaction;
-var sqlUtils = require("ringo/storage/sql/util");
+var Store = require("../lib/ringo/storage/sql/store").Store;
+var Key = require("../lib/ringo/storage/sql/key").Key;
+var Transaction = require("../lib/ringo/storage/sql/transaction").Transaction;
+var sqlUtils = require("../lib/ringo/storage/sql/util");
 var strings = require("ringo/utils/strings.js");
 
 var store = null;
-var Book = null;
 var Author = null;
-var dbProps = {
-        "url": "jdbc:h2:mem:test",
-        "driver": "org.h2.Driver"
-    };
-
-const MAPPING_BOOK = {
-    // "schema": "TEST",
-    "table": "book",
-    "id": {
-        "column": "book_id", // optional
-        "sequence": "book_id" // optional
-    },
-    "properties": {
-        "title": {
-            "type": "string",
-            "column": "book_title",
-            "length": 255,
-            "nullable": false,
-        },
-        "isbn": {
-            "type": "string",
-            "column": "book_isbn",
-            "length": 255,
-            "nullable": false,
-        },
-        "publishDate": {
-            "type": "timestamp",
-            "column": "book_timestamp",
-            "nullable": false,
-        },
-        "readCount": {
-            "type": "integer",
-            "column": "book_readcount",
-            "nullable": false
-        },
-        "price": {
-            "type": "float",
-            "column": "book_price",
-            "nullable": false
-        },
-        "available": {
-            "type": "boolean",
-            "column": "book_available"
-        },
-        "summary": {
-            "type": "text",
-            "column": "book_text"
-        },
-        "author": {
-            "type": "object",
-            "entity": "Author",
-            "column": "book_f_author",
-            "foreignProperty": "id" // optional, defines the name of the property in the related entity
-        }
-    }
-};
 
 const MAPPING_AUTHOR = {
     // "schema": "TEST",
@@ -78,178 +22,84 @@ const MAPPING_AUTHOR = {
             "type": "string",
             "column": "author_name",
             "nullable": false
-        },
-        "books": {
-            "type": "collection",
-            "entity": "Book",
-            "localProperty": "id",
-            "foreignProperty": "author" // optional, defines the name of the property in the related entity
         }
     }
 };
 
-function populate(store) {
-    var authors = [];
-    for (var i=1; i<=5; i+=1) {
-        var author = new Author({
-            "name": "Author " + i
-        });
-        author.save();
-        authors.push(author);
-    }
-    var transaction = store.createTransaction();
-    for (var i=0; i<10; i+=1) {
-        var nr = i + 1;
-        var props = {
-            "title": "Book " + nr,
-            "isbn": "AT-" + nr,
-            "publishDate": new Date(),
-            "readCount": 0,
-            "price": 12.95,
-            "summary": "This is the book no. " + nr,
-            "author": authors[Math.floor(i / 2)]
-        };
-        var book = new Book(props);
-        book.save(transaction);
-    }
-    transaction.commit();
-    return;
-};
-
-exports.setDbProps = function(props) {
-    dbProps = props;
-};
-
 exports.setUp = function() {
-    store = new Store(dbProps);
-    Book = store.defineEntity("Book", MAPPING_BOOK);
-    Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store = new Store(runner.getDbProps());
     assert.isNotNull(store);
-    assert.isTrue(Book instanceof Function);
+    Author = store.defineEntity("Author", MAPPING_AUTHOR);
     assert.isTrue(Author instanceof Function);
     // static constructor functions
-    assert.strictEqual(typeof(Book.get), "function");
-    assert.strictEqual(typeof(Book.all), "function");
-    assert.strictEqual(typeof(Book.query), "function");
-    assert.strictEqual(Book, store.getEntityConstructor("Book"));
+    assert.strictEqual(typeof(Author.get), "function");
+    assert.strictEqual(typeof(Author.all), "function");
+    assert.strictEqual(typeof(Author.query), "function");
     assert.strictEqual(Author, store.getEntityConstructor("Author"));
     return;
 };
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    [Book, Author].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
-            }
+    var schemaName = Author.mapping.schemaName || store.dialect.getDefaultSchema(conn);
+    if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
+        sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
+        if (Author.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
+            sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
         }
-    });
+    }
     store.connectionPool.stopScheduler();
     store.connectionPool.closeConnections();
     store = null;
     Author = null;
-    Book = null;
     return;
 };
 
 exports.testKey = function() {
-    var key = new Key("Book", 1);
-    assert.strictEqual(key.type, "Book");
+    var key = new Key("Author", 1);
+    assert.strictEqual(key.type, "Author");
     assert.strictEqual(key.id, 1);
     assert.isTrue(key.isPersistent());
     // transient key
-    key = new Key("Book", null);
+    key = new Key("Author", null);
     assert.isFalse(key.isPersistent());
-    key = new Key("Book");
+    key = new Key("Author");
     assert.isFalse(key.isPersistent());
     return;
 };
 
 exports.testCRUD = function() {
     // create
+    var name = "John Doe";
     var author = new Author({
-        "name": "John Doe"
+        "name": name
     });
+    assert.isUndefined(author._key);
+    assert.isUndefined(author._id);
     author.save();
-    var props = {
-        "title": "Building a Javascript ORM with RingoJS",
-        "isbn": "AT-123456",
-        "publishDate": new Date(),
-        "readCount": 0,
-        "price": 12.95,
-        "available": false,
-        "summary": "TL:DR",
-        "author": author
-    };
-    var book = new Book(props);
-    assert.isUndefined(book._key);
-    book.save();
-    assert.isTrue(book._key instanceof Key);
-    assert.strictEqual(book._key.type, "Book");
-    assert.strictEqual(book._id, 1);
-    assert.strictEqual(book.author, author);
-
+    assert.isTrue(author._key instanceof Key);
+    assert.strictEqual(author._key.type, "Author");
+    assert.strictEqual(author._key.id, 1);
+    assert.strictEqual(author._id, 1);
+    
     // read
-    book = Book.get(1);
-    assert.isNotNull(book);
-    assert.isTrue(!isNaN(book._id));
-    for each (var propName in ["title", "isbn", "summary", "readCount", "price", "available"]) {
-        assert.strictEqual(book[propName], props[propName]);
-    }
-    // compare publishDate - unfortunately MySQL doesn't support millis
-    // in timestamp columns, so compare all except millis
-    assert.strictEqual(props.publishDate.getFullYear(), book.publishDate.getFullYear());
-    assert.strictEqual(props.publishDate.getMonth(), book.publishDate.getMonth());
-    assert.strictEqual(props.publishDate.getDate(), book.publishDate.getDate());
-    assert.strictEqual(props.publishDate.getHours(), book.publishDate.getHours());
-    assert.strictEqual(props.publishDate.getMinutes(), book.publishDate.getMinutes());
-    assert.strictEqual(props.publishDate.getSeconds(), book.publishDate.getSeconds());
-    assert.isTrue(book.publishDate instanceof Date);
+    author = Author.get(1);
+    assert.isNotNull(author);
+    assert.strictEqual(author._id, 1);
+    assert.strictEqual(author.name, name);
 
-    // compare mapped author
-    assert.isNotNull(book.author);
-    assert.isTrue(book.author instanceof Author);
-    assert.strictEqual(book.author._key.toString(), author._key.toString());
-
-    // null author property
-    book.author = null;
-    book.save();
+    // update
+    author.name = name = "Mr. Foo-Bar";
+    author.save();
 
     // read again
-    book = Book.get(1);
-    assert.isNull(book.author);
-
-    // update properties
-    var newTitle = "Inside RingoJS SQL Store";
-    book.title = newTitle;
-    book.readCount = 1234;
-    var newAuthor = new Author({
-        "name": "Jane Doe"
-    });
-    book.author = newAuthor;
-    assert.isUndefined(book.author._id);
-    book.save();
-    // author must have been persisted
-    assert.strictEqual(book.author._id, 2);
-
-    // read again
-    book = Book.get(1);
-    assert.strictEqual(book.title, newTitle);
-    assert.strictEqual(book.readCount, 1234);
-    // newAuthor must have been persisted when saving book above
-    assert.isNotNull(newAuthor._id);
-    assert.strictEqual(book.author._key.toString(), newAuthor._key.toString());
+    author = Author.get(1);
+    assert.strictEqual(author.name, name);
 
     // remove
-    book.remove();
-    assert.strictEqual(Book.get(1), null);
     author.remove();
     assert.strictEqual(Author.get(1), null);
-    newAuthor.remove();
-    assert.strictEqual(Author.get(2), null);
+    assert.strictEqual(Author.all().length, 0);
     return;
 };
 
@@ -355,171 +205,7 @@ exports.testTypes = function() {
     return;
 };
 
-exports.testQuerySelectLazy = function() {
-    populate(store);
-    var result = Book.query().select();
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-};
-
-exports.testQuerySelectAggressive = function() {
-    populate(store);
-    var result = Book.query().select("*");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-};
-
-exports.testQuerySelectProperty = function() {
-    populate(store);
-    var result = Book.query().select("id");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(id, idx) {
-        assert.strictEqual(id, idx + 1);
-    });
-    return;
-};
-
-exports.testQueryAll = function() {
-    populate(store);
-    var result = Book.all();
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-};
-
-exports.testQueryAllAggressive = function() {
-    populate(store);
-    var result = Book.all("*");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-};
-
-exports.testQueryAllProperty = function() {
-    populate(store);
-    var result = Book.all("id");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(id, idx) {
-        assert.strictEqual(id, idx + 1);
-    });
-    return;
-};
-
-exports.testQueryEquals = function() {
-    populate(store);
-    var result = Book.query().equals("id", 1).select();
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0]._id, 1);
-    // storable as argument
-    result = Book.query().equals("author", Author.get(1)).select();
-    assert.strictEqual(result.length, 2);
-    // multiple storables as argument
-    result = Book.query().equals("author", Author.all()).select();
-    assert.strictEqual(result.length, 10);
-    return;
-};
-
-exports.testQueryGreaterThan = function() {
-    populate(store);
-    var result = Book.query().greater("id", 5).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 6);
-    });
-    return;
-};
-
-exports.testQueryGreaterThanOrEquals = function() {
-    populate(store);
-    var result = Book.query().greaterEquals("id", 6).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 6);
-    });
-    return;
-};
-
-exports.testQueryLessThan = function() {
-    populate(store);
-    var result = Book.query().less("id", 6).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-    return;
-};
-
-exports.testQueryLessThanOrEquals = function() {
-    populate(store);
-    var result = Book.query().lessEquals("id", 5).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-    return;
-};
-
-exports.testQueryOrder = function() {
-    populate(store);
-    var result = Book.query().orderBy("id desc").select();
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, 10 - idx);
-    });
-    return;
-};
-
-exports.testQueryLimit = function() {
-    populate(store);
-    var result = Book.query().limit(5).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-};
-
-exports.testQueryOffset = function() {
-    populate(store);
-    var result = Book.query().offset(5).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 6);
-    });
-    return;
-};
-
-exports.testQueryRange = function() {
-    populate(store);
-    var result = Book.query().range(3, 8).select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 4);
-    });
-    return;
-};
-
-exports.testQueryCombined = function() {
-    populate(store);
-    var result = Book.query().greater("id", 5).orderBy("id desc").select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, 10 - idx);
-    });
-    var result = Book.query().lessEquals("id", 5).orderBy("id").select();
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
-    });
-    return;
-};
-
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    require("test").run(exports);
+    system.exit(runner.run(exports, arguments));
 }
