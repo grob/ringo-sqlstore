@@ -1,8 +1,8 @@
 var runner = require("./runner");
 var assert = require("assert");
 
-var {Store} = require("../lib/ringo/storage/sql/store");
-var sqlUtils = require("../lib/ringo/storage/sql/util");
+var {Store} = require("../lib/sqlstore/store");
+var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
 var Author = null;

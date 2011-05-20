@@ -34,5 +34,5 @@
         "url": "https://github.com/grob/ringo-sqlstore.git"
     }],
     "engine": "rhino",
-    "main": "./lib/ringo/storage/sql/store.js"
+    "main": "./lib/sqlstore/store.js"
 }
