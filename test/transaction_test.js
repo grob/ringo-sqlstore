@@ -45,24 +45,23 @@ exports.tearDown = function() {
 };
 
 exports.testCommit = function() {
-    var transaction = store.createTransaction();
+    var transaction = store.beginTransaction();
     var authors = [];
     // insert some test objects
     for (var i=0; i<5; i+=1) {
         var author = new Author({
             "name": "Author " + (i + 1)
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
     }
     assert.strictEqual(transaction.inserted.length, authors.length);
     assert.isTrue(transaction.isDirty());
-    transaction.commit();
+    store.commitTransaction();
     assert.strictEqual(Author.all().length, 5);
     return;
 };
 
-/*
 exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
     store.beginTransaction();
@@ -112,7 +111,6 @@ exports.testBeginTransaction = function() {
     assert.strictEqual(Author.all().length, 0);
     return;
 };
-*/
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
