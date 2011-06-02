@@ -98,15 +98,34 @@ exports.testBasics = function() {
     var cnt = 0;
     for each (var book in author.books) {
         assert.isTrue(book instanceof Book);
+        assert.strictEqual(book._id, cnt + 1);
         cnt += 1;
     }
     assert.strictEqual(cnt, author.books.length);
     cnt = 0;
     author.books.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
+        assert.strictEqual(book._id, cnt + 1);
         cnt += 1;
     });
     assert.strictEqual(cnt, author.books.length);
+    // array methods
+    assert.strictEqual(author.books.indexOf(author.books.get(2)), 2);
+    assert.strictEqual(author.books.filter(function(book, idx) {
+        return book._id % 2 === 0;
+    }).length, 5);
+    assert.isTrue(author.books.some(function(book) {
+        return book._id === 5;
+    }));
+    assert.isTrue(author.books.every(function(book) {
+        return book instanceof Book;
+    }));
+    var ids = author.books.map(function(book) {
+        return book._id;
+    });
+    ids.forEach(function(id, idx) {
+        assert.strictEqual(id, idx + 1);
+    });
     return;
 };
 
