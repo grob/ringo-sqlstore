@@ -27,7 +27,7 @@ const MAPPING_BOOK = {
 };
 
 function populate(nrOfBooks) {
-    var transaction = store.createTransaction();
+    store.beginTransaction();
     for (var i=0; i<nrOfBooks; i+=1) {
         var nr = i + 1;
         var authorId = (i % 2) + 1;
@@ -36,9 +36,9 @@ function populate(nrOfBooks) {
             "authorId": authorId,
             "available": (i % 2) === 0
         });
-        book.save(transaction);
+        book.save();
     }
-    transaction.commit();
+    store.commitTransaction();
     return;
 };
 

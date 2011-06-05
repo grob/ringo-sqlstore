@@ -105,19 +105,19 @@ exports.tearDown = function() {
 };
 
 exports.testSimpleCollection = function() {
-    var transaction = store.createTransaction();
+    store.beginTransaction();
     var authors = [];
     var books = [];
     for (var i=1; i<3; i+=1) {
         var author = new Author({
             "name": "Author " + i
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
         var book = new Book({
             "title": "Book " + i
         });
-        book.save(transaction);
+        book.save();
         books.push(book);
     }
     var relations = [];
@@ -127,11 +127,11 @@ exports.testSimpleCollection = function() {
                 "book": book,
                 "author": author
             });
-            relation.save(transaction);
+            relation.save();
             relations.push(relation);
         });
     })
-    transaction.commit();
+    store.commitTransaction();
     var book = Book.get(1);
     assert.isNotNull(book);
     assert.strictEqual(book.authors.length, 2);
@@ -146,28 +146,28 @@ exports.testSimpleCollection = function() {
 };
 
 exports.testAdditionalCriteria = function() {
-    var transaction = store.createTransaction();
+    store.beginTransaction();
     var authors = [];
     for (var i=1; i<2; i+=1) {
         var author = new Author({
             "name": "Author " + i
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
     }
     var book = new Book({
         "title": "Book " + i
     });
-    book.save(transaction);
+    book.save();
     authors.forEach(function(author, idx) {
         var relation = new Relation({
             "book": book,
             "author": author,
             "isEditor": idx % 2 === 0
         });
-        relation.save(transaction);
+        relation.save();
     });
-    transaction.commit();
+    store.commitTransaction();
     var book = Book.get(1);
     assert.strictEqual(book.editors.length, 1);
     assert.equal(book.editors.get(0)._id, Author.get(1)._id);

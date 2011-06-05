@@ -24,23 +24,23 @@ const MAPPING_BOOK = {
 };
 
 var populate = function() {
-    var transaction = store.createTransaction();
+    store.beginTransaction();
     var authors = [];
     var books = [];
     for (var i=0; i<10; i+=1) {
         var author = new Author({
             "name": "Author " + i
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
         var book = new Book({
             "title": "Book " + i,
             "author": authors[i]
         });
-        book.save(transaction);
+        book.save();
         books.push(book);
     }
-    transaction.commit();
+    store.commitTransaction();
     return [authors, books];
 };
 

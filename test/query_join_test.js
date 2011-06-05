@@ -55,19 +55,19 @@ const MAPPING_RELATION = {
 };
 
 var populate = function() {
-    var transaction = store.createTransaction();
+    store.beginTransaction();
     var authors = [];
     var books = [];
     for (var i=1; i<3; i+=1) {
         var author = new Author({
             "name": "Author " + i
         });
-        author.save(transaction);
+        author.save();
         authors.push(author);
         var book = new Book({
             "title": "Book " + i
         });
-        book.save(transaction);
+        book.save();
         books.push(book);
     }
     var relations = [];
@@ -78,11 +78,11 @@ var populate = function() {
                 "author": author,
                 "isEditor": idx % 2 === 0
             });
-            relation.save(transaction);
+            relation.save();
             relations.push(relation);
         });
     })
-    transaction.commit();
+    store.commitTransaction();
     return [authors, books, relations];
 };
 
