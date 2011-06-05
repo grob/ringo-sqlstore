@@ -5,25 +5,28 @@
     "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
     "homepage": "https://github.com/grob/ringo-semver",
     "maintainers": [{
-        "name": "Robert Gaggl",
-        "web": "http://nomatic.org/",
-        "email": "robert@nomatic.org"
-    }],
+            "name": "Robert Gaggl",
+            "web": "http://nomatic.org/",
+            "email": "robert@nomatic.org"
+        }],
     "contributors": [{
-        "name": "Robert Gaggl",
-        "web": "http://nomatic.org/",
-        "email": "robert@nomatic.org"
+            "name": "Robert Gaggl",
+            "web": "http://nomatic.org/",
+            "email": "robert@nomatic.org"
+        },
+        {
+            "name": "Robert Thurnher",
+            "web": "http://robert42.com/",
+            "email": "r.thurnher@gmail.com>"
+        },
+        {
+            "name": "Hannes Wallnoefer",
+            "web": "http://hns.github.com/",
+            "email": "hannesw@gmail.com"
+        }],
+    "dependencies": {
+        "ringo-storable": "0.1.0"
     },
-    {
-        "name": "Robert Thurnher",
-        "web": "http://robert42.com/",
-        "email": "r.thurnher@gmail.com>"
-    },
-    {
-        "name": "Hannes Wallnoefer",
-        "web": "http://henso.com/",
-        "email": "hannes@helma.at"
-    }],
     "bugs": "http://github.com/grob/ringo-sqlstore/issues",
     "licences": [{
         "type": "Apache License Version 2.0",
