@@ -148,7 +148,7 @@ exports.testSimpleCollection = function() {
 exports.testAdditionalCriteria = function() {
     store.beginTransaction();
     var authors = [];
-    for (var i=1; i<2; i+=1) {
+    for (var i=1; i<=2; i+=1) {
         var author = new Author({
             "name": "Author " + i
         });
@@ -169,6 +169,7 @@ exports.testAdditionalCriteria = function() {
     });
     store.commitTransaction();
     var book = Book.get(1);
+    assert.strictEqual(book.authors.length, 2);
     assert.strictEqual(book.editors.length, 1);
     assert.equal(book.editors.get(0)._id, Author.get(1)._id);
     return;

@@ -11,7 +11,7 @@ exports.mysql = {
 };
 
 exports.oracle = {
-    "url": "jdbc:oracle:thin:@192.168.1.212:1524:XE",
+    "url": "jdbc:oracle:thin:@192.168.1.25:1521:XE",
     "driver": "oracle.jdbc.driver.OracleDriver",
     "username": "test",
     "password": "test"

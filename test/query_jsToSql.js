@@ -49,80 +49,170 @@ exports.tearDown = function() {
 };
 
 exports.testDefaultType = function() {
-    assert.strictEqual(jsToSql(store, "id", "Author"),
+    assert.strictEqual(jsToSql(store, "id", "Author")[0],
             Author.mapping.getQualifiedColumnName("id", store.dialect));
     return;
 };
 
 exports.testPropertyPrefix = function() {
-    assert.strictEqual(jsToSql(store, "Book.id", "Author"),
+    assert.strictEqual(jsToSql(store, "Book.id", "Author")[0],
             Book.mapping.getQualifiedColumnName("id", store.dialect));
-    assert.strictEqual(jsToSql(store, "Book.title", "Author"),
+    assert.strictEqual(jsToSql(store, "Book.title", "Author")[0],
             Book.mapping.getQualifiedColumnName("title", store.dialect));
     return;
 };
 
 exports.testValues = function() {
-    assert.strictEqual(jsToSql(store, "id == 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1");
-    assert.strictEqual(jsToSql(store, "name == 'test'", "Author"),
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = 'test'");
-    assert.strictEqual(jsToSql(store, "name == \"test\"", "Author"),
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = 'test'");
-    assert.strictEqual(jsToSql(store, "isHyped == true", "Author"),
-            Author.mapping.getQualifiedColumnName("isHyped", store.dialect) + " = " +
-            store.dialect.getBooleanValue(true));
-    assert.strictEqual(jsToSql(store, "isHyped == false", "Author"),
-            Author.mapping.getQualifiedColumnName("isHyped", store.dialect) + " = " +
-            store.dialect.getBooleanValue(false));
+    var [sql, parameters] = jsToSql(store, "id == 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "name == 'test'", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "string");
+    assert.strictEqual(parameters[0].value, "test");
+
+    [sql, parameters] = jsToSql(store, "name == \"test\"", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "string");
+    assert.strictEqual(parameters[0].value, "test");
+
+    [sql, parameters] = jsToSql(store, "isHyped == true", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("isHyped", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "boolean");
+    assert.strictEqual(parameters[0].value, true);
+
+    [sql, parameters] = jsToSql(store, "isHyped == false", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("isHyped", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "boolean");
+    assert.strictEqual(parameters[0].value, false);
     return;
 };
 
 exports.testComparisonOperators = function() {
-    assert.strictEqual(jsToSql(store, "id == 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1");
-    assert.strictEqual(jsToSql(store, "id === 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1");
-    assert.strictEqual(jsToSql(store, "id > 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " > 1");
-    assert.strictEqual(jsToSql(store, "id >= 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " >= 1");
-    assert.strictEqual(jsToSql(store, "id < 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " < 1");
-    assert.strictEqual(jsToSql(store, "id <= 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " <= 1");
-    assert.strictEqual(jsToSql(store, "id != 1", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " != 1");
+    var [sql, parameters] = jsToSql(store, "id == 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id === 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id > 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " > ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id >= 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " >= ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id < 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " < ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id <= 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " <= ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "id != 1", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " != ?");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
     return;
 };
 
 exports.testBooleanOperators = function() {
-    assert.strictEqual(jsToSql(store, "id == 1 && name == 'test'", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1 AND " +
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = 'test'");
-    assert.strictEqual(jsToSql(store, "id == 1 || name == 'test'", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1 OR " +
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = 'test'");
+    var [sql, parameters] = jsToSql(store, "id == 1 && name == 'test'", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ? AND " +
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = ?");
+    assert.strictEqual(parameters.length, 2);
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+    assert.strictEqual(parameters[1].type, "string");
+    assert.strictEqual(parameters[1].value, "test");
+
+    [sql, parameters] = jsToSql(store, "id == 1 || name == 'test'", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ? OR " +
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = ?");
+    assert.strictEqual(parameters.length, 2);
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+    assert.strictEqual(parameters[1].type, "string");
+    assert.strictEqual(parameters[1].value, "test");
     return;
 };
 
 exports.testParenthesis = function() {
-    assert.strictEqual(jsToSql(store, "(id == 1)", "Author"),
-            "(" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1)");
-    assert.strictEqual(jsToSql(store, "( (id == 1) )", "Author"),
-            "((" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1))");
-    assert.strictEqual(jsToSql(store, "((id == 1 || id == 2) && name === 'test')", "Author"),
-            "((" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 1 OR " +
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = 2) AND " +
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = 'test')");
+    var [sql, parameters] = jsToSql(store, "(id == 1)", "Author");
+    assert.strictEqual(sql,
+            "(" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?)");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "( (id == 1) )", "Author");
+    assert.strictEqual(sql,
+            "((" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?))");
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+
+    [sql, parameters] = jsToSql(store, "((id == 1 || id == 2) && name === 'test')", "Author");
+    assert.strictEqual(sql,
+            "((" + Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ? OR " +
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " = ?) AND " +
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " = ?)");
+    assert.strictEqual(parameters.length, 3);
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+    assert.strictEqual(parameters[1].type, "long");
+    assert.strictEqual(parameters[1].value, 2);
+    assert.strictEqual(parameters[2].type, "string");
+    assert.strictEqual(parameters[2].value, "test");
     return;
 };
 
 exports.testIn = function() {
-    assert.strictEqual(jsToSql(store, "id in [1,2,   3]", "Author"),
-            Author.mapping.getQualifiedColumnName("id", store.dialect) + " in (1, 2, 3)");
-    assert.strictEqual(jsToSql(store, "name in ['test','no',  'longer']", "Author"),
-            Author.mapping.getQualifiedColumnName("name", store.dialect) + " in ('test', 'no', 'longer')");
+    var [sql, parameters] = jsToSql(store, "id in [1,2,   3]", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("id", store.dialect) + " in (?, ?, ?)");
+    assert.strictEqual(parameters.length, 3);
+    assert.strictEqual(parameters[0].type, "long");
+    assert.strictEqual(parameters[0].value, 1);
+    assert.strictEqual(parameters[1].type, "long");
+    assert.strictEqual(parameters[1].value, 2);
+    assert.strictEqual(parameters[2].type, "long");
+    assert.strictEqual(parameters[2].value, 3);
+
+    [sql, parameters] = jsToSql(store, "name in ['test','no',  'longer']", "Author");
+    assert.strictEqual(sql,
+            Author.mapping.getQualifiedColumnName("name", store.dialect) + " in (?, ?, ?)");
+    assert.strictEqual(parameters.length, 3);
+    assert.strictEqual(parameters[0].type, "string");
+    assert.strictEqual(parameters[0].value, "test");
+    assert.strictEqual(parameters[1].type, "string");
+    assert.strictEqual(parameters[1].value, "no");
+    assert.strictEqual(parameters[2].type, "string");
+    assert.strictEqual(parameters[2].value, "longer");
     return;
 };
 
