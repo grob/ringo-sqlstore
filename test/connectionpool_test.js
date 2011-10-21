@@ -1,5 +1,6 @@
 var runner = require("./runner");
 var assert = require("assert");
+var scheduler = require("ringo/scheduler");
 var ConnectionPool = require("../lib/sqlstore/connectionpool").ConnectionPool;
 
 var pool = null;
@@ -69,6 +70,28 @@ exports.testConnectionIsValid = function() {
     conn.getConnection().close();
     assert.isFalse(conn.isValid());
     assert.isFalse(conn.validate());
+};
+
+exports.testConcurrency = function() {
+    var callback = function() {
+        var connections = [];
+        for (var i=0; i<50; i+=1) {
+            connections.push(pool.getConnection());
+        }
+        return connections;
+    };
+
+    var t1 = scheduler.setTimeout(callback, 0);
+    var t2 = scheduler.setTimeout(callback, 0);
+    var connections1 = t1.get();
+    var connections2 = t2.get();
+    var result = connections1.every(function(conn1, idx) {
+        return connections2.every(function(conn2, idx) {
+            return conn2.getConnection() != conn1.getConnection();
+        });
+    });
+    assert.isTrue(result);
+    return;
 };
 
 //start the test runner if we're called directly from command line

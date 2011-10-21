@@ -1,5 +1,6 @@
 var runner = require("./runner");
 var assert = require("assert");
+var scheduler = require("ringo/scheduler");
 
 var Store = require("../lib/sqlstore/store").Store;
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
@@ -111,6 +112,29 @@ exports.testBeginTransaction = function() {
     assert.strictEqual(Author.all().length, 0);
     return;
 };
+
+exports.testConcurrentInserts = function() {
+    var cnt = 100;
+    var callback = function() {
+        var threadId = java.lang.Thread.currentThread().getId();
+        for (var i=0; i<cnt; i+=1) {
+            var author = new Author({
+                "name": "Author " + (i + 1)
+            });
+            author.save();
+            // console.info("Inserted", author._key, "(Thread " + threadId + ")");
+        }
+        return true;
+    };
+
+    var t1 = scheduler.setTimeout(callback, 0);
+    var t2 = scheduler.setTimeout(callback, 0);
+    assert.isTrue(t1.get());
+    assert.isTrue(t2.get());
+    assert.strictEqual(Author.all().length, cnt * 2);
+    return;
+};
+
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
