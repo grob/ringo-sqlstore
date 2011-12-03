@@ -1,6 +1,7 @@
 var runner = require("./runner");
 var assert = require("assert");
-var scheduler = require("ringo/scheduler");
+var {Worker} = require("ringo/worker");
+var {Semaphore} = require("ringo/concurrent");
 
 var Store = require("../lib/sqlstore/store").Store;
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
@@ -97,7 +98,7 @@ exports.testBeginTransaction = function() {
     assert.strictEqual(transaction.deleted.length, 5);
     store.commitTransaction();
     assert.isNull(store.getTransaction());
-    
+
     // abort transaction
     store.beginTransaction();
     transaction = store.getTransaction();
@@ -114,24 +115,27 @@ exports.testBeginTransaction = function() {
 };
 
 exports.testConcurrentInserts = function() {
-    var cnt = 100;
-    var callback = function() {
-        var threadId = java.lang.Thread.currentThread().getId();
-        for (var i=0; i<cnt; i+=1) {
-            var author = new Author({
-                "name": "Author " + (i + 1)
-            });
-            author.save();
-            // console.info("Inserted", author._key, "(Thread " + threadId + ")");
-        }
-        return true;
-    };
+    var nrOfWorkers = 10;
+    var cnt = 10;
+    var semaphore = new Semaphore();
 
-    var t1 = scheduler.setTimeout(callback, 0);
-    var t2 = scheduler.setTimeout(callback, 0);
-    assert.isTrue(t1.get());
-    assert.isTrue(t2.get());
-    assert.strictEqual(Author.all().length, cnt * 2);
+    for (var i=0; i<nrOfWorkers; i+=1) {
+        var w = new Worker({
+            "onmessage": function(event) {
+                for (var i=0; i<cnt; i+=1) {
+                    var author = new Author({
+                        "name": "Author " + (i + 1)
+                    });
+                    author.save();
+                    // console.info("Inserted", author._key, "(Thread " + threadId + ")");
+                }
+                semaphore.signal();
+            }
+        });
+        w.postMessage(i, true);
+    }
+    semaphore.wait(nrOfWorkers);
+    assert.strictEqual(Author.all().length, cnt * nrOfWorkers);
     return;
 };
 

@@ -1,7 +1,8 @@
 var runner = require("./runner");
 var assert = require("assert");
-var scheduler = require("ringo/scheduler");
 var ConnectionPool = require("../lib/sqlstore/connectionpool").ConnectionPool;
+var {Worker} = require("ringo/worker");
+var {Semaphore} = require("ringo/concurrent");
 
 var pool = null;
 
@@ -44,8 +45,12 @@ exports.testGetConnection = function() {
 
 exports.testIsStale = function() {
     var conn = pool.getConnection();
+    conn.close();
     assert.isTrue(conn.isStale(0));
-    assert.isFalse(conn.isStale(1000));
+    assert.isFalse(conn.isStale(100));
+    // wait for one second
+    java.lang.Thread.sleep(100);
+    assert.isTrue(conn.isStale(100));
     return;
 };
 
@@ -65,32 +70,53 @@ exports.testRemoveDeadConnection = function() {
 exports.testConnectionIsValid = function() {
     var conn = pool.getConnection();
     assert.isTrue(conn.isValid());
-    assert.isTrue(conn.validate());
     // close underlying connection
     conn.getConnection().close();
     assert.isFalse(conn.isValid());
-    assert.isFalse(conn.validate());
 };
 
 exports.testConcurrency = function() {
-    var callback = function() {
-        var connections = [];
-        for (var i=0; i<50; i+=1) {
-            connections.push(pool.getConnection());
-        }
-        return connections;
-    };
 
-    var t1 = scheduler.setTimeout(callback, 0);
-    var t2 = scheduler.setTimeout(callback, 0);
-    var connections1 = t1.get();
-    var connections2 = t2.get();
-    var result = connections1.every(function(conn1, idx) {
-        return connections2.every(function(conn2, idx) {
-            return conn2.getConnection() != conn1.getConnection();
+    // starting 10 workers, each aquiring 10 connections
+    var nrOfWorkers = 10;
+    var connections = new Array(nrOfWorkers);
+    var semaphore = new Semaphore();
+
+    for (var i=0; i<nrOfWorkers; i+=1) {
+        var w = new Worker({
+            "onmessage": function(event) {
+                var workerNr = event.data;
+                var conns = [];
+                for (var i=0; i<10; i+=1) {
+                    conns.push(pool.getConnection());
+                }
+                event.source.postMessage({
+                    "nr": workerNr,
+                    "connections": conns
+                });
+                semaphore.signal();
+            }
+        });
+        w.onmessage = function(event) {
+            connections[event.data.nr] = event.data.connections;
+        };
+        w.postMessage(i, true);
+    }
+
+    // wait for all workers to finish
+    semaphore.wait(nrOfWorkers);
+    var offset = 0;
+    var result = connections.every(function(current, cIdx) {
+        offset += 1;
+        return connections.slice(offset).every(function(other, oIdx) {
+            return current.every(function(currentConn, ccIdx) {
+                return other.every(function(otherConn, ocIdx) {
+                    // console.log("COMPARING CURRENT", cIdx + "/" + ccIdx, "with OTHER", (oIdx + offset) + "/" + ocIdx);
+                    return currentConn.getConnection() != otherConn.getConnection();
+                });
+            });
         });
     });
-    assert.isTrue(result);
     return;
 };
 
