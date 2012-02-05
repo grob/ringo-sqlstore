@@ -1,6 +1,6 @@
 {
     "name": "ringo-sqlstore",
-    "version": "0.1",
+    "version": "0.1.1",
     "description": "SQL-Storage implementation for RingoJS",
     "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
     "homepage": "https://github.com/grob/ringo-sqlstore",
@@ -28,7 +28,7 @@
         "ringo-storable": "0.1.0"
     },
     "bugs": "http://github.com/grob/ringo-sqlstore/issues",
-    "licences": [{
+    "licenses": [{
         "type": "Apache License Version 2.0",
         "url": "http://www.apache.org/licenses/"
     }],
@@ -36,6 +36,8 @@
         "type": "git",
         "url": "https://github.com/grob/ringo-sqlstore.git"
     }],
-    "engine": "rhino",
+    "engines": {
+        "ringojs": ">= 0.8"
+    },
     "main": "./lib/sqlstore/store.js"
 }

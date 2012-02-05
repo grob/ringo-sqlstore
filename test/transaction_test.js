@@ -114,6 +114,28 @@ exports.testBeginTransaction = function() {
     return;
 };
 
+exports.testMultipleModifications = function() {
+    store.beginTransaction();
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    store.commitTransaction();
+    store.beginTransaction();
+    // step 1: modify author and save it, but don't commit the transaction
+    author = Author.get(1);
+    author.name = "Jane Foo";
+    author.save();
+    // step 2: modify author again, this time committing the transaction
+    // sqlstore is expected to do *both* updates
+    author.name = "John Doe";
+    author.save();
+    store.commitTransaction();
+    assert.strictEqual(author.name, "John Doe");
+    author = Author.get(1);
+    assert.strictEqual(author.name, "John Doe");
+};
+
 exports.testConcurrentInserts = function() {
     var nrOfWorkers = 10;
     var cnt = 10;
