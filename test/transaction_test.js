@@ -142,19 +142,15 @@ exports.testConcurrentInserts = function() {
     var semaphore = new Semaphore();
 
     for (var i=0; i<nrOfWorkers; i+=1) {
-        var w = new Worker({
-            "onmessage": function(event) {
-                for (var i=0; i<cnt; i+=1) {
-                    var author = new Author({
-                        "name": "Author " + (i + 1)
-                    });
-                    author.save();
-                    // console.info("Inserted", author._key, "(Thread " + threadId + ")");
-                }
-                semaphore.signal();
-            }
-        });
-        w.postMessage(i, true);
+        var w = new Worker(module.resolve("./transaction_worker"));
+        w.onmessage = function(event) {
+            semaphore.signal();
+        };
+        w.postMessage({
+            "workerNr": i,
+            "cnt": cnt,
+            "Author": Author
+        }, true);
     }
     semaphore.wait(nrOfWorkers);
     assert.strictEqual(Author.all().length, cnt * nrOfWorkers);

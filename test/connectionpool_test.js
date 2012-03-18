@@ -83,24 +83,15 @@ exports.testConcurrency = function() {
     var semaphore = new Semaphore();
 
     for (var i=0; i<nrOfWorkers; i+=1) {
-        var w = new Worker({
-            "onmessage": function(event) {
-                var workerNr = event.data;
-                var conns = [];
-                for (var i=0; i<10; i+=1) {
-                    conns.push(pool.getConnection());
-                }
-                event.source.postMessage({
-                    "nr": workerNr,
-                    "connections": conns
-                });
-                semaphore.signal();
-            }
-        });
+        var w = new Worker(module.resolve("./connectionpool_worker"));
         w.onmessage = function(event) {
-            connections[event.data.nr] = event.data.connections;
+            connections[event.data.workerNr] = event.data.connections;
+            semaphore.signal();
         };
-        w.postMessage(i, true);
+        w.postMessage({
+            "workerNr": i,
+            "pool": pool
+        }, true);
     }
 
     // wait for all workers to finish
@@ -117,6 +108,7 @@ exports.testConcurrency = function() {
             });
         });
     });
+    assert.isTrue(result);
     return;
 };
 
