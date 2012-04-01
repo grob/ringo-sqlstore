@@ -4,6 +4,7 @@ var assert = require("assert");
 var Store = require("../lib/sqlstore/store").Store;
 var sqlUtils = require("../lib/sqlstore/util");
 var {Storable} = require("../lib/sqlstore/storable");
+var {Key} = require("../lib/sqlstore/key");
 
 var store = null;
 var Author = null;
@@ -50,6 +51,25 @@ exports.tearDown = function() {
     store = null;
     Author = null;
     return;
+};
+
+exports.testInternalProps = function() {
+    var author = new Author();
+    assert.strictEqual(author._props.constructor, Object);
+    assert.isUndefined(author._entity);
+    assert.strictEqual(author._key.constructor, Key);
+    assert.isNull(author._key.id);
+    assert.isUndefined(author.name);
+    author.name = "John Doe";
+    assert.isNotUndefined(author._props.name);
+    author.save();
+    assert.isNotUndefined(author._entity);
+    assert.isNotNull(author._key.id);
+    // save() clears the _props object
+    assert.isUndefined(author._props);
+    // accessing a property for the first time re-populates the _props object
+    assert.isNotUndefined(author.name);
+    assert.isNotUndefined(author._props);
 };
 
 exports.testLifecycle = function() {
