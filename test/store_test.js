@@ -73,11 +73,11 @@ exports.testCRUD = function() {
     var author = new Author({
         "name": name
     });
-    assert.isUndefined(author._key);
-    assert.isUndefined(author._id);
-    author.save();
     assert.isTrue(author._key instanceof Key);
     assert.strictEqual(author._key.type, "Author");
+    assert.isNull(author._key.id);
+    assert.isNull(author._id);
+    author.save();
     assert.strictEqual(author._key.id, 1);
     assert.strictEqual(author._id, 1);
 
@@ -192,7 +192,7 @@ exports.testTypes = function() {
                 assert.strictEqual(value.getDate(), origValue.getDate());
                 break;
             case "typeBinary":
-                assert.isTrue(java.util.Arrays.equals(value, origValue)); 
+                assert.isTrue(java.util.Arrays.equals(value, origValue));
                 break;
             default:
                 assert.strictEqual(value, origValue);
