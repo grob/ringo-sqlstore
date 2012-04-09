@@ -83,8 +83,6 @@ exports.testLifecycle = function() {
     author = Author.get(1);
     assert.strictEqual(author._state, Storable.STATE_CLEAN);
     // modify
-    author.name = author.name;
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
     author.name = "Jane Foo";
     assert.strictEqual(author._state, Storable.STATE_DIRTY);
     author.save();
