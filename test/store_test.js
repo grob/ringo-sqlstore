@@ -34,7 +34,6 @@ exports.setUp = function() {
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
     assert.strictEqual(typeof(Author.all), "function");
-    assert.strictEqual(typeof(Author.query), "function");
     assert.strictEqual(Author, store.getEntityConstructor("Author"));
     return;
 };
@@ -81,7 +80,7 @@ exports.testCRUD = function() {
     assert.strictEqual(author._key.type, "Author");
     assert.strictEqual(author._key.id, 1);
     assert.strictEqual(author._id, 1);
-    
+
     // read
     author = Author.get(1);
     assert.isNotNull(author);

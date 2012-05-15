@@ -16,14 +16,11 @@ const MAPPING_AUTHOR = {
         "name": {
             "type": "string",
             "nullable": false
-         },
-         "books": {
+        },
+        "books": {
             "type": "collection",
-            "entity": "Book",
-            "through": "Relation",
-            "join": "Relation.book == Book.id",
-            "foreignProperty": "Relation.author"
-         }
+            "query": "from Book join Relation on Relation.book = Book.id where Relation.author = :id"
+        }
     }
 };
 
@@ -36,21 +33,15 @@ const MAPPING_BOOK = {
             "type": "string",
             "column": "book_title",
             "length": 255,
-            "nullable": false,
+            "nullable": false
         },
         "authors": {
             "type": "collection",
-            "entity": "Author",
-            "through": "Relation",
-            "join": "Relation.author == Author.id",
-            "foreignProperty": "Relation.book"
+            "query": "from Author join Relation on Relation.author = Author.id where Relation.book = :id"
         },
         "editors": {
             "type": "collection",
-            "entity": "Author",
-            "through": "Relation",
-            "join": "Relation.author == Author.id && Relation.isEditor == true",
-            "foreignProperty": "Relation.book"
+            "query": "from Author join Relation on (Relation.author = Author.id and Relation.isEditor = true) and Relation.book = :id"
         }
     }
 };
@@ -178,5 +169,5 @@ exports.testAdditionalCriteria = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    runner.run(exports, arguments);
+    system.exit(runner.run(exports, arguments));
 }

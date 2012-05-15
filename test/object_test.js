@@ -1,7 +1,8 @@
 var runner = require("./runner");
 var assert = require("assert");
 
-var Store = require("../lib/sqlstore/store").Store;
+var {Store} = require("../lib/sqlstore/store");
+var {Query} = require("../lib/sqlstore/query/query");
 var sqlUtils = require("../lib/sqlstore/util");
 var store = null;
 var Author = null;
@@ -17,8 +18,7 @@ const MAPPING_AUTHOR = {
         },
         "books": {
             "type": "collection",
-            "entity": "Book",
-            "foreignProperty": "author"
+            "query": "from Book where Book.author = :id"
         }
     }
 };
@@ -119,16 +119,16 @@ exports.testAssignLazyLoaded = function() {
     (new Author({
         "name": "John Doe"
     })).save();
-    // re-get all authors from db, but don't touch it
-    var authors = Author.query().select();
+    // re-get author from db, but don't access any properties of
+    var author = Author.get(1);
     var book = new Book({
         "title": "foo",
-        "author": authors[0]
+        "author": author
     });
     book.save();
     // after persisting the book, the author's book collection
     // must be populated
-    assert.strictEqual(authors[0].books.length, 1);
+    assert.strictEqual(author.books.length, 1);
     return;
 };
 
@@ -154,7 +154,7 @@ exports.testSimpleCircularReference = function() {
     assert.strictEqual(author.latestBook._id, book._id);
     assert.strictEqual(author.latestBook.author._id, author._id);
     assert.strictEqual(book.author._id, author._id);
-}
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

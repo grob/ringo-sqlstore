@@ -79,7 +79,7 @@ exports.testBasics = function() {
             },
             "books": {
                 "type": "collection",
-                "entity": "Book"
+                "query": "from Book"
             }
         }
     });
@@ -129,10 +129,7 @@ exports.testBasics = function() {
     return;
 };
 
-/**
- * Collection with filtering via foreignProperty and ordering
- */
-exports.testWithForeignProperty = function() {
+exports.testWithQueryParameter = function() {
     populate(11);
     Author = store.defineEntity("Author", {
         "properties": {
@@ -141,9 +138,40 @@ exports.testWithForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "entity": "Book",
-                "foreignProperty": "authorId",
-                "orderBy": "id desc"
+                "query": "from Book where Book.id > :threshold",
+                "params": {
+                    "threshold": 6
+                }
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of half of the books"
+    });
+    author.save();
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 5);
+    author.books.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 7);
+    });
+};
+
+/**
+ * Collection with filtering via foreignProperty and ordering
+ */
+exports.testWithForeignProperty = function() {
+    populate(11);
+    Author = store.defineEntity("Author", {
+        "id": {
+            "column": "AUTHOR_ID"
+        },
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
             }
         }
     });
@@ -174,10 +202,7 @@ exports.testWithLocalAndForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "entity": "Book",
-                "localProperty": "realId",
-                "foreignProperty": "authorId",
-                "orderBy": "id desc"
+                "query": "from Book, Author where Book.authorId = :realId order by Book.id desc"
             }
         }
     });
@@ -207,11 +232,9 @@ exports.testPartitionedCollection = function() {
             },
             "books": {
                 "type": "collection",
-                "entity": "Book",
                 "isPartitioned": true,
                 "partitionSize": 10,
-                "foreignProperty": "authorId",
-                "orderBy": "id desc"
+                "query": "select Book.* from Book where Book.authorId = :id order by Book.id desc"
             }
         }
     });
@@ -243,10 +266,7 @@ exports.testCollectionFilter = function() {
             "name": "string",
             "books": {
                 "type": "collection",
-                "entity": "Book",
-                "foreignProperty": "authorId",
-                "filter": "available == true",
-                "orderBy": "id desc"
+                "query": "from Book, Author where Book.authorId = :id and Book.available = true order by Book.id desc"
             }
         }
     });
@@ -257,7 +277,7 @@ exports.testCollectionFilter = function() {
     assert.strictEqual(author.books.length, 3);
     assert.strictEqual(author.books.get(0)._id, 5);
     return;
-}
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
