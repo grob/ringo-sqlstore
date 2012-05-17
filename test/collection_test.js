@@ -234,7 +234,7 @@ exports.testPartitionedCollection = function() {
                 "type": "collection",
                 "isPartitioned": true,
                 "partitionSize": 10,
-                "query": "select Book.* from Book where Book.authorId = :id order by Book.id desc"
+                "query": "select Book.id from Book where Book.authorId = :id order by Book.id desc"
             }
         }
     });
@@ -256,26 +256,6 @@ exports.testPartitionedCollection = function() {
         assert.isUndefined(author.books.partitions[i], "Partition " + i +
                 " should be undefined");
     }
-    return;
-};
-
-exports.testCollectionFilter = function() {
-    populate(5);
-    Author = store.defineEntity("Author", {
-        "properties": {
-            "name": "string",
-            "books": {
-                "type": "collection",
-                "query": "from Book, Author where Book.authorId = :id and Book.available = true order by Book.id desc"
-            }
-        }
-    });
-    var author = new Author({
-        "name": "John Doe"
-    });
-    author.save();
-    assert.strictEqual(author.books.length, 3);
-    assert.strictEqual(author.books.get(0)._id, 5);
     return;
 };
 

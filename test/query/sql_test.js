@@ -4,7 +4,9 @@ var assert = require("assert");
 var Store = require("../../lib/sqlstore/store").Store;
 var sqlUtils = require("../../lib/sqlstore/util");
 var {Parser} = require("../../lib/sqlstore/query/parser");
+var {Resolver} = require("../../lib/sqlstore/query/ast");
 var {StringBuffer} = java.lang;
+var {SqlGenerator} = require("../../lib/sqlstore/query/sqlgenerator");
 var store = null;
 var Author = null;
 var Book = null;
@@ -66,11 +68,11 @@ exports.tearDown = function() {
 var testQueries = function(queries, startRule, nparams) {
     for each (var {query, sql, values} in queries) {
         let tree = Parser.parse(query, startRule);
-        let params = [];
-        assert.strictEqual(tree.toSql(store, nparams, params),
+        let visitor = new SqlGenerator(store, (tree.from || {}).aliases, nparams);
+        assert.strictEqual(tree.accept(visitor),
             getExpectedSql(sql), query);
         if (values) {
-            assert.deepEqual(params, values, query);
+            assert.deepEqual(visitor.params, values, query);
         }
     }
 };
@@ -352,6 +354,10 @@ exports.testFromClause = function() {
         {
             "query": "from Author, Book",
             "sql": "FROM $Author, $Book"
+        },
+        {
+            "query": "from Author as author, Book as book",
+            "sql": "FROM $Author AS author, $Book AS book"
         }
     ];
 
@@ -414,30 +420,78 @@ exports.testNamedParameter = function() {
     testQueries(queries, undefined, namedParams);
 };
 
+exports.testSelectExpression = function() {
+    var queries = [
+        {
+            "query": "Author.id as authorId",
+            "sql": "$Author.id AS authorId"
+        },
+        {
+            "query": "count( Author.id ) as cnt",
+            "sql": "COUNT($Author.id) AS cnt"
+        }
+    ];
+    testQueries(queries, "selectExpression");
+};
+
+exports.testAliases = function() {
+    var mapping = Author.mapping;
+    var column = store.dialect.quote(mapping.getMapping("id").column);
+    var queries = [
+        {
+            "query": "select a.id as authorId from Author as a",
+            "sql": "SELECT a." + column + " AS authorId FROM $Author AS a"
+        },
+        {
+            "query": "select count(a.id) as authorId from Author as a",
+            "sql": "SELECT COUNT(a." + column + ") AS authorId FROM $Author AS a"
+        }
+    ];
+    for each (var {query, sql} in queries) {
+        var tree = Parser.parse(query);
+        var visitor = new SqlGenerator(store, tree.from.aliases);
+        var queryStr = tree.accept(visitor);
+        assert.strictEqual(queryStr, getExpectedSql(sql), query);
+    }
+};
+
+exports.testComplexQueries = function() {
+    var queries = [
+        {
+            "query": "select Author.name, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id order by Author.name",
+            "sql": "SELECT $Author.name, COUNT($Book.id) FROM $Author, $Book WHERE $Book.author = $Author.id GROUP BY $Author.id ORDER BY $Author.name ASC"
+        }
+    ];
+    testQueries(queries, undefined);
+};
+
 exports.testOffset = function() {
     var tree = Parser.parse("select Author from Author offset 10");
     var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id FROM $Author"));
     store.dialect.addSqlOffset(sqlBuf, 10);
-    assert.strictEqual(tree.toSql(store, null, []), sqlBuf.toString());
+    var visitor = new SqlGenerator(store);
+    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
 };
 
 exports.testLimit = function() {
     var tree = Parser.parse("select Author from Author limit 100");
     var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id FROM $Author"));
     store.dialect.addSqlLimit(sqlBuf, 100);
-    assert.strictEqual(tree.toSql(store, null, []), sqlBuf.toString());
+    var visitor = new SqlGenerator(store);
+    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
 };
 
 exports.testRange = function() {
     var tree = Parser.parse("select Author from Author offset 10 limit 100");
     var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id FROM $Author"));
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    assert.strictEqual(tree.toSql(store, null, []), sqlBuf.toString());
+    var visitor = new SqlGenerator(store);
+    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
     sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id FROM $Author"));
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    assert.strictEqual(tree.toSql(store, null, []), sqlBuf.toString());
+    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
 };
 
 //start the test runner if we're called directly from command line

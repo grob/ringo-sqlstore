@@ -126,10 +126,25 @@ exports.testEntity = function() {
     var value = Parser.parse("User", "entity");
     assert.isTrue(value instanceof ast.Entity);
     assert.strictEqual(value.entity, "User");
-    value = Parser.parse("User.*", "ident");
-    assert.isTrue(value instanceof ast.Entity);
+};
+
+exports.testSelectEntity = function() {
+    var value = Parser.parse("User", "selectEntity");
+    assert.isTrue(value instanceof ast.SelectEntity);
     assert.strictEqual(value.entity, "User");
+    assert.isFalse(value.loadAggressive);
+    value = Parser.parse("User.*", "selectEntity");
     assert.isTrue(value.loadAggressive);
+};
+
+exports.testSelectExpressionAlias = function() {
+    var value = Parser.parse("Author.id as authorId", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectExpression);
+    assert.strictEqual(value.alias, "authorId");
+    assert.isTrue(value.expression instanceof ast.Ident);
+    value = Parser.parse("count(Author.id) as cnt", "selectExpression");
+    assert.strictEqual(value.alias, "cnt");
+    assert.isTrue(value.expression instanceof ast.Aggregation);
 };
 
 exports.testIdent = function() {
@@ -161,11 +176,9 @@ exports.testIsNullCondition = function() {
     var value = Parser.parse("is null", rule);
     assert.isTrue(value instanceof ast.IsNullCondition);
     assert.isFalse(value.isNot);
-    assert.strictEqual(value.toSql(), "IS NULL");
     // not null
     var value = Parser.parse("is not null", rule);
     assert.isTrue(value.isNot);
-    assert.strictEqual(value.toSql(), "IS NOT NULL");
 };
 
 exports.testBetweenCondition = function() {
@@ -184,11 +197,6 @@ exports.testInCondition = function() {
     value.values.forEach(function(val) {
         assert.isTrue(val instanceof ast.IntValue);
     });
-    var params = [];
-    assert.strictEqual(value.toSql(store, null, params), "IN (?, ?, ?)");
-    for each (var param in params) {
-        assert.strictEqual(param.type, "long");
-    }
 };
 
 exports.testLikeCondition = function() {
@@ -197,7 +205,6 @@ exports.testLikeCondition = function() {
     assert.isTrue(value instanceof ast.LikeCondition);
     assert.isFalse(value.isNot);
     assert.isTrue(value.value instanceof ast.StringValue);
-    assert.strictEqual(value.toSql(store, null, []), "LIKE ?");
     // not like
     value = Parser.parse("not like '%test%'", rule);
     assert.isTrue(value.isNot);
@@ -288,13 +295,26 @@ exports.testWhereClause = function() {
     assert.isTrue(value.value instanceof ast.Expression);
 };
 
+exports.testFromExpression = function() {
+    var rule = "fromExpression";
+    var value = Parser.parse("Author", rule);
+    assert.isTrue(value instanceof ast.FromExpression);
+    assert.isTrue(value.entity instanceof ast.Entity);
+    assert.strictEqual(value.alias, null);
+    value = Parser.parse("Author as author", rule);
+    assert.isTrue(value instanceof ast.FromExpression);
+    assert.strictEqual(value.alias, "author");
+};
+
 exports.testFromClause = function() {
     var rule = "fromClause";
     var value = Parser.parse("from Author", rule);
     assert.isTrue(value instanceof ast.FromClause);
+    assert.isTrue(value.list[0] instanceof ast.FromExpression);
     assert.strictEqual(value.list.length, 1);
     value = Parser.parse("from Author, Book", rule);
     assert.strictEqual(value.list.length, 2);
+    assert.isTrue(value.list[1] instanceof ast.FromExpression);
 };
 
 exports.testSelectClause = function() {
@@ -304,6 +324,8 @@ exports.testSelectClause = function() {
     assert.strictEqual(value.list.length, 1);
     value = Parser.parse("User.id, User.name", rule);
     assert.strictEqual(value.list.length, 2);
+    assert.isTrue(value.list[0] instanceof ast.SelectExpression);
+    assert.isTrue(value.list[1] instanceof ast.SelectExpression);
 };
 
 exports.testAggregation = function() {

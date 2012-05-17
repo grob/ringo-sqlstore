@@ -111,23 +111,34 @@ exports.testSelectProperties = function() {
     var query = new Query(store, "select Book.title from Book");
     var result = query.select();
     assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book.title, "Book " + idx);
+    result.forEach(function(props, idx) {
+        assert.strictEqual(props["Book.title"], "Book " + idx);
     });
     query = new Query(store, "select Book.title, Book.id from Book");
     result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
-        assert.strictEqual(props.title, "Book " + idx);
-        assert.strictEqual(props.id, idx + 1);
+        assert.strictEqual(props["Book.title"], "Book " + idx);
+        assert.strictEqual(props["Book.id"], idx + 1);
     });
     query = new Query(store, "select Author.id, Book.title from Book, Author where Book.author = Author.id and Author.id < 6");
     result = query.select();
     assert.strictEqual(result.length, 5);
     result.forEach(function(props, idx) {
-        assert.strictEqual(props.title, "Book " + idx);
-        assert.strictEqual(props.id, idx + 1);
+        assert.strictEqual(props["Book.title"], "Book " + idx);
+        assert.strictEqual(props["Author.id"], idx + 1);
     });
+/*
+    // selecting more than one entity results in a property query
+    // FIXME: currently throws
+    query = new Query(store, "select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6");
+    result = query.select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(props, idx) {
+        assert.strictEqual(props["Book.id"], idx + 1);
+        assert.strictEqual(props["Author.id"], idx + 1);
+    });
+*/
     // named params
     query = new Query(store, "from Book where Book.title like :title");
     result = query.select({
@@ -140,6 +151,42 @@ exports.testSelectProperties = function() {
     });
 };
 
+exports.testAliases = function() {
+    populate();
+    var query = new Query(store, "select Author.name as author from Author");
+    var result = query.select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(props, idx) {
+        assert.isUndefined(props.name);
+        assert.strictEqual(props.author, "Author " + idx);
+    });
+    query = new Query(store, "select a.name as author from Author as a where a.id < 6");
+    result = query.select();
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(props, idx) {
+        assert.isUndefined(props.name);
+        assert.strictEqual(props.author, "Author " + idx);
+    });
+    query = new Query(store, "select count(Author.id) as cnt from Author");
+    result = query.select();
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].cnt, 10);
+    query = new Query(store, "select count(aut.id) as cnt from Author as aut");
+    result = query.select();
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].cnt, 10);
+};
+
+exports.testSelectAggregation = function() {
+    populate();
+    var query = new Query(store, "select count(Book.id) from Book");
+    var result = query.select();
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0]["COUNT_Book.id"], 10);
+    query = new Query(store, "select count(Book.id) as cnt from Book");
+    result = query.select();
+    assert.strictEqual(result[0]["cnt"], 10);
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
