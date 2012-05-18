@@ -100,6 +100,7 @@ exports.testSelectEntityAggressive = function() {
     var result = (new Query(store, "select Book.* from Book")).select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
+        assert.isTrue(book instanceof Book);
         assert.strictEqual(book._id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
@@ -111,8 +112,8 @@ exports.testSelectProperties = function() {
     var query = new Query(store, "select Book.title from Book");
     var result = query.select();
     assert.strictEqual(result.length, 10);
-    result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book.title"], "Book " + idx);
+    result.forEach(function(title, idx) {
+        assert.strictEqual(title, "Book " + idx);
     });
     query = new Query(store, "select Book.title, Book.id from Book");
     result = query.select();
@@ -139,13 +140,18 @@ exports.testSelectProperties = function() {
         assert.strictEqual(props["Author.id"], idx + 1);
     });
 */
+};
+
+exports.testNamedParameter = function() {
+    populate();
     // named params
-    query = new Query(store, "from Book where Book.title like :title");
-    result = query.select({
+    var query = new Query(store, "from Book where Book.title like :title");
+    var result = query.select({
         "title": "Book%"
     });
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
+        assert.isTrue(book instanceof Book);
         assert.strictEqual(book.title, "Book " + idx);
         assert.strictEqual(book._id, idx + 1);
     });
@@ -153,28 +159,41 @@ exports.testSelectProperties = function() {
 
 exports.testAliases = function() {
     populate();
-    var query = new Query(store, "select Author.name as author from Author");
+    var query = new Query(store, "select Author.name as author, Book.title as title from Author, Book where Book.author = Author.id");
     var result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
-        assert.isUndefined(props.name);
-        assert.strictEqual(props.author, "Author " + idx);
+        assert.strictEqual(props["author"], "Author " + idx);
+        assert.strictEqual(props["title"], "Book " + idx);
     });
     query = new Query(store, "select a.name as author from Author as a where a.id < 6");
     result = query.select();
     assert.strictEqual(result.length, 5);
-    result.forEach(function(props, idx) {
-        assert.isUndefined(props.name);
-        assert.strictEqual(props.author, "Author " + idx);
+    result.forEach(function(name, idx) {
+        assert.strictEqual(name, "Author " + idx);
     });
     query = new Query(store, "select count(Author.id) as cnt from Author");
     result = query.select();
     assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].cnt, 10);
+    assert.strictEqual(result[0], 10);
     query = new Query(store, "select count(aut.id) as cnt from Author as aut");
     result = query.select();
     assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].cnt, 10);
+    assert.strictEqual(result[0], 10);
+    query = new Query(store, "select Author.name as author, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id")
+    result = query.select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(props, idx) {
+        assert.strictEqual(props["author"], "Author " + idx);
+        assert.strictEqual(props["COUNT_Book.id"], 1);
+    });
+    query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.id")
+    result = query.select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(props, idx) {
+        assert.strictEqual(props["author"], "Author " + idx);
+        assert.strictEqual(props["cnt"], 1);
+    });
 };
 
 exports.testSelectAggregation = function() {
@@ -182,10 +201,10 @@ exports.testSelectAggregation = function() {
     var query = new Query(store, "select count(Book.id) from Book");
     var result = query.select();
     assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0]["COUNT_Book.id"], 10);
+    assert.strictEqual(result[0], 10);
     query = new Query(store, "select count(Book.id) as cnt from Book");
     result = query.select();
-    assert.strictEqual(result[0]["cnt"], 10);
+    assert.strictEqual(result[0], 10);
 };
 
 //start the test runner if we're called directly from command line
