@@ -445,6 +445,14 @@ exports.testAliases = function() {
         {
             "query": "select count(a.id) as authorId from Author as a",
             "sql": "SELECT COUNT(a." + column + ") AS authorId FROM $Author AS a"
+        },
+        {
+            "query": "select author from Author as author",
+            "sql": "SELECT author." + column + " FROM $Author AS author"
+        },
+        {
+            "query": "select author.* from Author as author",
+            "sql": "SELECT author.* FROM $Author AS author"
         }
     ];
     for each (var {query, sql} in queries) {

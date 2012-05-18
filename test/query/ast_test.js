@@ -381,6 +381,8 @@ exports.testSelect = function() {
     assert.isFalse(Parser.parse("select Author.id from Author").isEntityQuery());
     assert.isFalse(Parser.parse("select Author, Book from Author, Book").isEntityQuery());
     assert.isFalse(Parser.parse("select Author, Book.title from Author, Book").isEntityQuery());
+    assert.isTrue(Parser.parse("select author from Author as author").isEntityQuery());
+    assert.isTrue(Parser.parse("select author.* from Author as author").isEntityQuery());
 };
 
 //start the test runner if we're called directly from command line
