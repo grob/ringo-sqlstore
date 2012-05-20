@@ -4,8 +4,6 @@ var assert = require("assert");
 var Store = require("../../lib/sqlstore/store").Store;
 var sqlUtils = require("../../lib/sqlstore/util");
 var {Parser} = require("../../lib/sqlstore/query/parser");
-var {Resolver} = require("../../lib/sqlstore/query/ast");
-var {StringBuffer} = java.lang;
 var {SqlGenerator} = require("../../lib/sqlstore/query/sqlgenerator");
 var store = null;
 var Author = null;
@@ -476,31 +474,31 @@ exports.testComplexQueries = function() {
 
 exports.testOffset = function() {
     var tree = Parser.parse("select Author from Author offset 10");
-    var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id AS Author_id FROM $Author"));
+    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, 10);
     var visitor = new SqlGenerator(store);
-    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
 exports.testLimit = function() {
     var tree = Parser.parse("select Author from Author limit 100");
-    var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id AS Author_id FROM $Author"));
+    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
     var visitor = new SqlGenerator(store);
-    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
 exports.testRange = function() {
     var tree = Parser.parse("select Author from Author offset 10 limit 100");
-    var sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id AS Author_id FROM $Author"));
+    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
     var visitor = new SqlGenerator(store);
-    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
-    sqlBuf = new StringBuffer(getExpectedSql("SELECT $Author.id AS Author_id FROM $Author"));
+    sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    assert.strictEqual(tree.accept(visitor), sqlBuf.toString());
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
 //start the test runner if we're called directly from command line
