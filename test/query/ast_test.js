@@ -128,6 +128,16 @@ exports.testEntity = function() {
     assert.strictEqual(value.entity, "User");
 };
 
+exports.testSelectIdent = function() {
+    var rule = "selectIdent";
+    var value = Parser.parse("User.id", rule);
+    assert.strictEqual(value.entity, "User");
+    assert.strictEqual(value.property, "id");
+    value = Parser.parse("u.id", rule);
+    assert.strictEqual(value.entity, "u");
+    assert.strictEqual(value.property, "id");
+};
+
 exports.testSelectEntity = function() {
     var value = Parser.parse("User", "selectEntity");
     assert.isTrue(value instanceof ast.SelectEntity);
@@ -137,14 +147,68 @@ exports.testSelectEntity = function() {
     assert.isTrue(value.loadAggressive);
 };
 
-exports.testSelectExpressionAlias = function() {
-    var value = Parser.parse("Author.id as authorId", "selectExpression");
-    assert.isTrue(value instanceof ast.SelectExpression);
+exports.testSelectAggregation = function() {
+    var rule = "selectAggregation";
+    for each (var type in ["max", "min", "sum", "count"]) {
+        let value = Parser.parse(type + " ( User.id )", rule);
+        assert.isTrue(value instanceof ast.SelectAggregation, "Aggregation " + type);
+        assert.strictEqual(value.type, ast.SelectAggregation[type.toUpperCase()], "Aggregation " + type);
+    }
+};
+
+exports.testSelectExpression = function() {
+    var rule = "selectExpression";
+    var value;
+    // non-aliased ident
+    value = Parser.parse("Author.id", rule);
+    assert.isTrue(value instanceof ast.SelectIdent);
+    // aliased ident
+    value = Parser.parse("a.id", rule);
+    assert.isTrue(value instanceof ast.SelectIdent);
+    // result property name set
+    value = Parser.parse("Author.id as authorId", rule);
+    assert.isTrue(value instanceof ast.SelectIdent);
     assert.strictEqual(value.alias, "authorId");
-    assert.isTrue(value.expression instanceof ast.Ident);
+    value = Parser.parse("a.id as authorId", rule);
+    assert.isTrue(value instanceof ast.SelectIdent);
+    assert.strictEqual(value.alias, "authorId");
+
+    // non-aliased entity
+    value = Parser.parse("Author", rule);
+    assert.isTrue(value instanceof ast.SelectEntity);
+    value = Parser.parse("Author.*", rule);
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.isTrue(value.loadAggressive);
+    // result property name set
+    value = Parser.parse("Author as author", rule);
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.strictEqual(value.alias, "author");
+    value = Parser.parse("Author.* as author", rule);
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.strictEqual(value.alias, "author");
+    assert.isTrue(value.loadAggressive);
+
+    // aliased entity
+    value = Parser.parse("a", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectEntity);
+    value = Parser.parse("a.*", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.isTrue(value.loadAggressive);
+    // result property name set
+    value = Parser.parse("a as author", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.strictEqual(value.alias, "author");
+    value = Parser.parse("a.* as author", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectEntity);
+    assert.strictEqual(value.alias, "author");
+    assert.isTrue(value.loadAggressive);
+
+    // aggregation
+    value = Parser.parse("count(Author.id)", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectAggregation);
     value = Parser.parse("count(Author.id) as cnt", "selectExpression");
+    assert.isTrue(value instanceof ast.SelectAggregation);
     assert.strictEqual(value.alias, "cnt");
-    assert.isTrue(value.expression instanceof ast.Aggregation);
 };
 
 exports.testIdent = function() {
@@ -322,19 +386,21 @@ exports.testSelectClause = function() {
     var value = Parser.parse("User.id", rule);
     assert.isTrue(value instanceof ast.SelectClause);
     assert.strictEqual(value.list.length, 1);
+    // multiple idents
     value = Parser.parse("User.id, User.name", rule);
     assert.strictEqual(value.list.length, 2);
-    assert.isTrue(value.list[0] instanceof ast.SelectExpression);
-    assert.isTrue(value.list[1] instanceof ast.SelectExpression);
-};
-
-exports.testAggregation = function() {
-    var rule = "aggregation";
-    for each (var type in ["max", "min", "sum", "count"]) {
-        let value = Parser.parse(type + " ( User.id )", rule);
-        assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
-        assert.strictEqual(value.type, ast.Aggregation[type.toUpperCase()], "Aggregation " + type);
-    }
+    assert.isTrue(value.list[0] instanceof ast.SelectIdent);
+    assert.isTrue(value.list[1] instanceof ast.SelectIdent);
+    // multiple entities
+    value = Parser.parse("Author, Book", rule);
+    assert.strictEqual(value.list.length, 2);
+    assert.isTrue(value.list[0] instanceof ast.SelectEntity);
+    assert.isTrue(value.list[1] instanceof ast.SelectEntity);
+    // multiple aggregations
+    value = Parser.parse("count(Author.id), min(Book.id)", rule);
+    assert.strictEqual(value.list.length, 2);
+    assert.isTrue(value.list[0] instanceof ast.SelectAggregation);
+    assert.isTrue(value.list[1] instanceof ast.SelectAggregation);
 };
 
 exports.testInnerJoinClause = function() {
@@ -374,16 +440,19 @@ exports.testRangeClause = function() {
     assert.strictEqual(value.limit, 100);
 };
 
+/*
 exports.testSelect = function() {
     assert.isTrue(Parser.parse("select Author from Author").isEntityQuery());
     assert.isTrue(Parser.parse("select Author.* from Author").isEntityQuery());
     assert.isTrue(Parser.parse("from Author").isEntityQuery());
+    assert.isTrue(Parser.parse("from Author as author").isEntityQuery());
     assert.isFalse(Parser.parse("select Author.id from Author").isEntityQuery());
     assert.isFalse(Parser.parse("select Author, Book from Author, Book").isEntityQuery());
     assert.isFalse(Parser.parse("select Author, Book.title from Author, Book").isEntityQuery());
     assert.isTrue(Parser.parse("select author from Author as author").isEntityQuery());
     assert.isTrue(Parser.parse("select author.* from Author as author").isEntityQuery());
 };
+*/
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

@@ -202,7 +202,7 @@ exports.testWithLocalAndForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book, Author where Book.authorId = :realId order by Book.id desc"
+                "query": "select Book from Book, Author where Book.authorId = :realId order by Book.id desc"
             }
         }
     });

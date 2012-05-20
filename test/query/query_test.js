@@ -129,17 +129,14 @@ exports.testSelectProperties = function() {
         assert.strictEqual(props["Book.title"], "Book " + idx);
         assert.strictEqual(props["Author.id"], idx + 1);
     });
-/*
-    // selecting more than one entity results in a property query
-    // FIXME: currently throws
+    // selecting multiple entities
     query = new Query(store, "select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6");
     result = query.select();
     assert.strictEqual(result.length, 5);
     result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book.id"], idx + 1);
-        assert.strictEqual(props["Author.id"], idx + 1);
+        assert.strictEqual(props["Book"]._id, idx + 1);
+        assert.strictEqual(props["Author"]._id, idx + 1);
     });
-*/
 };
 
 exports.testNamedParameter = function() {
@@ -185,7 +182,7 @@ exports.testAliases = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
         assert.strictEqual(props["author"], "Author " + idx);
-        assert.strictEqual(props["COUNT_Book.id"], 1);
+        assert.strictEqual(props["COUNT_Book_id"], 1);
     });
     query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.id")
     result = query.select();
