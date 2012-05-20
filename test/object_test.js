@@ -43,7 +43,7 @@ exports.setUp = function() {
     store = new Store(runner.getDbProps());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
-    Editor = store.defineEntity("Editor", MAPPING_EDITOR); 
+    Editor = store.defineEntity("Editor", MAPPING_EDITOR);
     return;
 };
 
