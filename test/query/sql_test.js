@@ -432,7 +432,7 @@ exports.testSelectExpression = function() {
     testQueries(queries, "selectExpression");
 };
 
-exports.testAliases = function() {
+    exports.testAliases = function() {
     var mapping = Author.mapping;
     var idColumn = store.dialect.quote(mapping.getMapping("id").column);
     var nameColumn = store.dialect.quote(mapping.getMapping("name").column);
@@ -452,6 +452,10 @@ exports.testAliases = function() {
         {
             "query": "select author.* from Author as author",
             "sql": "SELECT author." + idColumn + " AS author_id, author." + nameColumn + " AS author_name FROM $Author AS author"
+        },
+        {
+            "query": "from Author as author",
+            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author AS author"
         }
     ];
     for each (var {query, sql} in queries) {
