@@ -202,7 +202,7 @@ exports.testWithLocalAndForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "select Book from Book, Author where Book.authorId = :realId order by Book.id desc"
+                "query": "from Book join Author on Book.authorId = :realId order by Book.id desc"
             }
         }
     });
@@ -234,7 +234,7 @@ exports.testPartitionedCollection = function() {
                 "type": "collection",
                 "isPartitioned": true,
                 "partitionSize": 10,
-                "query": "select Book.id from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
             }
         }
     });
@@ -252,10 +252,6 @@ exports.testPartitionedCollection = function() {
     assert.strictEqual(book._id, 81);
     book = author.books.get(50);
     assert.isNotUndefined(author.books.partitions[5]);
-    for (var i=2; i<5; i+=1) {
-        assert.isUndefined(author.books.partitions[i], "Partition " + i +
-                " should be undefined");
-    }
     return;
 };
 

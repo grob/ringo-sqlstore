@@ -12,8 +12,7 @@ const MAPPING_AUTHOR = {
         "name": "string",
         "books": {
             "type": "collection",
-            "entity": "Book",
-            "foreignProperty": "author"
+            "query": "from Book where Book.author = :id"
         }
     }
 };
@@ -60,54 +59,37 @@ exports.tearDown = function() {
     return;
 };
 
-exports.testBasicCachedEntity = function() {
-    var author1 = new Author({
-        "name": "John Foo"
-    });
-    author1.save();
-    var author2 = Author.get(1);
-    assert.strictEqual(author2._id, author1._id);
-    // assert.strictEqual(author2._entity, author1._entity);
-    // change name of author1 - as long as author1 isn't saved the name of author2
-    // shouldn't change
-    author1.name = "Jane Bar";
-    assert.strictEqual(author1.name, "Jane Bar");
-    assert.notStrictEqual(author2.name, author1.name);
-    author1.save();
-    // after persisting author1 and author2 share the same name
-    assert.strictEqual(author2.name, author1.name);
-    // reversing the change should have the same effect as above
-    author1.name = "John Foo";
-    assert.strictEqual(author1.name, "John Foo");
-    assert.notStrictEqual(author2.name, author1.name);
-    author1.save();
-    assert.strictEqual(author2.name, author1.name);
-    return;
-};
-
-exports.testPersisting = function() {
+exports.testStorablePersisting = function() {
     var author = new Author({
         "name": "John Foo"
     });
     assert.isUndefined(author.books);
-    // create a book with above author and persist it - afterwards
-    // the "books"-collection of author should contain this book
+    // create a book with above author and persist it
     var book = new Book({
         "title": "My Book",
         "author": author,
         "available": true
     });
+    // Note: persisting the book also persists it's author
     book.save();
+    // author.books collection is now populated
     assert.strictEqual(author.books.length, 1);
     assert.strictEqual(author.books.get(0)._id, book._id);
-    // removing the author from the book also updates the author's "books" collection
+    author.books.add(book);
+    assert.strictEqual(author.books.length, 1);
+    assert.strictEqual(author.books.get(0)._id, book._id);
+    // removing the author from the book needs explicit removal from the author's
+    // books collection
     book.author = null;
     book.save();
+    assert.strictEqual(author.books.length, 1);
+    assert.isUndefined(author.books[0]);
+    author.books.remove(book);
     assert.strictEqual(author.books.length, 0);
     return;
 };
 
-exports.testRemoval = function() {
+exports.testStorableRemoval = function() {
     var author = new Author({
         "name": "John Foo"
     });
@@ -118,13 +100,47 @@ exports.testRemoval = function() {
     });
     book.save();
     assert.strictEqual(author._id, 1);
-    // removing author must also set the book's reference to null
     author.remove();
+    // the book's author property is null because it has never been accessed
+    // before (the _props of the storable are cleared after saving)
     assert.isNull(book.author);
+    // although removed, the author's books collection is still populated
+    // (the books still have a foreign key pointing to the removed author)
+    assert.strictEqual(author.books.length, 1);
+    // but the author's books collection now contains an undefined value
+    assert.isUndefined(author.books[0]);
+    // now explicitly remove the author from all its books
+    book.author = null;
+    book.save();
+    author.books.invalidate();
+    assert.isNull(book.author);
+    assert.strictEqual(author.books.length, 0);
     return;
+};
+
+exports.testExplicitAddToCollection = function() {
+    var author = new Author({
+        "name": "John Foo"
+    });
+    author.save();
+    assert.isNotUndefined(author.books);
+    assert.strictEqual(author.books.length, 0);
+    // create a book with above author and persist it
+    var book = new Book({
+        "title": "My Book",
+        "author": author,
+        "available": true
+    });
+    book.save();
+    // this does *not* affect the author's book collection
+    assert.strictEqual(author.books.length, 0);
+    // unless explicitly added to it
+    author.books.add(book);
+    assert.strictEqual(author.books.length, 1);
+    assert.strictEqual(author.books.get(0)._id, book._id);
 };
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-  system.exit(runner.run(exports, arguments));
+   system.exit(runner.run(exports, arguments));
 }
