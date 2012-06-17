@@ -2,7 +2,6 @@ var runner = require("./runner");
 var assert = require("assert");
 
 var {Store} = require("../lib/sqlstore/store");
-var {Query} = require("../lib/sqlstore/query/query");
 var sqlUtils = require("../lib/sqlstore/util");
 var store = null;
 var Author = null;
