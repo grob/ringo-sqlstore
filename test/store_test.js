@@ -22,6 +22,10 @@ const MAPPING_AUTHOR = {
             "type": "string",
             "column": "author_name",
             "nullable": false
+        },
+        "state": {
+            "type": "string",
+            "column": "author_state"
         }
     }
 };
@@ -71,7 +75,8 @@ exports.testCRUD = function() {
     // create
     var name = "John Doe";
     var author = new Author({
-        "name": name
+        "name": name,
+        "state": "famous"
     });
     assert.isTrue(author._key instanceof Key);
     assert.strictEqual(author._key.type, "Author");
@@ -94,6 +99,7 @@ exports.testCRUD = function() {
     // read again
     author = Author.get(1);
     assert.strictEqual(author.name, name);
+    assert.strictEqual(author.state, "famous");
 
     // remove
     author.remove();
