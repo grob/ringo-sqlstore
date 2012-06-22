@@ -66,7 +66,7 @@ exports.tearDown = function() {
 var testQueries = function(queries, startRule, nparams) {
     for each (var {query, sql, values} in queries) {
         let tree = Parser.parse(query, startRule);
-        let visitor = new SqlGenerator(store, (tree.from || {}).aliases, nparams);
+        let visitor = new SqlGenerator(store, tree.aliases, nparams);
         assert.strictEqual(tree.accept(visitor),
             getExpectedSql(sql), query);
         if (values) {
@@ -432,9 +432,10 @@ exports.testSelectExpression = function() {
     testQueries(queries, "selectExpression");
 };
 
-    exports.testAliases = function() {
+exports.testAliases = function() {
     var mapping = Author.mapping;
     var idColumn = store.dialect.quote(mapping.getMapping("id").column);
+    var authorIdColumn = store.dialect.quote(Book.mapping.getMapping("author").column);
     var nameColumn = store.dialect.quote(mapping.getMapping("name").column);
     var queries = [
         {
@@ -456,11 +457,15 @@ exports.testSelectExpression = function() {
         {
             "query": "from Author as author",
             "sql": "SELECT author." + idColumn + " AS author_id FROM $Author AS author"
+        },
+        {
+            "query": "from Author as a inner join Book as b on a.id = b.author",
+            "sql": "SELECT a." + idColumn + " AS a_id FROM $Author AS a INNER JOIN $Book AS b ON a." + idColumn + " = b." + authorIdColumn
         }
     ];
     for each (var {query, sql} in queries) {
         var tree = Parser.parse(query);
-        var visitor = new SqlGenerator(store, tree.from.aliases);
+        var visitor = new SqlGenerator(store, tree.aliases);
         var queryStr = tree.accept(visitor);
         assert.strictEqual(queryStr, getExpectedSql(sql), query);
     }

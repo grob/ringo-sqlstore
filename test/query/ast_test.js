@@ -125,7 +125,7 @@ exports.testParameterValue = function() {
 exports.testEntity = function() {
     var value = Parser.parse("User", "entity");
     assert.isTrue(value instanceof ast.Entity);
-    assert.strictEqual(value.entity, "User");
+    assert.strictEqual(value.name, "User");
 };
 
 exports.testSelectIdent = function() {
@@ -141,7 +141,7 @@ exports.testSelectIdent = function() {
 exports.testSelectEntity = function() {
     var value = Parser.parse("User", "selectEntity");
     assert.isTrue(value instanceof ast.SelectEntity);
-    assert.strictEqual(value.entity, "User");
+    assert.strictEqual(value.name, "User");
     assert.isFalse(value.loadAggressive);
     value = Parser.parse("User.*", "selectEntity");
     assert.isTrue(value.loadAggressive);
@@ -168,10 +168,10 @@ exports.testSelectExpression = function() {
     // result property name set
     value = Parser.parse("Author.id as authorId", rule);
     assert.isTrue(value instanceof ast.SelectIdent);
-    assert.strictEqual(value.alias, "authorId");
+    assert.strictEqual(value.resultName, "authorId");
     value = Parser.parse("a.id as authorId", rule);
     assert.isTrue(value instanceof ast.SelectIdent);
-    assert.strictEqual(value.alias, "authorId");
+    assert.strictEqual(value.resultName, "authorId");
 
     // non-aliased entity
     value = Parser.parse("Author", rule);
@@ -182,10 +182,10 @@ exports.testSelectExpression = function() {
     // result property name set
     value = Parser.parse("Author as author", rule);
     assert.isTrue(value instanceof ast.SelectEntity);
-    assert.strictEqual(value.alias, "author");
+    assert.strictEqual(value.resultName, "author");
     value = Parser.parse("Author.* as author", rule);
     assert.isTrue(value instanceof ast.SelectEntity);
-    assert.strictEqual(value.alias, "author");
+    assert.strictEqual(value.resultName, "author");
     assert.isTrue(value.loadAggressive);
 
     // aliased entity
@@ -197,10 +197,10 @@ exports.testSelectExpression = function() {
     // result property name set
     value = Parser.parse("a as author", "selectExpression");
     assert.isTrue(value instanceof ast.SelectEntity);
-    assert.strictEqual(value.alias, "author");
+    assert.strictEqual(value.resultName, "author");
     value = Parser.parse("a.* as author", "selectExpression");
     assert.isTrue(value instanceof ast.SelectEntity);
-    assert.strictEqual(value.alias, "author");
+    assert.strictEqual(value.resultName, "author");
     assert.isTrue(value.loadAggressive);
 
     // aggregation
@@ -208,7 +208,7 @@ exports.testSelectExpression = function() {
     assert.isTrue(value instanceof ast.SelectAggregation);
     value = Parser.parse("count(Author.id) as cnt", "selectExpression");
     assert.isTrue(value instanceof ast.SelectAggregation);
-    assert.strictEqual(value.alias, "cnt");
+    assert.strictEqual(value.resultName, "cnt");
 };
 
 exports.testIdent = function() {
@@ -359,26 +359,15 @@ exports.testWhereClause = function() {
     assert.isTrue(value.value instanceof ast.Expression);
 };
 
-exports.testFromExpression = function() {
-    var rule = "fromExpression";
-    var value = Parser.parse("Author", rule);
-    assert.isTrue(value instanceof ast.FromExpression);
-    assert.isTrue(value.entity instanceof ast.Entity);
-    assert.strictEqual(value.alias, null);
-    value = Parser.parse("Author as author", rule);
-    assert.isTrue(value instanceof ast.FromExpression);
-    assert.strictEqual(value.alias, "author");
-};
-
 exports.testFromClause = function() {
     var rule = "fromClause";
     var value = Parser.parse("from Author", rule);
     assert.isTrue(value instanceof ast.FromClause);
-    assert.isTrue(value.list[0] instanceof ast.FromExpression);
+    assert.isTrue(value.list[0] instanceof ast.Entity);
     assert.strictEqual(value.list.length, 1);
     value = Parser.parse("from Author, Book", rule);
     assert.strictEqual(value.list.length, 2);
-    assert.isTrue(value.list[1] instanceof ast.FromExpression);
+    assert.isTrue(value.list[1] instanceof ast.Entity);
 };
 
 exports.testSelectClause = function() {
@@ -403,22 +392,22 @@ exports.testSelectClause = function() {
     assert.isTrue(value.list[1] instanceof ast.SelectAggregation);
 };
 
-exports.testInnerJoinClause = function() {
+exports.testInnerJoin = function() {
     var rule = "innerJoin";
     var value = Parser.parse("inner join Book on Author.id = Book.author", rule);
-    assert.isTrue(value instanceof ast.InnerJoinClause);
-    assert.strictEqual(value.entities.length, 1);
-    assert.isTrue(value.entities[0] instanceof ast.Entity);
+    assert.isTrue(value instanceof ast.InnerJoin);
+    assert.isTrue(value.entity instanceof ast.Entity);
     assert.isTrue(value.predicate instanceof ast.Expression);
+    value = Parser.parse("inner join Book as b on Author.id = b.author", rule);
+    assert.strictEqual(value.entity.alias, "b");
 };
 
-exports.testOuterJoinClause = function() {
+exports.testOuterJoin = function() {
     var rule = "outerJoin";
     var value = Parser.parse("left outer join Book on Author.id = Book.author", rule);
-    assert.isTrue(value instanceof ast.OuterJoinClause);
+    assert.isTrue(value instanceof ast.OuterJoin);
     assert.strictEqual(value.side, "LEFT");
-    assert.strictEqual(value.entities.length, 1);
-    assert.isTrue(value.entities[0] instanceof ast.Entity);
+    assert.isTrue(value.entity instanceof ast.Entity);
     assert.isTrue(value.predicate instanceof ast.Expression);
 };
 
