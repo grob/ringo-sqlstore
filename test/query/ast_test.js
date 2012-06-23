@@ -1,67 +1,8 @@
 var runner = require("../runner");
 var assert = require("assert");
 
-var Store = require("../../lib/sqlstore/store").Store;
-var sqlUtils = require("../../lib/sqlstore/util");
 var {Parser} = require("../../lib/sqlstore/query/parser");
 var ast = require("../../lib/sqlstore/query/ast");
-var store = null;
-var Author = null;
-var Book = null;
-
-const MAPPING_AUTHOR = {
-    "table": "T_AUTHOR",
-    "id": {
-        "column": "AUTHOR_ID"
-    },
-    "properties": {
-        "name": {
-            "column": "AUTHOR_NAME",
-            "type": "string"
-        }
-    }
-};
-
-const MAPPING_BOOK = {
-    "table": "T_BOOK",
-    "id": {
-        "column": "BOOK_ID"
-    },
-    "properties": {
-        "title": {
-            "column": "BOOK_TITLE",
-            "type": "string"
-        },
-        "author": {
-            "column": "BOOK_F_AUTHOR",
-            "type": "object",
-            "entity": "Author"
-        }
-    }
-};
-
-exports.setUp = function() {
-    store = new Store(runner.getDbProps());
-    Author = store.defineEntity("Author", MAPPING_AUTHOR);
-    Book = store.defineEntity("Book", MAPPING_BOOK);
-    return;
-};
-
-exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
-    store = null;
-    Author = null;
-    Book = null;
-    return;
-};
 
 exports.testStringValue = function() {
     var rule = "value_string";
@@ -126,6 +67,8 @@ exports.testEntity = function() {
     var value = Parser.parse("User", "entity");
     assert.isTrue(value instanceof ast.Entity);
     assert.strictEqual(value.name, "User");
+    value = Parser.parse("User as u", "entity");
+    assert.strictEqual(value.alias, "u");
 };
 
 exports.testSelectIdent = function() {
@@ -392,6 +335,17 @@ exports.testSelectClause = function() {
     assert.isTrue(value.list[1] instanceof ast.SelectAggregation);
 };
 
+exports.testJoinClause = function() {
+    var rule = "joinClause";
+    var value = Parser.parse("join Book on Author.id = Book.author", rule);
+    assert.isTrue(value instanceof ast.JoinClause);
+    assert.strictEqual(value.length, 1);
+    assert.isTrue(value.get(0) instanceof ast.InnerJoin);
+    // multiple joins
+    value = Parser.parse("join Book on Author.id = Book.author join Store on Book.store = Store.id", rule);
+    assert.strictEqual(value.length, 2);
+};
+
 exports.testInnerJoin = function() {
     var rule = "innerJoin";
     var value = Parser.parse("inner join Book on Author.id = Book.author", rule);
@@ -428,20 +382,6 @@ exports.testRangeClause = function() {
     assert.strictEqual(value.offset, 10);
     assert.strictEqual(value.limit, 100);
 };
-
-/*
-exports.testSelect = function() {
-    assert.isTrue(Parser.parse("select Author from Author").isEntityQuery());
-    assert.isTrue(Parser.parse("select Author.* from Author").isEntityQuery());
-    assert.isTrue(Parser.parse("from Author").isEntityQuery());
-    assert.isTrue(Parser.parse("from Author as author").isEntityQuery());
-    assert.isFalse(Parser.parse("select Author.id from Author").isEntityQuery());
-    assert.isFalse(Parser.parse("select Author, Book from Author, Book").isEntityQuery());
-    assert.isFalse(Parser.parse("select Author, Book.title from Author, Book").isEntityQuery());
-    assert.isTrue(Parser.parse("select author from Author as author").isEntityQuery());
-    assert.isTrue(Parser.parse("select author.* from Author as author").isEntityQuery());
-};
-*/
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
