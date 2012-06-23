@@ -383,6 +383,12 @@ exports.testRangeClause = function() {
     assert.strictEqual(value.limit, 100);
 };
 
+exports.testDistinct = function() {
+    var value = Parser.parse("select distinct a from Author as a");
+    assert.isTrue(value instanceof ast.Select);
+    assert.isTrue(value.isDistinct);
+};
+
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
     system.exit(runner.run(exports, arguments));

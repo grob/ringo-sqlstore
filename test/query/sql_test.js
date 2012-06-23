@@ -510,6 +510,17 @@ exports.testRange = function() {
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
+exports.testDistinct = function() {
+    var mapping = Author.mapping;
+    var idColumn = store.dialect.quote(mapping.getMapping("id").column);
+    var tree = Parser.parse("select distinct a from Author as a");
+    var sql = getExpectedSql("SELECT DISTINCT a." + idColumn +
+            " AS a_id FROM $Author AS a");
+    var visitor = new SqlGenerator(store, tree.aliases);
+    assert.strictEqual(tree.accept(visitor), sql);
+};
+
+
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
     system.exit(runner.run(exports, arguments));
