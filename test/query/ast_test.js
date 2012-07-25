@@ -96,6 +96,8 @@ exports.testSelectAggregation = function() {
         let value = Parser.parse(type + " ( User.id )", rule);
         assert.isTrue(value instanceof ast.SelectAggregation, "Aggregation " + type);
         assert.strictEqual(value.type, ast.SelectAggregation[type.toUpperCase()], "Aggregation " + type);
+        value = Parser.parse(type + " (distinct User.id )", rule);
+        assert.isTrue(value.isDistinct);
     }
 };
 
