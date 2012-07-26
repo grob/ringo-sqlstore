@@ -90,14 +90,22 @@ exports.testSelectEntity = function() {
     assert.isTrue(value.loadAggressive);
 };
 
+exports.testAggregation = function() {
+    var rule = "aggregation";
+    for each (var type in ["max", "min", "sum", "count"]) {
+        let value = Parser.parse(type + " ( User.id )", rule);
+        assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
+        assert.strictEqual(value.type, ast.Aggregation[type.toUpperCase()], "Aggregation " + type);
+        value = Parser.parse(type + " (distinct User.id )", rule);
+        assert.isTrue(value.isDistinct);
+    }
+};
+
 exports.testSelectAggregation = function() {
     var rule = "selectAggregation";
     for each (var type in ["max", "min", "sum", "count"]) {
         let value = Parser.parse(type + " ( User.id )", rule);
         assert.isTrue(value instanceof ast.SelectAggregation, "Aggregation " + type);
-        assert.strictEqual(value.type, ast.SelectAggregation[type.toUpperCase()], "Aggregation " + type);
-        value = Parser.parse(type + " (distinct User.id )", rule);
-        assert.isTrue(value.isDistinct);
     }
 };
 
@@ -294,7 +302,12 @@ exports.testHavingClause = function() {
     var rule = "havingClause";
     var value = Parser.parse("having Author.id > 10", rule);
     assert.isTrue(value instanceof ast.HavingClause);
-    assert.isTrue(value.value instanceof ast.Expression);
+    assert.isTrue(value.value instanceof ast.Condition);
+    assert.isTrue(value.value.left instanceof ast.Ident);
+    assert.isTrue(value.value.right instanceof ast.Comparison);
+    var value = Parser.parse("having max(Author.id) > 10", rule);
+    assert.isTrue(value.value.left instanceof ast.Aggregation);
+    assert.strictEqual(value.value.left.type, ast.Aggregation.MAX);
 };
 
 exports.testWhereClause = function() {

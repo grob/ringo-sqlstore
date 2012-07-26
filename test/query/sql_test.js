@@ -130,6 +130,10 @@ exports.testAggregation = function() {
         {
             "query": "select count(Author.id) from Author",
             "sql": "SELECT COUNT($Author.id) AS COUNT_Author_id FROM $Author"
+        },
+        {
+            "query": "select count(distinct Author.id) from Author",
+            "sql": "SELECT COUNT(DISTINCT $Author.id) AS COUNT_Author_id FROM $Author"
         }
     ];
 
@@ -336,6 +340,11 @@ exports.testHavingClause = function() {
         {
             "query": "having Author.id > 10",
             "sql": "HAVING $Author.id > ?",
+            "params": [10]
+        },
+        {
+            "query": "having max(Author.id) > 10",
+            "sql": "HAVING MAX($Author.id) > ?",
             "params": [10]
         }
     ];
