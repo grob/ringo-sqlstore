@@ -346,6 +346,11 @@ exports.testHavingClause = function() {
             "query": "having max(Author.id) > 10",
             "sql": "HAVING MAX($Author.id) > ?",
             "params": [10]
+        },
+        {
+            "query": "having max(Author.id) > 10 and min(Author.id) < 20",
+            "sql": "HAVING (MAX($Author.id) > ? AND MIN($Author.id) < ?)",
+            "params": [10, 20]
         }
     ];
 

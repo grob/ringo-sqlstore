@@ -302,12 +302,21 @@ exports.testHavingClause = function() {
     var rule = "havingClause";
     var value = Parser.parse("having Author.id > 10", rule);
     assert.isTrue(value instanceof ast.HavingClause);
-    assert.isTrue(value.value instanceof ast.Condition);
-    assert.isTrue(value.value.left instanceof ast.Ident);
-    assert.isTrue(value.value.right instanceof ast.Comparison);
+    assert.isTrue(value.value instanceof ast.Expression);
+    assert.strictEqual(value.value.andConditions.length, 1);
+    var condition = value.value.andConditions.conditions[0];
+    assert.isTrue(condition.left instanceof ast.Ident);
+    assert.isTrue(condition.right instanceof ast.Comparison);
     var value = Parser.parse("having max(Author.id) > 10", rule);
-    assert.isTrue(value.value.left instanceof ast.Aggregation);
-    assert.strictEqual(value.value.left.type, ast.Aggregation.MAX);
+    condition = value.value.andConditions.conditions[0];
+    assert.isTrue(condition.left instanceof ast.Aggregation);
+    assert.strictEqual(condition.left.type, ast.Aggregation.MAX);
+    // multiple having conditions
+    value = Parser.parse("having max(Author.id) > 10 and min(Author.id) < 20", rule);
+    assert.strictEqual(value.value.andConditions.length, 2);
+    for each (let condition in value.value.andConditions.conditions) {
+        assert.isTrue(condition.left instanceof ast.Aggregation);
+    }
 };
 
 exports.testWhereClause = function() {
