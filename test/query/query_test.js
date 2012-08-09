@@ -191,6 +191,9 @@ exports.testAliases = function() {
         assert.strictEqual(props["author"], "Author " + idx);
         assert.strictEqual(props["cnt"], 1);
     });
+    query = new Query(store, "select a as author, b as book from Author as a inner join Book as b on a.id = b.author");
+    result = query.select();
+    assert.strictEqual(result.length, 10);
 };
 
 exports.testSelectAggregation = function() {

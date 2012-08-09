@@ -369,7 +369,7 @@ exports.testFromClause = function() {
         },
         {
             "query": "from Author as author, Book as book",
-            "sql": "FROM $Author AS author, $Book AS book"
+            "sql": "FROM $Author author, $Book book"
         }
     ];
 
@@ -454,27 +454,27 @@ exports.testAliases = function() {
     var queries = [
         {
             "query": "select a.id as authorId from Author as a",
-            "sql": "SELECT a." + idColumn + " AS authorId FROM $Author AS a"
+            "sql": "SELECT a." + idColumn + " AS authorId FROM $Author a"
         },
         {
             "query": "select count(a.id) as authorId from Author as a",
-            "sql": "SELECT COUNT(a." + idColumn + ") AS authorId FROM $Author AS a"
+            "sql": "SELECT COUNT(a." + idColumn + ") AS authorId FROM $Author a"
         },
         {
             "query": "select author from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author AS author"
+            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author author"
         },
         {
             "query": "select author.* from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id, author." + nameColumn + " AS author_name FROM $Author AS author"
+            "sql": "SELECT author." + idColumn + " AS author_id, author." + nameColumn + " AS author_name FROM $Author author"
         },
         {
             "query": "from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author AS author"
+            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author author"
         },
         {
             "query": "from Author as a inner join Book as b on a.id = b.author",
-            "sql": "SELECT a." + idColumn + " AS a_id FROM $Author AS a INNER JOIN $Book AS b ON a." + idColumn + " = b." + authorIdColumn
+            "sql": "SELECT a." + idColumn + " AS a_id FROM $Author a INNER JOIN $Book b ON a." + idColumn + " = b." + authorIdColumn
         }
     ];
     for each (var {query, sql} in queries) {
@@ -529,7 +529,7 @@ exports.testDistinct = function() {
     var idColumn = store.dialect.quote(mapping.getMapping("id").column);
     var tree = Parser.parse("select distinct a from Author as a");
     var sql = getExpectedSql("SELECT DISTINCT a." + idColumn +
-            " AS a_id FROM $Author AS a");
+            " AS a_id FROM $Author a");
     var visitor = new SqlGenerator(store, tree.aliases);
     assert.strictEqual(tree.accept(visitor), sql);
 };
