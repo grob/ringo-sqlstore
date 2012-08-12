@@ -85,28 +85,53 @@ var getExpectedSql = function(str) {
     })
 };
 
+exports.testExpression = function() {
+    var queries = [
+        {
+            "query": "Author.id",
+            "sql": "$Author.id"
+        },
+        {
+            "query": "Author.id - 2",
+            "sql": "($Author.id - ?)",
+            "values": [{"type": "long", "value": 2}]
+        },
+        {
+            "query": "Author.id + 2",
+            "sql": "($Author.id + ?)",
+            "values": [{"type": "long", "value": 2}]
+        }
+    ];
+
+    testQueries(queries);
+};
+
 exports.testSelectClause = function() {
     var queries = [
         {
             "query": "select Author from Author",
-            "sql": "SELECT $Author.id AS Author_id FROM $Author"
+            "sql": "SELECT $Author.id FROM $Author"
         },
         {
             "query": "select Author.name from Author",
-            "sql": "SELECT $Author.name AS Author_name FROM $Author"
+            "sql": "SELECT $Author.name FROM $Author"
         },
         {
             "query": "select Author.* from Author",
-            "sql": "SELECT $Author.id AS Author_id, $Author.name AS Author_name FROM $Author"
+            "sql": "SELECT $Author.id, $Author.name FROM $Author"
+        },
+        {
+            "query": "select Author.name, max(Author.id) - min(Author.id) as authors from Author",
+            "sql": "SELECT $Author.name, (MAX($Author.id) - MIN($Author.id)) FROM $Author"
         },
         // simple select
         {
             "query": "from Author",
-            "sql": "SELECT $Author.id AS Author_id FROM $Author"
+            "sql": "SELECT $Author.id FROM $Author"
         },
         {
             "query": "from Author, Book",
-            "sql": "SELECT $Author.id AS Author_id, $Book.id AS Book_id FROM $Author, $Book"
+            "sql": "SELECT $Author.id, $Book.id FROM $Author, $Book"
         }
     ];
 
@@ -117,23 +142,23 @@ exports.testAggregation = function() {
     var queries = [
         {
             "query": "select max(Author.id) from Author",
-            "sql": "SELECT MAX($Author.id) AS MAX_Author_id FROM $Author"
+            "sql": "SELECT MAX($Author.id) FROM $Author"
         },
         {
             "query": "select min(Author.id) from Author",
-            "sql": "SELECT MIN($Author.id) AS MIN_Author_id FROM $Author"
+            "sql": "SELECT MIN($Author.id) FROM $Author"
         },
         {
             "query": "select sum(Author.id) from Author",
-            "sql": "SELECT SUM($Author.id) AS SUM_Author_id FROM $Author"
+            "sql": "SELECT SUM($Author.id) FROM $Author"
         },
         {
             "query": "select count(Author.id) from Author",
-            "sql": "SELECT COUNT($Author.id) AS COUNT_Author_id FROM $Author"
+            "sql": "SELECT COUNT($Author.id) FROM $Author"
         },
         {
             "query": "select count(distinct Author.id) from Author",
-            "sql": "SELECT COUNT(DISTINCT $Author.id) AS COUNT_Author_id FROM $Author"
+            "sql": "SELECT COUNT(DISTINCT $Author.id) FROM $Author"
         }
     ];
 
@@ -145,15 +170,15 @@ exports.testWhereClause = function() {
         // testing default entity
         {
             "query": "from Author where Author.id = 1",
-            "sql": "SELECT $Author.id AS Author_id FROM $Author WHERE $Author.id = ?"
+            "sql": "SELECT $Author.id FROM $Author WHERE $Author.id = ?"
         },
         {
             "query": "from Author, Book where Author.id = 1",
-            "sql": "SELECT $Author.id AS Author_id, $Book.id AS Book_id FROM $Author, $Book WHERE $Author.id = ?"
+            "sql": "SELECT $Author.id, $Book.id FROM $Author, $Book WHERE $Author.id = ?"
         },
         {
             "query": "from Book, Author where Book.title = 'test'",
-            "sql": "SELECT $Book.id AS Book_id, $Author.id AS Author_id FROM $Book, $Author WHERE $Book.title = ?"
+            "sql": "SELECT $Book.id, $Author.id FROM $Book, $Author WHERE $Book.title = ?"
         }
     ];
 
@@ -245,16 +270,16 @@ exports.testInCondition = function() {
         },
         {
             "query": 'in ( select Author.id from Author)',
-            "sql": "IN (SELECT $Author.id AS Author_id FROM $Author)"
+            "sql": "IN (SELECT $Author.id FROM $Author)"
         },
         {
             "query": 'in ( select Author.id from Author where (Author.id = 123))',
-            "sql": "IN (SELECT $Author.id AS Author_id FROM $Author WHERE $Author.id = ?)",
+            "sql": "IN (SELECT $Author.id FROM $Author WHERE $Author.id = ?)",
             "params": [123]
         },
         {
             "query": 'in ( select Author.id from Author where Author.id = 123 or Author.name like "John%")',
-            "sql": "IN (SELECT $Author.id AS Author_id FROM $Author WHERE ($Author.id = ? OR $Author.name LIKE ?))",
+            "sql": "IN (SELECT $Author.id FROM $Author WHERE ($Author.id = ? OR $Author.name LIKE ?))",
             "params": [123, "John%"]
         }
     ];
@@ -435,12 +460,24 @@ exports.testNamedParameter = function() {
 exports.testSelectExpression = function() {
     var queries = [
         {
+            "query": "Author.id",
+            "sql": "$Author.id"
+        },
+        {
+            "query": "Author.id authorId",
+            "sql": "$Author.id"
+        },
+        {
             "query": "Author.id as authorId",
-            "sql": "$Author.id AS authorId"
+            "sql": "$Author.id"
         },
         {
             "query": "count( Author.id ) as cnt",
-            "sql": "COUNT($Author.id) AS cnt"
+            "sql": "COUNT($Author.id)"
+        },
+        {
+            "query": "max(Author.id) - min(Author.id) as authors",
+            "sql": "(MAX($Author.id) - MIN($Author.id))"
         }
     ];
     testQueries(queries, "selectExpression");
@@ -454,27 +491,31 @@ exports.testAliases = function() {
     var queries = [
         {
             "query": "select a.id as authorId from Author as a",
-            "sql": "SELECT a." + idColumn + " AS authorId FROM $Author a"
+            "sql": "SELECT a." + idColumn + " FROM $Author a"
         },
         {
             "query": "select count(a.id) as authorId from Author as a",
-            "sql": "SELECT COUNT(a." + idColumn + ") AS authorId FROM $Author a"
+            "sql": "SELECT COUNT(a." + idColumn + ") FROM $Author a"
         },
         {
             "query": "select author from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author author"
+            "sql": "SELECT author." + idColumn + " FROM $Author author"
         },
         {
             "query": "select author.* from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id, author." + nameColumn + " AS author_name FROM $Author author"
+            "sql": "SELECT author." + idColumn + ", author." + nameColumn + " FROM $Author author"
+        },
+        {
+            "query": "select Author.* as author from Author",
+            "sql": "SELECT $Author.id, $Author.name FROM $Author"
         },
         {
             "query": "from Author as author",
-            "sql": "SELECT author." + idColumn + " AS author_id FROM $Author author"
+            "sql": "SELECT author." + idColumn + " FROM $Author author"
         },
         {
             "query": "from Author as a inner join Book as b on a.id = b.author",
-            "sql": "SELECT a." + idColumn + " AS a_id FROM $Author a INNER JOIN $Book b ON a." + idColumn + " = b." + authorIdColumn
+            "sql": "SELECT a." + idColumn + " FROM $Author a INNER JOIN $Book b ON a." + idColumn + " = b." + authorIdColumn
         }
     ];
     for each (var {query, sql} in queries) {
@@ -489,7 +530,7 @@ exports.testComplexQueries = function() {
     var queries = [
         {
             "query": "select Author.name, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id order by Author.name",
-            "sql": "SELECT $Author.name AS Author_name, COUNT($Book.id) AS COUNT_Book_id FROM $Author, $Book WHERE $Book.author = $Author.id GROUP BY $Author.id ORDER BY $Author.name ASC"
+            "sql": "SELECT $Author.name, COUNT($Book.id) FROM $Author, $Book WHERE $Book.author = $Author.id GROUP BY $Author.id ORDER BY $Author.name ASC"
         }
     ];
     testQueries(queries, undefined);
@@ -497,7 +538,7 @@ exports.testComplexQueries = function() {
 
 exports.testOffset = function() {
     var tree = Parser.parse("select Author from Author offset 10");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
+    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, 10);
     var visitor = new SqlGenerator(store);
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
@@ -505,7 +546,7 @@ exports.testOffset = function() {
 
 exports.testLimit = function() {
     var tree = Parser.parse("select Author from Author limit 100");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
+    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
     var visitor = new SqlGenerator(store);
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
@@ -513,13 +554,13 @@ exports.testLimit = function() {
 
 exports.testRange = function() {
     var tree = Parser.parse("select Author from Author offset 10 limit 100");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
+    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
     var visitor = new SqlGenerator(store);
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
-    sqlBuf = [getExpectedSql("SELECT $Author.id AS Author_id FROM $Author")];
+    sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
@@ -529,7 +570,7 @@ exports.testDistinct = function() {
     var idColumn = store.dialect.quote(mapping.getMapping("id").column);
     var tree = Parser.parse("select distinct a from Author as a");
     var sql = getExpectedSql("SELECT DISTINCT a." + idColumn +
-            " AS a_id FROM $Author a");
+            " FROM $Author a");
     var visitor = new SqlGenerator(store, tree.aliases);
     assert.strictEqual(tree.accept(visitor), sql);
 };
