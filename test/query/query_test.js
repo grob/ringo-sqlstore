@@ -17,6 +17,10 @@ const MAPPING_AUTHOR = {
         "name": {
             "column": "AUTHOR_NAME",
             "type": "string"
+        },
+        "books": {
+            "type": "collection",
+            "query": "from Book b where b.author = :id"
         }
     }
 };
@@ -107,6 +111,7 @@ exports.testSelectEntityAggressive = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
+        assert.isTrue(book.author instanceof Author);
         assert.strictEqual(book._id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
@@ -116,6 +121,10 @@ exports.testSelectEntityAggressive = function() {
     result.forEach(function(obj, idx) {
         assert.isTrue(obj.Book instanceof Book);
         assert.isTrue(obj.Author instanceof Author);
+        assert.strictEqual(obj.Book._id, idx + 1);
+        assert.strictEqual(obj.Book.title, "Book " + idx);
+        assert.strictEqual(obj.Book.author._id, obj.Author._id);
+        assert.strictEqual(obj.Author._id, idx + 1);
     });
 };
 
