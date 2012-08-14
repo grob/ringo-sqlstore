@@ -3,7 +3,6 @@ var assert = require("assert");
 
 var Store = require("../../lib/sqlstore/store").Store;
 var sqlUtils = require("../../lib/sqlstore/util");
-var {Parser} = require("../../lib/sqlstore/query/parser");
 var {Query} = require("../../lib/sqlstore/query/query");
 var store = null;
 var Author = null;
@@ -18,6 +17,10 @@ const MAPPING_AUTHOR = {
         "name": {
             "column": "AUTHOR_NAME",
             "type": "string"
+        },
+        "books": {
+            "type": "collection",
+            "query": "from Book b where b.author = :id"
         }
     }
 };
@@ -92,6 +95,13 @@ exports.testSelectEntity = function() {
         assert.strictEqual(book._id, idx + 1);
         assert.isNull(book._entity);
     });
+    result = (new Query(store, "select Book as book from Book")).select();
+    assert.strictEqual(result.length, 10);
+    // alias is ignored if only one result
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+        assert.isNull(book._entity);
+    });
 };
 
 exports.testSelectEntityAggressive = function() {
@@ -101,9 +111,20 @@ exports.testSelectEntityAggressive = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
+        assert.isTrue(book.author instanceof Author);
         assert.strictEqual(book._id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
+    });
+    result = (new Query(store, "select b.*, a.* from Book b, Author a where b.author = a.id")).select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(obj, idx) {
+        assert.isTrue(obj.Book instanceof Book);
+        assert.isTrue(obj.Author instanceof Author);
+        assert.strictEqual(obj.Book._id, idx + 1);
+        assert.strictEqual(obj.Book.title, "Book " + idx);
+        assert.strictEqual(obj.Book.author._id, obj.Author._id);
+        assert.strictEqual(obj.Author._id, idx + 1);
     });
 };
 
@@ -173,24 +194,27 @@ exports.testAliases = function() {
     result = query.select();
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], 10);
-    query = new Query(store, "select count(aut.id) as cnt from Author as aut");
+    query = new Query(store, "select count(aut.id) as cnt from Author aut");
     result = query.select();
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], 10);
-    query = new Query(store, "select Author.name as author, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id")
+    query = new Query(store, "select Author.name author, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id");
     result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
         assert.strictEqual(props["author"], "Author " + idx);
-        assert.strictEqual(props["COUNT_Book_id"], 1);
+        assert.strictEqual(props["COUNT(Book.id)"], 1);
     });
-    query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.id")
+    query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.id");
     result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
         assert.strictEqual(props["author"], "Author " + idx);
         assert.strictEqual(props["cnt"], 1);
     });
+    query = new Query(store, "select a as author, b as book from Author a inner join Book b on a.id = b.author");
+    result = query.select();
+    assert.strictEqual(result.length, 10);
 };
 
 exports.testSelectAggregation = function() {
@@ -202,6 +226,22 @@ exports.testSelectAggregation = function() {
     query = new Query(store, "select count(Book.id) as cnt from Book");
     result = query.select();
     assert.strictEqual(result[0], 10);
+};
+
+exports.testSummand = function() {
+    populate();
+    var query = new Query(store, "select Book.id + 10 from Book");
+    var result = query.select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(value, idx) {
+        assert.strictEqual(value, idx + 11);
+    });
+    query = new Query(store, "select ((Book.id + 1) % 2) from Book");
+    var result = query.select();
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(value, idx) {
+        assert.strictEqual(value, ((idx + 2) % 2));
+    });
 };
 
 //start the test runner if we're called directly from command line
