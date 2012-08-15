@@ -93,14 +93,14 @@ exports.testSelectEntity = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
-        assert.isNull(book._entity);
+        assert.isNotNull(book._entity);
     });
     result = (new Query(store, "select Book as book from Book")).select();
     assert.strictEqual(result.length, 10);
     // alias is ignored if only one result
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
-        assert.isNull(book._entity);
+        assert.isNotNull(book._entity);
     });
 };
 

@@ -10,6 +10,7 @@ exports.testLifecycle = require("./lifecycle_test");
 exports.testMapping = require("./mapping_test");
 exports.testObject = require("./object_test");
 exports.testStore = require("./store_test");
+exports.testRollback = require("./rollback_test");
 exports.testTransaction = require("./transaction_test");
 exports.testQuery = require("./query/all");
 
