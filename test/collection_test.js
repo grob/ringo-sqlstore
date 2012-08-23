@@ -219,6 +219,31 @@ exports.testWithLocalAndForeignProperty = function() {
     return;
 };
 
+exports.testAggressiveLoading = function() {
+    populate(11);
+    // this is important, because populating also populates the cache
+    store.cache.clear();
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "select b.* from Book b where b.authorId = :id"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    assert.strictEqual(author.books.length, 6);
+    for each (let book in author.books.all) {
+        assert.isNotNull(book._entity);
+    }
+};
+
 /**
  * Partitioned collection with custom partition size, ordering and filtering
  * with foreignProperty
