@@ -57,7 +57,7 @@ exports.testCommit = function() {
         author.save();
         authors.push(author);
     }
-    assert.strictEqual(transaction.inserted.length, authors.length);
+    assert.strictEqual(Object.keys(transaction.inserted).length, authors.length);
     assert.isTrue(transaction.isDirty());
     store.commitTransaction();
     assert.strictEqual(Author.all().length, 5);
@@ -80,7 +80,7 @@ exports.testBeginTransaction = function() {
         author.save();
         authors.push(author);
     }
-    assert.strictEqual(transaction.inserted.length, authors.length);
+    assert.strictEqual(Object.keys(transaction.inserted).length, authors.length);
     assert.isTrue(transaction.isDirty());
     assert.strictEqual(Author.all().length, 5);
     store.commitTransaction();
@@ -95,7 +95,7 @@ exports.testBeginTransaction = function() {
         author.remove();
     });
     assert.isTrue(transaction.isDirty());
-    assert.strictEqual(transaction.deleted.length, 5);
+    assert.strictEqual(Object.keys(transaction.deleted).length, 5);
     store.commitTransaction();
     assert.isNull(store.getTransaction());
 
@@ -107,7 +107,7 @@ exports.testBeginTransaction = function() {
     });
     author.save(transaction);
     assert.isTrue(transaction.isDirty());
-    assert.strictEqual(transaction.inserted.length, 1);
+    assert.strictEqual(Object.keys(transaction.inserted).length, 1);
     store.abortTransaction();
     assert.isNull(Transaction.getInstance());
     assert.strictEqual(Author.all().length, 0);
