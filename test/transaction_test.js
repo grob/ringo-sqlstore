@@ -157,6 +157,69 @@ exports.testConcurrentInserts = function() {
     return;
 };
 
+exports.testInsertIsolation = function() {
+    store.beginTransaction();
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    // the above is not visible for other threads
+    assert.isNull(spawn(function() {
+        return Author.get(1);
+    }).get());
+    // nor is the storable's _entity in cache
+    assert.isFalse(store.cache.containsKey(author._key.getCacheKey()));
+    store.commitTransaction();
+    // after commit the storable is visible and it's _entity cached
+    assert.isTrue(store.cache.containsKey(author._key.getCacheKey()));
+    assert.isTrue(author._key.equals(spawn(function() {
+        return Author.get(1)._key;
+    }).get()));
+};
+
+exports.testUpdateIsolation = function() {
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    store.beginTransaction();
+    author.name = "Jane Foo";
+    author.save();
+    // the above is not visible for other threads
+    assert.strictEqual(spawn(function() {
+        return Author.get(1).name;
+    }).get(), "John Doe");
+    // nor is the change above in cache
+    assert.strictEqual(store.cache.get(author._key.getCacheKey())[1].author_name, "John Doe");
+    store.commitTransaction();
+    // after commit the storable is visible and it's _entity cached
+    assert.strictEqual(store.cache.get(author._key.getCacheKey())[1].author_name, "Jane Foo");
+    assert.strictEqual(spawn(function() {
+        return Author.get(1).name;
+    }).get(), "Jane Foo");
+};
+
+exports.testRemoveIsolation = function() {
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    store.beginTransaction();
+    author.remove();
+    // the above is not visible for other threads
+    assert.isNotNull(spawn(function() {
+        return Author.get(1);
+    }).get());
+    // nor is the change above in cache
+    assert.isTrue(store.cache.containsKey(author._key.getCacheKey()));
+    store.commitTransaction();
+    // after commit the storable is gone from cache and for other threads too
+    assert.isFalse(store.cache.containsKey(author._key.getCacheKey()));
+    assert.isNull(spawn(function() {
+        return Author.get(1);
+    }).get());
+};
+
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
