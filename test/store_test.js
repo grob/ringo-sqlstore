@@ -62,12 +62,10 @@ exports.testKey = function() {
     var key = new Key("Author", 1);
     assert.strictEqual(key.type, "Author");
     assert.strictEqual(key.id, 1);
-    assert.isTrue(key.isPersistent());
-    // transient key
-    key = new Key("Author", null);
-    assert.isFalse(key.isPersistent());
-    key = new Key("Author");
-    assert.isFalse(key.isPersistent());
+    // trying to overwrite id must throw an error
+    assert.throws(function() {
+        key.id = 2;
+    });
     return;
 };
 
