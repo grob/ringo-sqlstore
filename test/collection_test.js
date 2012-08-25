@@ -2,6 +2,7 @@ var runner = require("./runner");
 var assert = require("assert");
 
 var Store = require("../lib/sqlstore/store").Store;
+var {Collection} = require("../lib/sqlstore/collection");
 var sqlUtils = require("../lib/sqlstore/util");
 var store = null;
 var Book = null;
@@ -245,8 +246,7 @@ exports.testAggressiveLoading = function() {
 };
 
 /**
- * Partitioned collection with custom partition size, ordering and filtering
- * with foreignProperty
+ * Partitioned collection
  */
 exports.testPartitionedCollection = function() {
     populate(101);
@@ -277,7 +277,180 @@ exports.testPartitionedCollection = function() {
     assert.strictEqual(book._id, 81);
     book = author.books.get(50);
     assert.isNotUndefined(author.books.partitions[5]);
-    return;
+};
+
+exports.testReloadInTransaction = function() {
+    populate(101);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+
+    store.beginTransaction();
+    var book = new Book({
+        "title": "New Book",
+        "authorId": 1,
+        "available": true
+    });
+    book.save();
+    author.books.invalidate();
+    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    // the collection manipulation above isn't visible to other threads
+    assert.strictEqual(spawn(function() {
+        return Author.get(1).books.length;
+    }).get(), 51);
+    // but for this thread the collection already contains the added book
+    assert.strictEqual(author.books.length, 52);
+    assert.strictEqual(author.books._state, Collection.STATE_CLEAN);
+    // even when retrieving a new author instance, the above added book is
+    // contained in the collection
+    assert.strictEqual(Author.get(1).books.length, 52);
+
+    // committing the transaction will put the IDs of author.books into
+    // the store's cache
+    store.commitTransaction();
+    // after commit the ids of the above collection is stored in cache
+    var cachedIds = store.cache.get(author.books._cacheKey);
+    assert.strictEqual(cachedIds, author.books.ids);
+    // after commit the change is visible to other threads too
+    assert.strictEqual(spawn(function() {
+        return Author.get(1).books.ids;
+    }).get(), author.books.ids);
+};
+
+exports.testInvalidateInTransaction = function() {
+    populate(101);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+    // make sure the collection is cached
+    assert.strictEqual(author.books.length, 51);
+    assert.strictEqual(author.books.ids, store.cache.get(author.books._cacheKey));
+
+    store.beginTransaction();
+    var book = new Book({
+        "title": "New Book 2",
+        "authorId": 1,
+        "available": true
+    });
+    book.save();
+    author.books.invalidate();
+    assert.isTrue(store.cache.containsKey(author.books._cacheKey));
+    // cached collection is untouched
+    assert.strictEqual(store.cache.get(author.books._cacheKey).length, 51);
+    store.commitTransaction();
+    // after commit, the collection has been removed from the cache, since
+    // it hasn't been reloaded during the transaction
+    assert.isFalse(store.cache.containsKey(author.books._cacheKey));
+};
+
+exports.testRollbackWithoutReload = function() {
+    populate(101);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+    // make sure the collection is cached
+    assert.strictEqual(author.books.length, 51);
+    assert.strictEqual(author.books.ids, store.cache.get(author.books._cacheKey));
+    store.beginTransaction();
+    var book = new Book({
+        "title": "New Book 2",
+        "authorId": 1,
+        "available": true
+    });
+    book.save();
+    author.books.invalidate();
+    assert.isTrue(store.cache.containsKey(author.books._cacheKey));
+    // cached collection is untouched
+    assert.strictEqual(store.cache.get(author.books._cacheKey).length, 51);
+    store.abortTransaction();
+    // the collection is reverted to it's previous state
+    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(store.cache.get(author.books._cacheKey), author.books.ids);
+    // store's cache is untouched
+    assert.isTrue(store.cache.containsKey(author.books._cacheKey));
+    assert.strictEqual(store.cache.get(author.books._cacheKey).length, 51);
+};
+
+exports.testRollbackWithReload = function() {
+    populate(101);
+    Author = store.defineEntity("Author", {
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "books": {
+                "type": "collection",
+                "query": "from Book where Book.authorId = :id order by Book.id desc"
+            }
+        }
+    });
+    var author = new Author({
+        "name": "Author of just a bunch of books"
+    });
+    author.save();
+    // make sure the collection is cached
+    assert.strictEqual(author.books.length, 51);
+    assert.strictEqual(author.books.ids, store.cache.get(author.books._cacheKey));
+    store.beginTransaction();
+    var book = author.books.get(10);
+    book.remove();
+    author.books.invalidate();
+    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    // accessing .length reloads the collection
+    assert.strictEqual(author.books.length, 50);
+    // reloading the collection creates a new IDs array different from the one in cache
+    assert.isFalse(store.cache.get(author.books._cacheKey) === author.books.ids);
+    // the removed book isn't in collection anymore
+    assert.strictEqual(author.books.indexOf(book), -1);
+    // since we're in an open transaction, the cached collection is untouched
+    assert.strictEqual(store.cache.get(author.books._cacheKey).length, 51);
+    assert.strictEqual(store.cache.get(author.books._cacheKey).indexOf(book._id), 10);
+    // so the remove above isn't visible to other threads
+    assert.strictEqual(spawn(function() {
+        return Author.get(1).books.length;
+    }).get(), 51);
+
+    store.abortTransaction();
+    // the collection is reverted to it's previous state
+    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(store.cache.get(author.books._cacheKey), author.books.ids);
+    assert.strictEqual(store.cache.get(author.books._cacheKey).length, 51);
 };
 
 //start the test runner if we're called directly from command line

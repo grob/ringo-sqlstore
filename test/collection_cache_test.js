@@ -75,7 +75,7 @@ exports.testStorablePersisting = function() {
     // author.books collection is now populated
     assert.strictEqual(author.books.length, 1);
     assert.strictEqual(author.books.get(0)._id, book._id);
-    author.books.add(book);
+    author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
     assert.strictEqual(author.books.get(0)._id, book._id);
     // removing the author from the book needs explicit removal from the author's
@@ -84,7 +84,7 @@ exports.testStorablePersisting = function() {
     book.save();
     assert.strictEqual(author.books.length, 1);
     assert.isNotUndefined(author.books.get(0));
-    author.books.remove(book);
+    author.books.invalidate();
     assert.strictEqual(author.books.length, 0);
     // create new book and persist it - since the author's book collection has
     // been touched above, it doesn't change (still empty)
@@ -95,8 +95,7 @@ exports.testStorablePersisting = function() {
     });
     book.save();
     assert.strictEqual(author.books.length, 0);
-    // explicitly adding the book to the author's collection re-creates it
-    author.books.add(book);
+    author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
     return;
 };
@@ -122,32 +121,11 @@ exports.testStorableRemoval = function() {
     // it still has a length of 1, but contains a null value at idx 0
     assert.strictEqual(Author.get(1).books.length, 1);
     assert.isNull(Author.get(1).books.get(0));
-    // explicitly remove the book from the author's collection
-    author.books.remove(book);
+    // explicitly invalidate the collection
+    author.books.invalidate();
     assert.strictEqual(author.books.length, 0);
     assert.strictEqual(Author.get(1).books.length, 0);
     return;
-};
-
-exports.testExplicitAddToCollection = function() {
-    var author = new Author({
-        "name": "John Foo"
-    });
-    author.save();
-    assert.strictEqual(author.books.length, 0);
-    // create a book with above author and persist it
-    var book = new Book({
-        "title": "My Book",
-        "author": author,
-        "available": true
-    });
-    book.save();
-    // this does *not* affect the author's book collection
-    assert.strictEqual(author.books.length, 0);
-    // unless explicitly added to it
-    author.books.add(book);
-    assert.strictEqual(author.books.length, 1);
-    assert.strictEqual(author.books.get(0)._id, book._id);
 };
 
 //start the test runner if we're called directly from command line

@@ -115,12 +115,10 @@ exports.testBeginTransaction = function() {
 };
 
 exports.testMultipleModifications = function() {
-    store.beginTransaction();
     var author = new Author({
         "name": "John Doe"
     });
     author.save();
-    store.commitTransaction();
     store.beginTransaction();
     // step 1: modify author and save it, but don't commit the transaction
     author = Author.get(1);
@@ -169,6 +167,12 @@ exports.testInsertIsolation = function() {
     }).get());
     // nor is the storable's _entity in cache
     assert.isFalse(store.cache.containsKey(author._key.getCacheKey()));
+    // even after re-getting the storable its _entity isn't cached
+    Author.get(1);
+    assert.isFalse(store.cache.containsKey(author._key.getCacheKey()));
+    // same happens when querying for the newly created author instance
+    assert.strictEqual(store.query("from Author where Author.id = 1")[0]._id, 1);
+    assert.isFalse(store.cache.containsKey(author._key.getCacheKey()));
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
     assert.isTrue(store.cache.containsKey(author._key.getCacheKey()));
@@ -190,6 +194,12 @@ exports.testUpdateIsolation = function() {
         return Author.get(1).name;
     }).get(), "John Doe");
     // nor is the change above in cache
+    assert.strictEqual(store.cache.get(author._key.getCacheKey())[1].author_name, "John Doe");
+    // even after re-getting the storable its _entity isn't cached
+    assert.strictEqual(Author.get(1).name, "Jane Foo");
+    assert.strictEqual(store.cache.get(author._key.getCacheKey())[1].author_name, "John Doe");
+    // same happens when querying for the newly created author instance
+    assert.strictEqual(store.query("select a.name from Author a where a.id = 1")[0], "Jane Foo");
     assert.strictEqual(store.cache.get(author._key.getCacheKey())[1].author_name, "John Doe");
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
