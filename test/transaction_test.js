@@ -186,6 +186,7 @@ exports.testUpdateIsolation = function() {
         "name": "John Doe"
     });
     author.save();
+    assert.isTrue(store.cache.containsKey(author._cacheKey));
     store.beginTransaction();
     author.name = "Jane Foo";
     author.save();
@@ -199,7 +200,7 @@ exports.testUpdateIsolation = function() {
     assert.strictEqual(Author.get(1).name, "Jane Foo");
     assert.strictEqual(store.cache.get(author._cacheKey)[1].author_name, "John Doe");
     // same happens when querying for the newly created author instance
-    assert.strictEqual(store.query("select a.name from Author a where a.id = 1")[0], "Jane Foo");
+    assert.strictEqual(store.query("from Author a where a.id = 1")[0].name, "Jane Foo");
     assert.strictEqual(store.cache.get(author._cacheKey)[1].author_name, "John Doe");
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
