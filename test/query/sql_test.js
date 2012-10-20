@@ -542,6 +542,12 @@ exports.testOffset = function() {
     store.dialect.addSqlOffset(sqlBuf, 10);
     var visitor = new SqlGenerator(store);
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
+    // parameter value as offset
+    tree = Parser.parse("select Author from Author offset :offset");
+    sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    store.dialect.addSqlOffset(sqlBuf, "?");
+    visitor = new SqlGenerator(store, null, {"offset": 10});
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
 exports.testLimit = function() {
@@ -549,6 +555,12 @@ exports.testLimit = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
     var visitor = new SqlGenerator(store);
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
+    // parameter value as limit
+    tree = Parser.parse("select Author from Author limit :limit");
+    sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    store.dialect.addSqlLimit(sqlBuf, "?");
+    visitor = new SqlGenerator(store, null, {"limit": 100});
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 
@@ -562,6 +574,12 @@ exports.testRange = function() {
     tree = Parser.parse("select Author from Author limit 100 offset 10");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
+    assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
+    // parameter value as offset/limit
+    tree = Parser.parse("select Author from Author offset :offset limit :limit");
+    sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    store.dialect.addSqlRange(sqlBuf, "?", "?");
+    visitor = new SqlGenerator(store, null, {"offset": 10, "limit": 100});
     assert.strictEqual(tree.accept(visitor), sqlBuf.join(""));
 };
 

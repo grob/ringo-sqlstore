@@ -418,16 +418,23 @@ exports.testRangeClause = function() {
     assert.isTrue(value instanceof ast.RangeClause);
     assert.strictEqual(value.limit, 100);
     assert.strictEqual(value.offset, 0);
+    value = Parser.parse("limit :limit", rule);
+    assert.isTrue(value.limit instanceof ast.ParameterValue);
+    assert.strictEqual(value.limit.value, "limit");
     value = Parser.parse("offset 10", rule);
     assert.isTrue(value instanceof ast.RangeClause);
     assert.strictEqual(value.limit, 0);
     assert.strictEqual(value.offset, 10);
+    value = Parser.parse("offset :offset", rule);
+    assert.isTrue(value.offset instanceof ast.ParameterValue);
+    assert.strictEqual(value.offset.value, "offset");
     value = Parser.parse("offset 10 limit 100", rule);
     assert.strictEqual(value.offset, 10);
     assert.strictEqual(value.limit, 100);
     value = Parser.parse("limit 100 offset 10", rule);
     assert.strictEqual(value.offset, 10);
     assert.strictEqual(value.limit, 100);
+    // parameter values for offset and limit are allowed too
 };
 
 exports.testDistinct = function() {
