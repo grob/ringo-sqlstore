@@ -115,6 +115,11 @@ exports.testBasics = function() {
     assert.strictEqual(author.books.filter(function(book, idx) {
         return book._id % 2 === 0;
     }).length, 5);
+    author.books.filter(function(book, idx) {
+        return book._id % 2 === 0;
+    }).forEach(function(book) {
+        assert.isTrue(book instanceof Book);
+    });
     assert.isTrue(author.books.some(function(book) {
         return book._id === 5;
     }));
