@@ -232,6 +232,11 @@ exports.testBetweenCondition = function() {
             "params": [1, 10]
         },
         {
+            "query": "not between 1 and 10",
+            "sql": "NOT BETWEEN ? AND ?",
+            "params": [1, 10]
+        },
+        {
             "query": "between 'A' and 'D'",
             "sql": "BETWEEN ? AND ?",
             "params": ["A", "D"]
@@ -261,6 +266,11 @@ exports.testInCondition = function() {
         {
             "query": "in (1,2,3)",
             "sql": "IN (?, ?, ?)",
+            "params": [1, 2, 3]
+        },
+        {
+            "query": "not in (1,2,3)",
+            "sql": "NOT IN (?, ?, ?)",
             "params": [1, 2, 3]
         },
         {

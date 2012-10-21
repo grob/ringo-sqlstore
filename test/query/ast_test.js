@@ -208,6 +208,10 @@ exports.testBetweenCondition = function() {
     assert.isTrue(value instanceof ast.BetweenCondition);
     assert.isTrue(value.start instanceof ast.IntValue);
     assert.isTrue(value.end instanceof ast.IntValue);
+    assert.isFalse(value.isNot);
+    value = Parser.parse("not between 1 and 10", rule);
+    assert.isTrue(value instanceof ast.BetweenCondition);
+    assert.isTrue(value.isNot);
 };
 
 exports.testInCondition = function() {
@@ -215,9 +219,13 @@ exports.testInCondition = function() {
     var value = Parser.parse("in (1,2,3)", rule);
     assert.isTrue(value instanceof ast.InCondition);
     assert.strictEqual(value.values.length, 3);
+    assert.isFalse(value.isNot);
     value.values.forEach(function(val) {
         assert.isTrue(val instanceof ast.IntValue);
     });
+    value = Parser.parse("not in (1,2,3)", rule);
+    assert.isTrue(value instanceof ast.InCondition);
+    assert.isTrue(value.isNot);
 };
 
 exports.testLikeCondition = function() {
