@@ -15,5 +15,5 @@ exports.testTransaction = require("./transaction_test");
 exports.testQuery = require("./query/all");
 
 if (require.main == module.id) {
-    system.exit(runner.run(exports, arguments));
+    require("system").exit(runner.run(exports, arguments));
 }

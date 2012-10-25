@@ -169,5 +169,5 @@ exports.testAdditionalCriteria = function() {
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
-    system.exit(runner.run(exports, arguments));
+    require("system").exit(runner.run(exports, arguments));
 }

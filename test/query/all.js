@@ -6,5 +6,5 @@ exports.testQuery = require("./query_test");
 exports.testQueryJoin = require("./query_join_test");
 
 if (require.main == module.id) {
-    system.exit(runner.run(exports, arguments));
+    require("system").exit(runner.run(exports, arguments));
 }

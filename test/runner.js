@@ -21,7 +21,7 @@ function setDatabase(args) {
     if (opts.type) {
         if (config[opts.type] == undefined) {
             print("Database connection '" + opts.type + "' is not defined in config.js");
-            system.exit(-1);
+            require("system").exit(-1);
         }
         set(opts.type);
     }
