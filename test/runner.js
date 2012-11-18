@@ -1,3 +1,4 @@
+var system = require("system");
 var {Parser} = require("ringo/args");
 var config = require("./config");
 var database = "h2";
