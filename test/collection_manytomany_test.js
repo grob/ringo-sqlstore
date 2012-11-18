@@ -1,7 +1,10 @@
 var runner = require("./runner");
 var assert = require("assert");
+var system = require("system");
 
-var Store = require("../lib/sqlstore/store").Store;
+var {Store} = require("../lib/sqlstore/store");
+var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
+var {Cache} = require("../lib/sqlstore/cache");
 var sqlUtils = require("../lib/sqlstore/util");
 var store = null;
 var Author = null;
@@ -68,11 +71,11 @@ const MAPPING_RELATION = {
 };
 
 exports.setUp = function() {
-    store = new Store(runner.getDbProps());
+    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Relation = store.defineEntity("Relation", MAPPING_RELATION);
-    return;
 };
 
 exports.tearDown = function() {
@@ -86,13 +89,7 @@ exports.tearDown = function() {
             }
         }
     });
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
-    store = null;
-    Author = null;
-    Book = null;
-    Relation = null;
-    return;
+    store.close();
 };
 
 exports.testSimpleCollection = function() {

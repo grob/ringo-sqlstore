@@ -1,7 +1,10 @@
 var runner = require("../runner");
 var assert = require("assert");
+var system = require("system");
 
-var Store = require("../../lib/sqlstore/store").Store;
+var {Store} = require("../../lib/sqlstore/store");
+var {ConnectionPool} = require("../../lib/sqlstore/connectionpool");
+var {Cache} = require("../../lib/sqlstore/cache");
 var sqlUtils = require("../../lib/sqlstore/util");
 var {Query} = require("../../lib/sqlstore/query/query");
 var store = null;
@@ -65,10 +68,10 @@ var populate = function() {
 };
 
 exports.setUp = function() {
-    store = new Store(runner.getDbProps());
+    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
-    return;
 };
 
 exports.tearDown = function() {

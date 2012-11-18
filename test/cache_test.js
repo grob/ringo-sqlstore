@@ -1,10 +1,11 @@
 var assert = require("assert");
 var Cache = require("../lib/sqlstore/cache").Cache;
+var system = require("system");
 
 exports.testCache = function() {
     var cache = new Cache();
     assert.isNotNull(cache);
-    assert.strictEqual(cache.size(), 0);    
+    assert.strictEqual(cache.size(), 0);
     assert.isTrue(cache.isEmpty());
 
     // put
@@ -15,7 +16,7 @@ exports.testCache = function() {
     // containsKey
     assert.isTrue(cache.containsKey("one"));
     assert.isFalse(cache.containsKey("two"));
-    
+
     // get
     var value = cache.get("one");
     assert.strictEqual(value, 1);

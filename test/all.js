@@ -1,4 +1,5 @@
 var runner = require("./runner");
+var system = require("system");
 
 exports.testCache = require("./cache_test");
 exports.testCollectionManyToMany = require("./collection_manytomany_test");

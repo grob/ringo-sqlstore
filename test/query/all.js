@@ -1,4 +1,5 @@
 var runner = require("../runner");
+var system = require("system");
 
 exports.testAst = require("./ast_test");
 exports.testSql = require("./sql_test");

@@ -1,5 +1,6 @@
 var runner = require("../runner");
 var assert = require("assert");
+var system = require("system");
 
 var {Parser} = require("../../lib/sqlstore/query/parser");
 var ast = require("../../lib/sqlstore/query/ast");

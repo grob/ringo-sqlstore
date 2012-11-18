@@ -1,7 +1,10 @@
 var runner = require("./runner");
 var assert = require("assert");
+var system = require("system");
 
 var {Store} = require("../lib/sqlstore/store");
+var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
+var {Cache} = require("../lib/sqlstore/cache");
 var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
@@ -15,9 +18,9 @@ const MAPPING_AUTHOR = {
 };
 
 exports.setUp = function() {
-    store = new Store(runner.getDbProps());
+    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
-    return;
 };
 
 exports.tearDown = function() {
@@ -26,11 +29,7 @@ exports.tearDown = function() {
     if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
         sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
     }
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
-    store = null;
-    Author = null;
-    return;
+    store.close();
 };
 
 exports.testGetNextId = function() {

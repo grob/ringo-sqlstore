@@ -3,6 +3,7 @@ var assert = require("assert");
 var ConnectionPool = require("../lib/sqlstore/connectionpool").ConnectionPool;
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
+var system = require("system");
 
 var pool = null;
 

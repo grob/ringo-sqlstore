@@ -1,7 +1,10 @@
 var runner = require("./runner");
 var assert = require("assert");
+var system = require("system");
 
-var Store = require("../lib/sqlstore/store").Store;
+var {Store} = require("../lib/sqlstore/store");
+var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
+var {Cache} = require("../lib/sqlstore/cache");
 var Key = require("../lib/sqlstore/key").Key;
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
 var sqlUtils = require("../lib/sqlstore/util");
@@ -31,15 +34,14 @@ const MAPPING_AUTHOR = {
 };
 
 exports.setUp = function() {
-    store = new Store(runner.getDbProps());
-    assert.isNotNull(store);
+    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     assert.isTrue(Author instanceof Function);
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
     assert.strictEqual(typeof(Author.all), "function");
     assert.strictEqual(Author, store.getEntityConstructor("Author"));
-    return;
 };
 
 exports.tearDown = function() {
@@ -51,11 +53,7 @@ exports.tearDown = function() {
             sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
         }
     }
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
-    store = null;
-    Author = null;
-    return;
+    store.close();
 };
 
 exports.testKey = function() {
