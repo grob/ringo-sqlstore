@@ -72,6 +72,7 @@ exports.testAssignObject = function() {
     // author is persisted together with book instance
     assert.strictEqual(author._id, 1);
     assert.strictEqual(book.author._id, author._id);
+    assert.strictEqual(author, book.author);
     // create different book author and assign it as the book's author
     var authorTwo = new Author({
         "name": "Mr. Foo-Bar"
@@ -80,6 +81,7 @@ exports.testAssignObject = function() {
     book.save();
     // authorTwo is persisted when changes of book are
     assert.strictEqual(Author.all().length, 2);
+    assert.strictEqual(authorTwo, book.author);
     assert.strictEqual(book.author._id, authorTwo._id);
     assert.strictEqual(Book.get(book._id).author._id, authorTwo._id);
     // null out the book's author
