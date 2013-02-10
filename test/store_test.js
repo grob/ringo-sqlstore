@@ -23,12 +23,7 @@ const MAPPING_AUTHOR = {
     "properties": {
         "name": {
             "type": "string",
-            "column": "author_name",
-            "nullable": false
-        },
-        "state": {
-            "type": "string",
-            "column": "author_state"
+            "column": "author_name"
         }
     }
 };
@@ -95,13 +90,11 @@ exports.testCRUD = function() {
     // read again
     author = Author.get(1);
     assert.strictEqual(author.name, name);
-    assert.strictEqual(author.state, "famous");
 
     // remove
     author.remove();
     assert.strictEqual(Author.get(1), null);
     assert.strictEqual(Author.all().length, 0);
-    return;
 };
 
 exports.testTypes = function() {
@@ -203,7 +196,14 @@ exports.testTypes = function() {
 
     // drop the table
     sqlUtils.dropTable(store.getConnection(), store.dialect, mapping.table);
-    return;
+};
+
+exports.testNullProps = function() {
+    var author = new Author();
+    assert.isNull(author.name);
+    author.save();
+    author = Author.get(1);
+    assert.isNull(author.name);
 };
 
 //start the test runner if we're called directly from command line

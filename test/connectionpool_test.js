@@ -49,7 +49,7 @@ exports.testIsStale = function() {
     conn.close();
     assert.isTrue(conn.isStale(0));
     assert.isFalse(conn.isStale(100));
-    // wait for one second
+    // wait for 1/10th of a second
     java.lang.Thread.sleep(100);
     assert.isTrue(conn.isStale(100));
     return;

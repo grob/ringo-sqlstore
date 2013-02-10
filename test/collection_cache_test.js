@@ -61,7 +61,7 @@ exports.testStorablePersisting = function() {
     var author = new Author({
         "name": "John Foo"
     });
-    assert.isUndefined(author.books);
+    assert.isNull(author.books);
     // create a book with above author and persist it
     // Note: persisting the book also persists it's author
     var book = new Book({
@@ -96,6 +96,28 @@ exports.testStorablePersisting = function() {
     author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
     return;
+};
+
+exports.testCollectionInvalidation = function() {
+    var author = new Author({
+        "name": "John Foo"
+    });
+    author.save();
+    assert.strictEqual(author.books.length, 0);
+    var book = new Book({
+        "title": "Server-side JS made easy",
+        "author": author,
+        "available": true
+    });
+    book.save();
+    // save() does no longer change the properties assigned during construction
+    // so the value of book.author strictly equals the author instance
+    assert.strictEqual(book.author, author);
+    // invalidate the books collection, and ensure that it's the same
+    // reference used in author.books and book.author.books
+    book.author.books.invalidate();
+    assert.strictEqual(author.books.length, 1);
+    assert.strictEqual(book.author.books.length, 1);
 };
 
 exports.testStorableRemoval = function() {

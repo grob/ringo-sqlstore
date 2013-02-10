@@ -59,17 +59,17 @@ exports.testInternalProps = function() {
     assert.isUndefined(author._entity);
     assert.strictEqual(author._key.constructor, Key);
     assert.isNull(author._key.id);
-    assert.isUndefined(author.name);
+    // name has never been assigned, accessing it returns null (not undefined)
+    assert.isNull(author.name);
     author.name = "John Doe";
     assert.isTrue(author._props.hasOwnProperty("name"));
     assert.isNotUndefined(author._props.name);
     author.save();
     assert.isNotUndefined(author._entity);
     assert.isNotNull(author._key.id);
-    // save() clears the _props object
-    assert.deepEqual(author._props, {});
+    // save() does not affect the internal _props object
+    assert.isTrue(author._props.hasOwnProperty("name"));
     assert.isNotUndefined(author.name);
-    assert.isFalse(author._props.hasOwnProperty("name"));
     // setting the name property stores the new value in the _props object
     author.name = "Jane Foo";
     assert.isTrue(author._props.hasOwnProperty("name"));

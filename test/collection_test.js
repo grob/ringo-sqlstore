@@ -85,8 +85,8 @@ exports.testBasics = function() {
     var author = new Author({
         "name": "Author of all books"
     });
-    // "books" collection is undefined as long as author is transient
-    assert.isUndefined(author.books);
+    // "books" collection is null as long as author is transient
+    assert.isNull(author.books);
     author.save();
     // after persisting "books" collection is existing and populated at first access
     assert.strictEqual(author.books.length, 11);
@@ -182,7 +182,7 @@ exports.testWithForeignProperty = function() {
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
-    assert.isUndefined(author.books);
+    assert.isNull(author.books);
     author.save();
     assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 6);
@@ -214,7 +214,7 @@ exports.testWithLocalAndForeignProperty = function() {
         "name": "Author of just a bunch of books",
         "realId": 2 // mimick other author
     });
-    assert.isUndefined(author.books);
+    assert.isNull(author.books);
     author.save();
     assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 5);
