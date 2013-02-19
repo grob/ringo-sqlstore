@@ -201,14 +201,14 @@ exports.testAliases = function() {
     result = query.select();
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], 10);
-    query = new Query(store, "select Author.name author, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id");
+    query = new Query(store, "select Author.name author, count(Book.id) from Author, Book where Book.author = Author.id group by Author.name order by Author.name");
     result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
         assert.strictEqual(props["author"], "Author " + idx);
         assert.strictEqual(props["COUNT(Book.id)"], 1);
     });
-    query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.id");
+    query = new Query(store, "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.name order by Author.name");
     result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(props, idx) {
@@ -239,11 +239,11 @@ exports.testSummand = function() {
     result.forEach(function(value, idx) {
         assert.strictEqual(value, idx + 11);
     });
-    query = new Query(store, "select ((Book.id + 1) % 2) from Book");
+    query = new Query(store, "select ((Book.id + 1) * 2) from Book");
     var result = query.select();
     assert.strictEqual(result.length, 10);
     result.forEach(function(value, idx) {
-        assert.strictEqual(value, ((idx + 2) % 2));
+        assert.strictEqual(value, ((idx + 2) * 2));
     });
 };
 
