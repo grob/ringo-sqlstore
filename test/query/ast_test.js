@@ -297,10 +297,19 @@ exports.testOrderBy = function() {
     var rule = "order";
     var value = Parser.parse("Author.id", rule);
     assert.isTrue(value instanceof ast.OrderBy);
-    assert.isTrue(value.value instanceof ast.Ident);
+    assert.isTrue(value.value instanceof ast.Expression);
+    Parser.parse("min(Author.id)", rule);
+    Parser.parse("Author.id % 2");
+    Parser.parse("Author.a + Author.b");
+    Parser.parse("(Author.id % 2) + 1");
     assert.isFalse(value.isReverse);
     assert.isFalse(Parser.parse("Author.id asc", rule).isReverse);
     assert.isTrue(Parser.parse("Author.id desc", rule).isReverse);
+    assert.isNull(value.nulls);
+    assert.strictEqual(Parser.parse("Author.id nulls first", rule).nulls, -1);
+    assert.strictEqual(Parser.parse("Author.id asc nulls first", rule).nulls, -1);
+    assert.strictEqual(Parser.parse("Author.id nulls last", rule).nulls, 1);
+    assert.strictEqual(Parser.parse("Author.id desc nulls last", rule).nulls, 1);
 };
 
 exports.testOrderByClause = function() {

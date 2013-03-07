@@ -342,6 +342,10 @@ exports.testOrderByClause = function() {
             "sql": "ORDER BY $Author.id ASC"
         },
         {
+            "query": "order by Author.id asc",
+            "sql": "ORDER BY $Author.id ASC"
+        },
+        {
             "query": "order by Author.id desc",
             "sql": "ORDER BY $Author.id DESC"
         },
@@ -350,8 +354,24 @@ exports.testOrderByClause = function() {
             "sql": "ORDER BY $Author.id ASC, $Book.title ASC"
         },
         {
-            "query": "order by Author.id desc, Book.title",
+            "query": "order by Author.id desc, Book.title asc",
             "sql": "ORDER BY $Author.id DESC, $Book.title ASC"
+        },
+        {
+            "query": "order by min(Author.id) desc",
+            "sql": "ORDER BY MIN($Author.id) DESC"
+        },
+        {
+            "query": "order by min(Author.id) + 1 desc",
+            "sql": "ORDER BY (MIN($Author.id) + ?) DESC"
+        },
+        {
+            "query": "order by Author.id nulls first",
+            "sql": "ORDER BY $Author.id ASC NULLS FIRST"
+        },
+        {
+            "query": "order by Author.id desc nulls last",
+            "sql": "ORDER BY $Author.id DESC NULLS LAST"
         }
     ];
 
