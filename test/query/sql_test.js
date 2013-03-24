@@ -490,6 +490,22 @@ exports.testNamedParameter = function() {
     testQueries(queries, undefined, namedParams);
 };
 
+exports.testStorableAsNamedParameter = function() {
+    var book = new Book({"title": "Test"});
+    book.save();
+    var namedParams = {
+        "book": Book.get(1)
+    };
+    var queries = [
+        {
+            "query": "Book = :book",
+            "sql": "$Book.id = ?",
+            "values": [{"type": "long", "value": book._id}]
+        }
+    ];
+    testQueries(queries, undefined, namedParams);
+};
+
 exports.testSelectExpression = function() {
     var queries = [
         {

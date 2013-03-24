@@ -178,6 +178,18 @@ exports.testNamedParameter = function() {
     });
 };
 
+exports.testStorableAsNamedParameter = function() {
+    populate();
+    var author = Author.get(1);
+    var query = new Query(store, "from Book where Book.author = :author");
+    var book = query.select({
+        "author": author
+    });
+    assert.strictEqual(book.length, 1);
+    assert.isTrue(book[0] instanceof Book);
+    assert.isTrue(book[0].author._key.equals(author._key));
+};
+
 exports.testAliases = function() {
     populate();
     var query = new Query(store, "select Author.name as author, Book.title as title from Author, Book where Book.author = Author.id");
