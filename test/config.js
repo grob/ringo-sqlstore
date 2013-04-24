@@ -18,7 +18,7 @@ exports.oracle = {
 };
 
 exports.postgresql = {
-    "url": "jdbc:postgresql://192.168.1.212/test",
+    "url": "jdbc:postgresql://localhost/test",
     "driver": "org.postgresql.Driver",
     "user": "test",
     "password": "test"

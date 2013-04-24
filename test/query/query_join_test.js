@@ -121,14 +121,14 @@ exports.tearDown = function() {
 exports.testInnerJoinQuery = function() {
     var [authors, books, relations] = populate();
     // all books by author 1
-    var query = new Query(store, "from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
-    var result = query.select();
+    var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, books[0]._id);
     assert.strictEqual(result[1]._id, books[1]._id);
     // all authors of book 1 - this time with named parameter
-    query = new Query(store, "from Author inner join Relation on Relation.author = Author.id where Relation.book = :bookId");
-    result = query.select({"bookId": 1});
+    result = store.query("from Author inner join Relation on Relation.author = Author.id where Relation.book = :bookId", {
+        "bookId": 1
+    });
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, authors[0]._id);
     assert.strictEqual(result[1]._id, authors[1]._id);
