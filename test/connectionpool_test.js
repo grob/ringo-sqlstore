@@ -23,10 +23,8 @@ exports.testGetConnection = function() {
     var conn1 = pool.getConnection();
     assert.strictEqual(pool.size(), 1);
     assert.isNotNull(conn1);
-    assert.isTrue(conn1.isInUse());
     assert.isTrue(conn1.isValid());
     conn1.close();
-    assert.isFalse(conn1.isInUse());
     assert.strictEqual(pool.size(), 1);
 
     // retrieve connection again - must be above connection, since it has been closed
