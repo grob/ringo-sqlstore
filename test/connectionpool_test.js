@@ -39,8 +39,8 @@ exports.testGetConnection = function() {
     assert.strictEqual(pool.size(), 2);
     assert.notStrictEqual(conn1, conn3);
     assert.notStrictEqual(conn2, conn3);
-    assert.isFalse(conn1.getConnection().equals(conn3.getConnection()));
-    assert.isFalse(conn2.getConnection().equals(conn3.getConnection()));
+    assert.isFalse(conn1.connection.equals(conn3.connection));
+    assert.isFalse(conn2.connection.equals(conn3.connection));
     return;
 };
 
@@ -63,7 +63,7 @@ exports.testRemoveDeadConnection = function() {
     // close underlying connection and return it to the pool - since the
     // connection is dead now, it must be removed from the pool when
     // calling conn.close()
-    conn.getConnection().close();
+    conn.connection.close();
     conn.close();
     assert.strictEqual(pool.size(), 0);
 };
@@ -72,7 +72,7 @@ exports.testConnectionIsValid = function() {
     var conn = pool.getConnection();
     assert.isTrue(conn.isValid());
     // close underlying connection
-    conn.getConnection().close();
+    conn.connection.close();
     assert.isFalse(conn.isValid());
 };
 
@@ -104,7 +104,7 @@ exports.testConcurrency = function() {
             return current.every(function(currentConn, ccIdx) {
                 return other.every(function(otherConn, ocIdx) {
                     // console.log("COMPARING CURRENT", cIdx + "/" + ccIdx, "with OTHER", (oIdx + offset) + "/" + ocIdx);
-                    return currentConn.getConnection() != otherConn.getConnection();
+                    return currentConn.connection != otherConn.connection;
                 });
             });
         });
