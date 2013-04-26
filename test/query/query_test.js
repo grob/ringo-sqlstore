@@ -82,8 +82,7 @@ exports.tearDown = function() {
             sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
         }
     });
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
+    store.close();
     store = null;
     Author = null;
     Book = null;

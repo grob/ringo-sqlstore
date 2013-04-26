@@ -109,8 +109,7 @@ exports.tearDown = function() {
             }
         }
     });
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
+    store.close();
     store = null;
     Author = null;
     Book = null;

@@ -14,6 +14,7 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     pool.stopScheduler();
+    pool.closeConnections();
     pool = null;
     return;
 };
@@ -94,7 +95,7 @@ exports.testConcurrency = function() {
     }
 
     // wait for all workers to finish
-    semaphore.wait(nrOfWorkers);
+    semaphore.tryWait(1000, nrOfWorkers);
     var offset = 0;
     var result = connections.every(function(current, cIdx) {
         offset += 1;

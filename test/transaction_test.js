@@ -16,7 +16,8 @@ var Author = null;
 const MAPPING_AUTHOR = {
     "table": "author",
     "id": {
-        "column": "author_id"
+        "column": "author_id",
+        "sequence": "author_id"
     },
     "properties": {
         "name": {
@@ -149,7 +150,7 @@ exports.testConcurrentInserts = function() {
             "Author": Author
         }, true);
     }
-    semaphore.wait(nrOfWorkers);
+    semaphore.tryWait(1000, nrOfWorkers);
     assert.strictEqual(Author.all().length, cnt * nrOfWorkers);
     return;
 };
