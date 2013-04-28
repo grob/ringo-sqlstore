@@ -260,7 +260,6 @@ exports.testPartitionedCollection = function() {
             },
             "books": {
                 "type": "collection",
-                "isPartitioned": true,
                 "partitionSize": 10,
                 "query": "from Book where Book.authorId = :id order by Book.id desc"
             }
@@ -275,11 +274,15 @@ exports.testPartitionedCollection = function() {
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0)._id, 101);
     assert.isNotUndefined(author.books.partitions[0]);
+    assert.strictEqual(author.books.partitions[0].length, 10);
     var book = author.books.get(10);
     assert.isNotUndefined(author.books.partitions[1]);
+    assert.strictEqual(author.books.partitions[1].length, 10);
     assert.strictEqual(book._id, 81);
     book = author.books.get(50);
     assert.isNotUndefined(author.books.partitions[5]);
+    assert.strictEqual(author.books.partitions[5].length, 1);
+    assert.strictEqual(book._id, 1);
 };
 
 exports.testReloadInTransaction = function() {
