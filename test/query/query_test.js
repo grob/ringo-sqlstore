@@ -6,7 +6,6 @@ var {Store} = require("../../lib/sqlstore/store");
 var {ConnectionPool} = require("../../lib/sqlstore/connectionpool");
 var {Cache} = require("../../lib/sqlstore/cache");
 var sqlUtils = require("../../lib/sqlstore/util");
-var {Query} = require("../../lib/sqlstore/query/query");
 var store = null;
 var Author = null;
 var Book = null;
