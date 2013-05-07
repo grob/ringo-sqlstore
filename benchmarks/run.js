@@ -21,13 +21,13 @@ var printUsage = function() {
 var run = function() {
     var optLevel = getOptimizationLevel();
     var profiler = null;
-    if (optLevel < 0) {
-        profiler = new Profiler();
-        profiler.attach();
-    }
     var benchmark = require(file);
     try {
         benchmark.setUp(dbProps);
+        if (optLevel < 0) {
+            profiler = new Profiler();
+            profiler.attach();
+        }
         benchmark.start.apply(null, arguments);
     } finally {
         benchmark.tearDown(dbProps);
