@@ -72,7 +72,7 @@ exports.testConnectionIsValid = function() {
     assert.isTrue(conn.isValid());
     // close underlying connection
     conn.connection.close();
-    assert.isFalse(conn.isValid());
+    assert.isFalse(conn.isValid(null, true));
 };
 
 exports.testConcurrency = function() {
