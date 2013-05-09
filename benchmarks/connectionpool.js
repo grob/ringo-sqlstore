@@ -15,11 +15,11 @@ exports.tearDown = function() {
 
 exports.start = function(cnt) {
     cnt || (cnt = 200000);
-    var start = java.lang.System.currentTimeMillis();
+    var start = Date.now();
     for (let i=0; i<cnt; i+=1) {
         let conn = connectionPool.getConnection();
         conn.close();
     }
-    var millis = java.lang.System.currentTimeMillis() - start;
+    var millis = Date.now() - start;
     term.writeln(term.GREEN, cnt, "connections,", millis / cnt + "ms per connection retrieval");
 };

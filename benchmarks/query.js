@@ -57,7 +57,7 @@ exports.tearDown = function() {
 
 exports.start = function(cnt) {
     cnt || (cnt = 10000);
-    var start = java.lang.System.currentTimeMillis();
+    var start = Date.now();
     for (let i=0; i<cnt; i+=1) {
         let id = ((Math.random() * maxAuthors) | 0) + 1;
         let author = store.query("select Author.* from Author where Author.id = :id", {
@@ -65,6 +65,6 @@ exports.start = function(cnt) {
         })[0];
         assert.strictEqual(author._id, id);
     }
-    var millis = java.lang.System.currentTimeMillis() - start;
+    var millis = Date.now() - start;
     term.writeln(term.GREEN, cnt, "queries,", millis / cnt + "ms/query", term.RESET);
 };
