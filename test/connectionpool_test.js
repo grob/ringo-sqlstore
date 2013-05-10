@@ -1,6 +1,6 @@
 var runner = require("./runner");
 var assert = require("assert");
-var ConnectionPool = require("../lib/sqlstore/connectionpool").ConnectionPool;
+var ConnectionPool = require("../lib/sqlstore/connection/pool").ConnectionPool;
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
@@ -13,8 +13,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    pool.stopScheduler();
-    pool.closeConnections();
+    pool.close();
     pool = null;
     return;
 };

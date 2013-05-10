@@ -4,9 +4,7 @@ var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
 
-var {Store} = require("../lib/sqlstore/store");
-var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
-var {Cache} = require("../lib/sqlstore/cache");
+var {Store, Cache} = require("../lib/sqlstore/main");
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
 var sqlUtils = require("../lib/sqlstore/util");
 
@@ -29,7 +27,7 @@ const MAPPING_AUTHOR = {
 };
 
 exports.setUp = function() {
-    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
 };

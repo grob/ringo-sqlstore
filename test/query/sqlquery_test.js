@@ -2,8 +2,7 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store} = require("../../lib/sqlstore/store");
-var {ConnectionPool} = require("../../lib/sqlstore/connectionpool");
+var {Store, Cache} = require("../../lib/sqlstore/main");
 var sqlUtils = require("../../lib/sqlstore/util");
 var store = null;
 var Author = null;
@@ -30,7 +29,7 @@ var populate = function(cnt) {
 };
 
 exports.setUp = function() {
-    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store = new Store(Store.initConnectionPool(runner.getDbProps()));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
 };
 

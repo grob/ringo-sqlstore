@@ -2,9 +2,7 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store} = require("../lib/sqlstore/store");
-var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
-var {Cache} = require("../lib/sqlstore/cache");
+var {Store, Cache} = require("../lib/sqlstore/main");
 var sqlUtils = require("../lib/sqlstore/util");
 var store = null;
 var Book = null;
@@ -34,7 +32,7 @@ const MAPPING_BOOK = {
 };
 
 exports.setUp = function() {
-    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
