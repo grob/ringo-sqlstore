@@ -31,7 +31,7 @@ exports.setUp = function(dbProps) {
     connectionPool = Store.initConnectionPool(dbProps);
     store = new Store(connectionPool);
     term.writeln("------------------------------");
-//    term.writeln("Using", store.connectionPool.getProperties().get("driver"));
+    term.writeln("Using", store.connectionPool.getDriverClass());
     store.setQueryCache(new Cache(10000));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.beginTransaction();
@@ -69,7 +69,6 @@ exports.start = function(cnt, maxWorkers) {
     for (let i=0; i<maxWorkers; i+=1) {
         var worker = new Worker(module.resolve("./query.concurrent.worker"));
         worker.onmessage = function(event) {
-            // term.writeln("Worker", event.data.workerNr, "finished in", event.data.millis, "ms");
             workerMillis[event.data.workerNr] = event.data.millis;
             workerMsPerQuery[event.data.workerNr] = event.data.msPerQuery;
             semaphore.signal();
@@ -79,20 +78,11 @@ exports.start = function(cnt, maxWorkers) {
             semaphore.signal();
         };
         workers[i] = worker;
-//        conns[i] = connectionPool.getConnection();
     }
     term.writeln("Setup", maxWorkers, "workers");
 
-/*
-    conns.forEach(function(conn) {
-        conn.close();
-    });
-    console.log("Connections:", connectionPool.size());
-*/
-
     var queryCache = new Cache(10000);
     workers.forEach(function(worker, idx) {
-        // term.writeln("Worker", idx, "starting...");
         worker.postMessage({
             "workerNr": idx,
             "maxAuthors": maxAuthors,

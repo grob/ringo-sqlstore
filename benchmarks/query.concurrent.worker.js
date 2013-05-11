@@ -35,8 +35,7 @@ function onmessage(event) {
             "id": id
         })[0];
         msPerQuery[i] = Date.now() - s;
-//        store.sqlQuery("select 1");
-        // assert.strictEqual(author._id, id);
+        assert.strictEqual(author._id, id);
     }
     event.source.postMessage({
         "workerNr": event.data.workerNr,
