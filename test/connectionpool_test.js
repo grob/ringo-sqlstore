@@ -53,19 +53,6 @@ exports.testIsStale = function() {
     return;
 };
 
-exports.testRemoveDeadConnection = function() {
-    assert.strictEqual(pool.size(), 0);
-    var conn = pool.getConnection();
-    assert.strictEqual(pool.size(), 1);
-    assert.isTrue(conn.isValid());
-    // close underlying connection and return it to the pool - since the
-    // connection is dead now, it must be removed from the pool when
-    // calling conn.close()
-    conn.connection.close();
-    conn.close();
-    assert.strictEqual(pool.size(), 0);
-};
-
 exports.testConnectionIsValid = function() {
     var conn = pool.getConnection();
     assert.isTrue(conn.isValid());
