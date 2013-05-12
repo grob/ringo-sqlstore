@@ -2,9 +2,7 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store} = require("../../lib/sqlstore/store");
-var {ConnectionPool} = require("../../lib/sqlstore/connectionpool");
-var {Cache} = require("../../lib/sqlstore/cache");
+var {Store, Cache} = require("../../lib/sqlstore/main");
 var {Query} = require("../../lib/sqlstore/query/query");
 var sqlUtils = require("../../lib/sqlstore/util");
 var store = null;
@@ -91,7 +89,7 @@ var populate = function() {
 };
 
 exports.setUp = function() {
-    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
@@ -109,8 +107,7 @@ exports.tearDown = function() {
             }
         }
     });
-    store.connectionPool.stopScheduler();
-    store.connectionPool.closeConnections();
+    store.close();
     store = null;
     Author = null;
     Book = null;
@@ -121,14 +118,14 @@ exports.tearDown = function() {
 exports.testInnerJoinQuery = function() {
     var [authors, books, relations] = populate();
     // all books by author 1
-    var query = new Query(store, "from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
-    var result = query.select();
+    var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, books[0]._id);
     assert.strictEqual(result[1]._id, books[1]._id);
     // all authors of book 1 - this time with named parameter
-    query = new Query(store, "from Author inner join Relation on Relation.author = Author.id where Relation.book = :bookId");
-    result = query.select({"bookId": 1});
+    result = store.query("from Author inner join Relation on Relation.author = Author.id where Relation.book = :bookId", {
+        "bookId": 1
+    });
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0]._id, authors[0]._id);
     assert.strictEqual(result[1]._id, authors[1]._id);

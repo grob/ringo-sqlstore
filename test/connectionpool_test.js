@@ -1,6 +1,6 @@
 var runner = require("./runner");
 var assert = require("assert");
-var ConnectionPool = require("../lib/sqlstore/connectionpool").ConnectionPool;
+var ConnectionPool = require("../lib/sqlstore/connection/pool").ConnectionPool;
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
@@ -13,7 +13,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    pool.stopScheduler();
+    pool.close();
     pool = null;
     return;
 };
@@ -23,10 +23,8 @@ exports.testGetConnection = function() {
     var conn1 = pool.getConnection();
     assert.strictEqual(pool.size(), 1);
     assert.isNotNull(conn1);
-    assert.isTrue(conn1.isInUse());
     assert.isTrue(conn1.isValid());
     conn1.close();
-    assert.isFalse(conn1.isInUse());
     assert.strictEqual(pool.size(), 1);
 
     // retrieve connection again - must be above connection, since it has been closed
@@ -39,8 +37,8 @@ exports.testGetConnection = function() {
     assert.strictEqual(pool.size(), 2);
     assert.notStrictEqual(conn1, conn3);
     assert.notStrictEqual(conn2, conn3);
-    assert.isFalse(conn1.getConnection().equals(conn3.getConnection()));
-    assert.isFalse(conn2.getConnection().equals(conn3.getConnection()));
+    assert.isFalse(conn1.connection.equals(conn3.connection));
+    assert.isFalse(conn2.connection.equals(conn3.connection));
     return;
 };
 
@@ -55,25 +53,12 @@ exports.testIsStale = function() {
     return;
 };
 
-exports.testRemoveDeadConnection = function() {
-    assert.strictEqual(pool.size(), 0);
-    var conn = pool.getConnection();
-    assert.strictEqual(pool.size(), 1);
-    assert.isTrue(conn.isValid());
-    // close underlying connection and return it to the pool - since the
-    // connection is dead now, it must be removed from the pool when
-    // calling conn.close()
-    conn.getConnection().close();
-    conn.close();
-    assert.strictEqual(pool.size(), 0);
-};
-
 exports.testConnectionIsValid = function() {
     var conn = pool.getConnection();
     assert.isTrue(conn.isValid());
     // close underlying connection
-    conn.getConnection().close();
-    assert.isFalse(conn.isValid());
+    conn.connection.close();
+    assert.isFalse(conn.isValid(null, true));
 };
 
 exports.testConcurrency = function() {
@@ -96,7 +81,7 @@ exports.testConcurrency = function() {
     }
 
     // wait for all workers to finish
-    semaphore.wait(nrOfWorkers);
+    semaphore.tryWait(1000, nrOfWorkers);
     var offset = 0;
     var result = connections.every(function(current, cIdx) {
         offset += 1;
@@ -104,7 +89,7 @@ exports.testConcurrency = function() {
             return current.every(function(currentConn, ccIdx) {
                 return other.every(function(otherConn, ocIdx) {
                     // console.log("COMPARING CURRENT", cIdx + "/" + ccIdx, "with OTHER", (oIdx + offset) + "/" + ocIdx);
-                    return currentConn.getConnection() != otherConn.getConnection();
+                    return currentConn.connection != otherConn.connection;
                 });
             });
         });

@@ -4,9 +4,7 @@ var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
 
-var {Store} = require("../lib/sqlstore/store");
-var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
-var {Cache} = require("../lib/sqlstore/cache");
+var {Store, Cache} = require("../lib/sqlstore/main");
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
 var sqlUtils = require("../lib/sqlstore/util");
 
@@ -16,7 +14,8 @@ var Author = null;
 const MAPPING_AUTHOR = {
     "table": "author",
     "id": {
-        "column": "author_id"
+        "column": "author_id",
+        "sequence": "author_id"
     },
     "properties": {
         "name": {
@@ -28,7 +27,7 @@ const MAPPING_AUTHOR = {
 };
 
 exports.setUp = function() {
-    store = new Store(new ConnectionPool(runner.getDbProps()));
+    store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
 };
@@ -149,7 +148,7 @@ exports.testConcurrentInserts = function() {
             "Author": Author
         }, true);
     }
-    semaphore.wait(nrOfWorkers);
+    semaphore.tryWait(1000, nrOfWorkers);
     assert.strictEqual(Author.all().length, cnt * nrOfWorkers);
     return;
 };
