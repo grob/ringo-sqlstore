@@ -1,0 +1,4071 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>query/ast - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/jsdoc.css" />
+<link rel="stylesheet" href="../../static/style.css" />
+<script type="text/javascript" src="../../static/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module query/ast</h1>
+        <div class="fileoverview">
+            <p>AST implementation used by the query parser to convert queries
+into a tree of nodes.</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+            <div class="classes">
+                                <h2>Class <a href="#Aggregation" class="jsdoc-title">Aggregation</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Aggregation.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Aggregation.prototype.isDistinct" class="jsdoc-title"> isDistinct</a>
+                    </li>
+                                        <li>
+                        <a href="#Aggregation.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#Aggregation.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h3>Static Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Aggregation.COUNT" class="jsdoc-title"> COUNT</a>
+                    </li>
+                                        <li>
+                        <a href="#Aggregation.MAX" class="jsdoc-title"> MAX</a>
+                    </li>
+                                        <li>
+                        <a href="#Aggregation.MIN" class="jsdoc-title"> MIN</a>
+                    </li>
+                                        <li>
+                        <a href="#Aggregation.SUM" class="jsdoc-title"> SUM</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#BetweenCondition" class="jsdoc-title">BetweenCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#BetweenCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#BetweenCondition.prototype.end" class="jsdoc-title"> end</a>
+                    </li>
+                                        <li>
+                        <a href="#BetweenCondition.prototype.isNot" class="jsdoc-title"> isNot</a>
+                    </li>
+                                        <li>
+                        <a href="#BetweenCondition.prototype.start" class="jsdoc-title"> start</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#BooleanValue" class="jsdoc-title">BooleanValue</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#BooleanValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#BooleanValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Comparison" class="jsdoc-title">Comparison</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Comparison.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Comparison.prototype.operator" class="jsdoc-title"> operator</a>
+                    </li>
+                                        <li>
+                        <a href="#Comparison.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Condition" class="jsdoc-title">Condition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Condition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Condition.prototype.left" class="jsdoc-title"> left</a>
+                    </li>
+                                        <li>
+                        <a href="#Condition.prototype.right" class="jsdoc-title"> right</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#ConditionList" class="jsdoc-title">ConditionList</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ConditionList.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ConditionList.prototype.conditions" class="jsdoc-title"> conditions</a>
+                    </li>
+                                        <li>
+                        <a href="#ConditionList.prototype.length" class="jsdoc-title"> length</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#DecimalValue" class="jsdoc-title">DecimalValue</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#DecimalValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#DecimalValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Entity" class="jsdoc-title">Entity</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Entity.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Entity.prototype.alias" class="jsdoc-title"> alias</a>
+                    </li>
+                                        <li>
+                        <a href="#Entity.prototype.name" class="jsdoc-title"> name</a>
+                    </li>
+                                        <li>
+                        <a href="#Entity.prototype.property" class="jsdoc-title"> property</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#ExistsCondition" class="jsdoc-title">ExistsCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ExistsCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ExistsCondition.prototype.select" class="jsdoc-title"> select</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Expression" class="jsdoc-title">Expression</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Expression.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Expression.prototype.andConditions" class="jsdoc-title"> andConditions</a>
+                    </li>
+                                        <li>
+                        <a href="#Expression.prototype.orConditions" class="jsdoc-title"> orConditions</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Factor" class="jsdoc-title">Factor</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Factor.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Factor.prototype.left" class="jsdoc-title"> left</a>
+                    </li>
+                                        <li>
+                        <a href="#Factor.prototype.operand" class="jsdoc-title"> operand</a>
+                    </li>
+                                        <li>
+                        <a href="#Factor.prototype.right" class="jsdoc-title"> right</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#FromClause" class="jsdoc-title">FromClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#FromClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                                        <li>
+                        <a href="#FromClause.prototype.get" class="jsdoc-title"> get</a>(idx)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#FromClause.prototype.length" class="jsdoc-title"> length</a>
+                    </li>
+                                        <li>
+                        <a href="#FromClause.prototype.list" class="jsdoc-title"> list</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#GroupByClause" class="jsdoc-title">GroupByClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#GroupByClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#GroupByClause.prototype.list" class="jsdoc-title"> list</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#HavingClause" class="jsdoc-title">HavingClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#HavingClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#HavingClause.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Ident" class="jsdoc-title">Ident</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Ident.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Ident.prototype.entity" class="jsdoc-title"> entity</a>
+                    </li>
+                                        <li>
+                        <a href="#Ident.prototype.property" class="jsdoc-title"> property</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#InCondition" class="jsdoc-title">InCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#InCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#InCondition.prototype.isNot" class="jsdoc-title"> isNot</a>
+                    </li>
+                                        <li>
+                        <a href="#InCondition.prototype.values" class="jsdoc-title"> values</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#InnerJoin" class="jsdoc-title">InnerJoin</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#InnerJoin.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#InnerJoin.prototype.entity" class="jsdoc-title"> entity</a>
+                    </li>
+                                        <li>
+                        <a href="#InnerJoin.prototype.predicate" class="jsdoc-title"> predicate</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#IntValue" class="jsdoc-title">IntValue</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#IntValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#IntValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#IsNullCondition" class="jsdoc-title">IsNullCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#IsNullCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#IsNullCondition.prototype.isNot" class="jsdoc-title"> isNot</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#JoinClause" class="jsdoc-title">JoinClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#JoinClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                                        <li>
+                        <a href="#JoinClause.prototype.get" class="jsdoc-title"> get</a>(idx)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#JoinClause.prototype.length" class="jsdoc-title"> length</a>
+                    </li>
+                                        <li>
+                        <a href="#JoinClause.prototype.list" class="jsdoc-title"> list</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#LikeCondition" class="jsdoc-title">LikeCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#LikeCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#LikeCondition.prototype.isNot" class="jsdoc-title"> isNot</a>
+                    </li>
+                                        <li>
+                        <a href="#LikeCondition.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#NotCondition" class="jsdoc-title">NotCondition</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#NotCondition.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#NotCondition.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#NullValue" class="jsdoc-title">NullValue</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#NullValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#NullValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#OrderBy" class="jsdoc-title">OrderBy</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OrderBy.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OrderBy.prototype.isReverse" class="jsdoc-title"> isReverse</a>
+                    </li>
+                                        <li>
+                        <a href="#OrderBy.prototype.nulls" class="jsdoc-title"> nulls</a>
+                    </li>
+                                        <li>
+                        <a href="#OrderBy.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#OrderByClause" class="jsdoc-title">OrderByClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OrderByClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OrderByClause.prototype.list" class="jsdoc-title"> list</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#OuterJoin" class="jsdoc-title">OuterJoin</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OuterJoin.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OuterJoin.prototype.entity" class="jsdoc-title"> entity</a>
+                    </li>
+                                        <li>
+                        <a href="#OuterJoin.prototype.predicate" class="jsdoc-title"> predicate</a>
+                    </li>
+                                        <li>
+                        <a href="#OuterJoin.prototype.side" class="jsdoc-title"> side</a>
+                    </li>
+                    </ul>
+                                <h3>Static Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#OuterJoin.LEFT" class="jsdoc-title"> LEFT</a>
+                    </li>
+                                        <li>
+                        <a href="#OuterJoin.RIGHT" class="jsdoc-title"> RIGHT</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#ParameterValue" class="jsdoc-title">ParameterValue</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ParameterValue.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#ParameterValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#ParameterValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#RangeClause" class="jsdoc-title">RangeClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#RangeClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#RangeClause.prototype.limit" class="jsdoc-title"> limit</a>
+                    </li>
+                                        <li>
+                        <a href="#RangeClause.prototype.offset" class="jsdoc-title"> offset</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Select" class="jsdoc-title">Select</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Select.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Select.prototype.aliases" class="jsdoc-title"> aliases</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.from" class="jsdoc-title"> from</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.groupBy" class="jsdoc-title"> groupBy</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.having" class="jsdoc-title"> having</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.isDistinct" class="jsdoc-title"> isDistinct</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.join" class="jsdoc-title"> join</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.orderBy" class="jsdoc-title"> orderBy</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.range" class="jsdoc-title"> range</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.select" class="jsdoc-title"> select</a>
+                    </li>
+                                        <li>
+                        <a href="#Select.prototype.where" class="jsdoc-title"> where</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#SelectClause" class="jsdoc-title">SelectClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                                        <li>
+                        <a href="#SelectClause.prototype.get" class="jsdoc-title"> get</a>(idx)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectClause.prototype.length" class="jsdoc-title"> length</a>
+                    </li>
+                                        <li>
+                        <a href="#SelectClause.prototype.list" class="jsdoc-title"> list</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#SelectEntity" class="jsdoc-title">SelectEntity</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectEntity.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectEntity.prototype.name" class="jsdoc-title"> name</a>
+                    </li>
+                                        <li>
+                        <a href="#SelectEntity.prototype.property" class="jsdoc-title"> property</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#SelectExpression" class="jsdoc-title">SelectExpression</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectExpression.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SelectExpression.prototype.alias" class="jsdoc-title"> alias</a>
+                    </li>
+                                        <li>
+                        <a href="#SelectExpression.prototype.expression" class="jsdoc-title"> expression</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#StringValue" class="jsdoc-title">StringValue</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#StringValue.prototype.type" class="jsdoc-title"> type</a>
+                    </li>
+                                        <li>
+                        <a href="#StringValue.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Summand" class="jsdoc-title">Summand</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Summand.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Summand.prototype.left" class="jsdoc-title"> left</a>
+                    </li>
+                                        <li>
+                        <a href="#Summand.prototype.operand" class="jsdoc-title"> operand</a>
+                    </li>
+                                        <li>
+                        <a href="#Summand.prototype.right" class="jsdoc-title"> right</a>
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#Value" class="jsdoc-title">Value</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Value.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#WhereClause" class="jsdoc-title">WhereClause</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#WhereClause.prototype.accept" class="jsdoc-title"> accept</a>(visitor)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#WhereClause.prototype.value" class="jsdoc-title"> value</a>
+                    </li>
+                    </ul>
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Aggregation" href="#Aggregation" class="itemtitle itemname">Aggregation</a></span>
+                    <span class="itemtitle light">(type, ident, isDistinct)</span></h3>
+                <div>
+                    <p>Creates a new Aggregation instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">type</td>
+                            <td>The type of aggregation</td>
+                        </tr>
+                                                <tr>
+                            <td>Ident</td>
+                            <td class="paramname">ident</td>
+                            <td>The ident</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">isDistinct</td>
+                            <td>True for distinct aggregations</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Aggregation instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.COUNT">
+                <h3 >
+                    <span class="itemtitle">Aggregation.<a id="Aggregation.COUNT" href="#Aggregation.COUNT" class="itemtitle itemname">COUNT</a></span>
+                    </h3>
+                <div>
+                    <p><code>COUNT</code> aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.MAX">
+                <h3 >
+                    <span class="itemtitle">Aggregation.<a id="Aggregation.MAX" href="#Aggregation.MAX" class="itemtitle itemname">MAX</a></span>
+                    </h3>
+                <div>
+                    <p><code>MAX</code> aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.MIN">
+                <h3 >
+                    <span class="itemtitle">Aggregation.<a id="Aggregation.MIN" href="#Aggregation.MIN" class="itemtitle itemname">MIN</a></span>
+                    </h3>
+                <div>
+                    <p><code>MIN</code> aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.SUM">
+                <h3 >
+                    <span class="itemtitle">Aggregation.<a id="Aggregation.SUM" href="#Aggregation.SUM" class="itemtitle itemname">SUM</a></span>
+                    </h3>
+                <div>
+                    <p><code>SUM</code> aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Aggregation.prototype.<a id="Aggregation.prototype.accept" href="#Aggregation.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitAggregation</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.prototype.isDistinct">
+                <h3 >
+                    <span class="itemtitle">Aggregation.prototype.<a id="Aggregation.prototype.isDistinct" href="#Aggregation.prototype.isDistinct" class="itemtitle itemname">isDistinct</a></span>
+                    </h3>
+                <div>
+                    <p>True for distinct aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.prototype.type">
+                <h3 >
+                    <span class="itemtitle">Aggregation.prototype.<a id="Aggregation.prototype.type" href="#Aggregation.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the type of aggregation</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Aggregation.prototype.value">
+                <h3 >
+                    <span class="itemtitle">Aggregation.prototype.<a id="Aggregation.prototype.value" href="#Aggregation.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The ident to aggregate</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BetweenCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="BetweenCondition" href="#BetweenCondition" class="itemtitle itemname">BetweenCondition</a></span>
+                    <span class="itemtitle light">(start, end, not)</span></h3>
+                <div>
+                    <p>Creates a new BetweenCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">start</td>
+                            <td>The start value</td>
+                        </tr>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">end</td>
+                            <td>The end value</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">not</td>
+                            <td>True for "not between" conditions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created BetweenCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BetweenCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">BetweenCondition.prototype.<a id="BetweenCondition.prototype.accept" href="#BetweenCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitBetweenCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BetweenCondition.prototype.end">
+                <h3 >
+                    <span class="itemtitle">BetweenCondition.prototype.<a id="BetweenCondition.prototype.end" href="#BetweenCondition.prototype.end" class="itemtitle itemname">end</a></span>
+                    </h3>
+                <div>
+                    <p>The end value</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BetweenCondition.prototype.isNot">
+                <h3 >
+                    <span class="itemtitle">BetweenCondition.prototype.<a id="BetweenCondition.prototype.isNot" href="#BetweenCondition.prototype.isNot" class="itemtitle itemname">isNot</a></span>
+                    </h3>
+                <div>
+                    <p>True for "not between" conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BetweenCondition.prototype.start">
+                <h3 >
+                    <span class="itemtitle">BetweenCondition.prototype.<a id="BetweenCondition.prototype.start" href="#BetweenCondition.prototype.start" class="itemtitle itemname">start</a></span>
+                    </h3>
+                <div>
+                    <p>The start value</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BooleanValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="BooleanValue" href="#BooleanValue" class="itemtitle itemname">BooleanValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new BooleanValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created BooleanValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BooleanValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">BooleanValue.prototype.<a id="BooleanValue.prototype.type" href="#BooleanValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("boolean")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="BooleanValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">BooleanValue.prototype.<a id="BooleanValue.prototype.value" href="#BooleanValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this BooleanValue instance</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Comparison">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Comparison" href="#Comparison" class="itemtitle itemname">Comparison</a></span>
+                    <span class="itemtitle light">(operator, value)</span></h3>
+                <div>
+                    <p>Creates a new Comparison instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">operator</td>
+                            <td>The operator</td>
+                        </tr>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Comparison instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Comparison.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Comparison.prototype.<a id="Comparison.prototype.accept" href="#Comparison.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitComparison</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Comparison.prototype.operator">
+                <h3 >
+                    <span class="itemtitle">Comparison.prototype.<a id="Comparison.prototype.operator" href="#Comparison.prototype.operator" class="itemtitle itemname">operator</a></span>
+                    </h3>
+                <div>
+                    <p>The operator</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Comparison.prototype.value">
+                <h3 >
+                    <span class="itemtitle">Comparison.prototype.<a id="Comparison.prototype.value" href="#Comparison.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this comparison</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Condition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Condition" href="#Condition" class="itemtitle itemname">Condition</a></span>
+                    <span class="itemtitle light">(left, right)</span></h3>
+                <div>
+                    <p>Creates a new Condition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">left</td>
+                            <td>The left side of the condition</td>
+                        </tr>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">right</td>
+                            <td>The right side of the condition</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Condition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Condition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Condition.prototype.<a id="Condition.prototype.accept" href="#Condition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Condition.prototype.left">
+                <h3 >
+                    <span class="itemtitle">Condition.prototype.<a id="Condition.prototype.left" href="#Condition.prototype.left" class="itemtitle itemname">left</a></span>
+                    </h3>
+                <div>
+                    <p>The left side</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Condition.prototype.right">
+                <h3 >
+                    <span class="itemtitle">Condition.prototype.<a id="Condition.prototype.right" href="#Condition.prototype.right" class="itemtitle itemname">right</a></span>
+                    </h3>
+                <div>
+                    <p>The right side</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ConditionList">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="ConditionList" href="#ConditionList" class="itemtitle itemname">ConditionList</a></span>
+                    <span class="itemtitle light">(conditions)</span></h3>
+                <div>
+                    <p>Creates a new ConditionList instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">conditions</td>
+                            <td>An array containing conditions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created ConditionList instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ConditionList.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">ConditionList.prototype.<a id="ConditionList.prototype.accept" href="#ConditionList.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitConditionList</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ConditionList.prototype.conditions">
+                <h3 >
+                    <span class="itemtitle">ConditionList.prototype.<a id="ConditionList.prototype.conditions" href="#ConditionList.prototype.conditions" class="itemtitle itemname">conditions</a></span>
+                    </h3>
+                <div>
+                    <p>The list of conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ConditionList.prototype.length">
+                <h3 >
+                    <span class="itemtitle">ConditionList.prototype.<a id="ConditionList.prototype.length" href="#ConditionList.prototype.length" class="itemtitle itemname">length</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the number of conditions of this list</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="DecimalValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="DecimalValue" href="#DecimalValue" class="itemtitle itemname">DecimalValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new DecimalValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created DecimalValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="DecimalValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">DecimalValue.prototype.<a id="DecimalValue.prototype.type" href="#DecimalValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("float")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="DecimalValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">DecimalValue.prototype.<a id="DecimalValue.prototype.value" href="#DecimalValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this DecimalValue instance</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Entity">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Entity" href="#Entity" class="itemtitle itemname">Entity</a></span>
+                    <span class="itemtitle light">(name, alias)</span></h3>
+                <div>
+                    <p>Creates a new Entity instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The name of the entity</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">alias</td>
+                            <td>The alias of the entity in the query (optional)</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Entity instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Entity.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Entity.prototype.<a id="Entity.prototype.accept" href="#Entity.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitEntity</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Entity.prototype.alias">
+                <h3 >
+                    <span class="itemtitle">Entity.prototype.<a id="Entity.prototype.alias" href="#Entity.prototype.alias" class="itemtitle itemname">alias</a></span>
+                    </h3>
+                <div>
+                    <p>The alias of the entity in the query</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Entity.prototype.name">
+                <h3 >
+                    <span class="itemtitle">Entity.prototype.<a id="Entity.prototype.name" href="#Entity.prototype.name" class="itemtitle itemname">name</a></span>
+                    </h3>
+                <div>
+                    <p>The name of the entity</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Entity.prototype.property">
+                <h3 >
+                    <span class="itemtitle">Entity.prototype.<a id="Entity.prototype.property" href="#Entity.prototype.property" class="itemtitle itemname">property</a></span>
+                    </h3>
+                <div>
+                    <p>The property of the entity to use ("id")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ExistsCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="ExistsCondition" href="#ExistsCondition" class="itemtitle itemname">ExistsCondition</a></span>
+                    <span class="itemtitle light">(select)</span></h3>
+                <div>
+                    <p>Creates a new ExistsCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Select</td>
+                            <td class="paramname">select</td>
+                            <td>The select expression</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created ExistsCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ExistsCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">ExistsCondition.prototype.<a id="ExistsCondition.prototype.accept" href="#ExistsCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitExistCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ExistsCondition.prototype.select">
+                <h3 >
+                    <span class="itemtitle">ExistsCondition.prototype.<a id="ExistsCondition.prototype.select" href="#ExistsCondition.prototype.select" class="itemtitle itemname">select</a></span>
+                    </h3>
+                <div>
+                    <p>The select expression</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Expression">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Expression" href="#Expression" class="itemtitle itemname">Expression</a></span>
+                    <span class="itemtitle light">(andConditions, orConditions)</span></h3>
+                <div>
+                    <p>Creates a new Expression instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">andConditions</td>
+                            <td>An array containing `AND` combined conditions</td>
+                        </tr>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">orConditions</td>
+                            <td>An array containing `OR` combined conditions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Expression instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Expression.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Expression.prototype.<a id="Expression.prototype.accept" href="#Expression.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitExpression</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Expression.prototype.andConditions">
+                <h3 >
+                    <span class="itemtitle">Expression.prototype.<a id="Expression.prototype.andConditions" href="#Expression.prototype.andConditions" class="itemtitle itemname">andConditions</a></span>
+                    </h3>
+                <div>
+                    <p>The list of <code>AND</code> conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Expression.prototype.orConditions">
+                <h3 >
+                    <span class="itemtitle">Expression.prototype.<a id="Expression.prototype.orConditions" href="#Expression.prototype.orConditions" class="itemtitle itemname">orConditions</a></span>
+                    </h3>
+                <div>
+                    <p>The list of <code>OR</code> conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Factor">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Factor" href="#Factor" class="itemtitle itemname">Factor</a></span>
+                    <span class="itemtitle light">(left, operand, right)</span></h3>
+                <div>
+                    <p>Creates a new Factor instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">left</td>
+                            <td>The left side of the factor</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">operand</td>
+                            <td>The operand</td>
+                        </tr>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">right</td>
+                            <td>The right side of the factor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Factor instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Factor.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Factor.prototype.<a id="Factor.prototype.accept" href="#Factor.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitFactor</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Factor.prototype.left">
+                <h3 >
+                    <span class="itemtitle">Factor.prototype.<a id="Factor.prototype.left" href="#Factor.prototype.left" class="itemtitle itemname">left</a></span>
+                    </h3>
+                <div>
+                    <p>The left side of this factor</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Factor.prototype.operand">
+                <h3 >
+                    <span class="itemtitle">Factor.prototype.<a id="Factor.prototype.operand" href="#Factor.prototype.operand" class="itemtitle itemname">operand</a></span>
+                    </h3>
+                <div>
+                    <p>The operand</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Factor.prototype.right">
+                <h3 >
+                    <span class="itemtitle">Factor.prototype.<a id="Factor.prototype.right" href="#Factor.prototype.right" class="itemtitle itemname">right</a></span>
+                    </h3>
+                <div>
+                    <p>The right side of this factor</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="FromClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="FromClause" href="#FromClause" class="itemtitle itemname">FromClause</a></span>
+                    <span class="itemtitle light">(list)</span></h3>
+                <div>
+                    <p>Creates a new FromClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">list</td>
+                            <td>An array containing Entity instances</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created FromClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="FromClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">FromClause.prototype.<a id="FromClause.prototype.accept" href="#FromClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitFromClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="FromClause.prototype.get">
+                <h3 >
+                    <span class="itemtitle">FromClause.prototype.<a id="FromClause.prototype.get" href="#FromClause.prototype.get" class="itemtitle itemname">get</a></span>
+                    <span class="itemtitle light">(idx)</span></h3>
+                <div>
+                    <p>Returns the entity reference at the given index position</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">idx</td>
+                            <td>The index position</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Entity</td>
+                            <td> The entity reference at the given position</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="FromClause.prototype.length">
+                <h3 >
+                    <span class="itemtitle">FromClause.prototype.<a id="FromClause.prototype.length" href="#FromClause.prototype.length" class="itemtitle itemname">length</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the number of entity references in this clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="FromClause.prototype.list">
+                <h3 >
+                    <span class="itemtitle">FromClause.prototype.<a id="FromClause.prototype.list" href="#FromClause.prototype.list" class="itemtitle itemname">list</a></span>
+                    </h3>
+                <div>
+                    <p>The list of references forming the clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="GroupByClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="GroupByClause" href="#GroupByClause" class="itemtitle itemname">GroupByClause</a></span>
+                    <span class="itemtitle light">(list)</span></h3>
+                <div>
+                    <p>Creates a new GroupByClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">list</td>
+                            <td>The list of expressions forming this clause</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created GroupByClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="GroupByClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">GroupByClause.prototype.<a id="GroupByClause.prototype.accept" href="#GroupByClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitGroupByClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="GroupByClause.prototype.list">
+                <h3 >
+                    <span class="itemtitle">GroupByClause.prototype.<a id="GroupByClause.prototype.list" href="#GroupByClause.prototype.list" class="itemtitle itemname">list</a></span>
+                    </h3>
+                <div>
+                    <p>The list of expressions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="HavingClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="HavingClause" href="#HavingClause" class="itemtitle itemname">HavingClause</a></span>
+                    <span class="itemtitle light">(expression)</span></h3>
+                <div>
+                    <p>Creates a new HavingClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">expression</td>
+                            <td>The expression</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created HavingClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="HavingClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">HavingClause.prototype.<a id="HavingClause.prototype.accept" href="#HavingClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitHavingClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="HavingClause.prototype.value">
+                <h3 >
+                    <span class="itemtitle">HavingClause.prototype.<a id="HavingClause.prototype.value" href="#HavingClause.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The expression of this clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Ident">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Ident" href="#Ident" class="itemtitle itemname">Ident</a></span>
+                    <span class="itemtitle light">(name, property)</span></h3>
+                <div>
+                    <p>Creates a new Ident instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The name of the entity</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">property</td>
+                            <td>The name of the property (optional)</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Ident instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Ident.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Ident.prototype.<a id="Ident.prototype.accept" href="#Ident.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitIdent</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Ident.prototype.entity">
+                <h3 >
+                    <span class="itemtitle">Ident.prototype.<a id="Ident.prototype.entity" href="#Ident.prototype.entity" class="itemtitle itemname">entity</a></span>
+                    </h3>
+                <div>
+                    <p>The name of the entity</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Ident.prototype.property">
+                <h3 >
+                    <span class="itemtitle">Ident.prototype.<a id="Ident.prototype.property" href="#Ident.prototype.property" class="itemtitle itemname">property</a></span>
+                    </h3>
+                <div>
+                    <p>The property of the entity to use ("id")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="InCondition" href="#InCondition" class="itemtitle itemname">InCondition</a></span>
+                    <span class="itemtitle light">(values, not)</span></h3>
+                <div>
+                    <p>Creates a new InCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">values</td>
+                            <td>An array containing Value instances</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">not</td>
+                            <td>True for "not in" conditions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created InCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">InCondition.prototype.<a id="InCondition.prototype.accept" href="#InCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitInCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InCondition.prototype.isNot">
+                <h3 >
+                    <span class="itemtitle">InCondition.prototype.<a id="InCondition.prototype.isNot" href="#InCondition.prototype.isNot" class="itemtitle itemname">isNot</a></span>
+                    </h3>
+                <div>
+                    <p>True for "not in" conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InCondition.prototype.values">
+                <h3 >
+                    <span class="itemtitle">InCondition.prototype.<a id="InCondition.prototype.values" href="#InCondition.prototype.values" class="itemtitle itemname">values</a></span>
+                    </h3>
+                <div>
+                    <p>The values of this InCondition</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InnerJoin">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="InnerJoin" href="#InnerJoin" class="itemtitle itemname">InnerJoin</a></span>
+                    <span class="itemtitle light">(entity, predicate)</span></h3>
+                <div>
+                    <p>Creates a new InnerJoin instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Entity</td>
+                            <td class="paramname">entity</td>
+                            <td>The entity to join with</td>
+                        </tr>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">predicate</td>
+                            <td>The join predicate</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created InnerJoin instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InnerJoin.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">InnerJoin.prototype.<a id="InnerJoin.prototype.accept" href="#InnerJoin.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitInnerJoin</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InnerJoin.prototype.entity">
+                <h3 >
+                    <span class="itemtitle">InnerJoin.prototype.<a id="InnerJoin.prototype.entity" href="#InnerJoin.prototype.entity" class="itemtitle itemname">entity</a></span>
+                    </h3>
+                <div>
+                    <p>The entity to join with</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="InnerJoin.prototype.predicate">
+                <h3 >
+                    <span class="itemtitle">InnerJoin.prototype.<a id="InnerJoin.prototype.predicate" href="#InnerJoin.prototype.predicate" class="itemtitle itemname">predicate</a></span>
+                    </h3>
+                <div>
+                    <p>The join predicate</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IntValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="IntValue" href="#IntValue" class="itemtitle itemname">IntValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new IntValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created IntValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IntValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">IntValue.prototype.<a id="IntValue.prototype.type" href="#IntValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("long")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IntValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">IntValue.prototype.<a id="IntValue.prototype.value" href="#IntValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this IntValue instance</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IsNullCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="IsNullCondition" href="#IsNullCondition" class="itemtitle itemname">IsNullCondition</a></span>
+                    <span class="itemtitle light">(not)</span></h3>
+                <div>
+                    <p>Creates a new IsNullCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">not</td>
+                            <td>True or false</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created IsNullCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IsNullCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">IsNullCondition.prototype.<a id="IsNullCondition.prototype.accept" href="#IsNullCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitIsNullCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="IsNullCondition.prototype.isNot">
+                <h3 >
+                    <span class="itemtitle">IsNullCondition.prototype.<a id="IsNullCondition.prototype.isNot" href="#IsNullCondition.prototype.isNot" class="itemtitle itemname">isNot</a></span>
+                    </h3>
+                <div>
+                    <p>Contains true for "is not" conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="JoinClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="JoinClause" href="#JoinClause" class="itemtitle itemname">JoinClause</a></span>
+                    <span class="itemtitle light">(list)</span></h3>
+                <div>
+                    <p>Creates a new JoinClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">list</td>
+                            <td>An array containing InnerJoin and or OuterJoin instances</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created JoinClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="JoinClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">JoinClause.prototype.<a id="JoinClause.prototype.accept" href="#JoinClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitJoinClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="JoinClause.prototype.get">
+                <h3 >
+                    <span class="itemtitle">JoinClause.prototype.<a id="JoinClause.prototype.get" href="#JoinClause.prototype.get" class="itemtitle itemname">get</a></span>
+                    <span class="itemtitle light">(idx)</span></h3>
+                <div>
+                    <p>Returns the join at the given index position</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">idx</td>
+                            <td>The index position</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>InnerJoin|OuterJoin</td>
+                            <td> The join</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="JoinClause.prototype.length">
+                <h3 >
+                    <span class="itemtitle">JoinClause.prototype.<a id="JoinClause.prototype.length" href="#JoinClause.prototype.length" class="itemtitle itemname">length</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the number of joins in this clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="JoinClause.prototype.list">
+                <h3 >
+                    <span class="itemtitle">JoinClause.prototype.<a id="JoinClause.prototype.list" href="#JoinClause.prototype.list" class="itemtitle itemname">list</a></span>
+                    </h3>
+                <div>
+                    <p>The list of joins</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="LikeCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="LikeCondition" href="#LikeCondition" class="itemtitle itemname">LikeCondition</a></span>
+                    <span class="itemtitle light">(value, not)</span></h3>
+                <div>
+                    <p>Creates a new LikeCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">value</td>
+                            <td>The value of the condition</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">not</td>
+                            <td>True for "not like" conditions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created LikeCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="LikeCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">LikeCondition.prototype.<a id="LikeCondition.prototype.accept" href="#LikeCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitLikeCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="LikeCondition.prototype.isNot">
+                <h3 >
+                    <span class="itemtitle">LikeCondition.prototype.<a id="LikeCondition.prototype.isNot" href="#LikeCondition.prototype.isNot" class="itemtitle itemname">isNot</a></span>
+                    </h3>
+                <div>
+                    <p>True for "not like" conditions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="LikeCondition.prototype.value">
+                <h3 >
+                    <span class="itemtitle">LikeCondition.prototype.<a id="LikeCondition.prototype.value" href="#LikeCondition.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this condition</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NotCondition">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="NotCondition" href="#NotCondition" class="itemtitle itemname">NotCondition</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new NotCondition instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created NotCondition instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NotCondition.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">NotCondition.prototype.<a id="NotCondition.prototype.accept" href="#NotCondition.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitNotCondition</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NotCondition.prototype.value">
+                <h3 >
+                    <span class="itemtitle">NotCondition.prototype.<a id="NotCondition.prototype.value" href="#NotCondition.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NullValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="NullValue" href="#NullValue" class="itemtitle itemname">NullValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new NullValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created NullValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NullValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">NullValue.prototype.<a id="NullValue.prototype.type" href="#NullValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("null")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="NullValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">NullValue.prototype.<a id="NullValue.prototype.value" href="#NullValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this NullValue instance</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderBy">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="OrderBy" href="#OrderBy" class="itemtitle itemname">OrderBy</a></span>
+                    <span class="itemtitle light">(expression, isReverse, nulls)</span></h3>
+                <div>
+                    <p>Creates a new OrderBy instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">expression</td>
+                            <td>The expression</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">isReverse</td>
+                            <td>True if the ordering is descending</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">nulls</td>
+                            <td>True if nulls should be sorted at the beginning</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created OrderBy instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderBy.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">OrderBy.prototype.<a id="OrderBy.prototype.accept" href="#OrderBy.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitOrderBy</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderBy.prototype.isReverse">
+                <h3 >
+                    <span class="itemtitle">OrderBy.prototype.<a id="OrderBy.prototype.isReverse" href="#OrderBy.prototype.isReverse" class="itemtitle itemname">isReverse</a></span>
+                    </h3>
+                <div>
+                    <p>True if the ordering is reverse (i.e. descending)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderBy.prototype.nulls">
+                <h3 >
+                    <span class="itemtitle">OrderBy.prototype.<a id="OrderBy.prototype.nulls" href="#OrderBy.prototype.nulls" class="itemtitle itemname">nulls</a></span>
+                    </h3>
+                <div>
+                    <p>True if nulls should be sorted to the beginning</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderBy.prototype.value">
+                <h3 >
+                    <span class="itemtitle">OrderBy.prototype.<a id="OrderBy.prototype.value" href="#OrderBy.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The expression of this clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderByClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="OrderByClause" href="#OrderByClause" class="itemtitle itemname">OrderByClause</a></span>
+                    <span class="itemtitle light">(list)</span></h3>
+                <div>
+                    <p>Creates a new OrderByClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">list</td>
+                            <td>The list of OrderBy instances forming this clause</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created OrderByClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderByClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">OrderByClause.prototype.<a id="OrderByClause.prototype.accept" href="#OrderByClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitOrderByClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OrderByClause.prototype.list">
+                <h3 >
+                    <span class="itemtitle">OrderByClause.prototype.<a id="OrderByClause.prototype.list" href="#OrderByClause.prototype.list" class="itemtitle itemname">list</a></span>
+                    </h3>
+                <div>
+                    <p>The list of OrderBy expressions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="OuterJoin" href="#OuterJoin" class="itemtitle itemname">OuterJoin</a></span>
+                    <span class="itemtitle light">(entity, predicate, side)</span></h3>
+                <div>
+                    <p>Creates a new OuterJoin instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Entity</td>
+                            <td class="paramname">entity</td>
+                            <td>The entity to join with</td>
+                        </tr>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">predicate</td>
+                            <td>The join predicate</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">side</td>
+                            <td>The side of the outer join</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created OuterJoin instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.LEFT">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.<a id="OuterJoin.LEFT" href="#OuterJoin.LEFT" class="itemtitle itemname">LEFT</a></span>
+                    </h3>
+                <div>
+                    
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.RIGHT">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.<a id="OuterJoin.RIGHT" href="#OuterJoin.RIGHT" class="itemtitle itemname">RIGHT</a></span>
+                    </h3>
+                <div>
+                    
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.prototype.<a id="OuterJoin.prototype.accept" href="#OuterJoin.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitOuterJoin</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.prototype.entity">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.prototype.<a id="OuterJoin.prototype.entity" href="#OuterJoin.prototype.entity" class="itemtitle itemname">entity</a></span>
+                    </h3>
+                <div>
+                    <p>The entity to join with</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.prototype.predicate">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.prototype.<a id="OuterJoin.prototype.predicate" href="#OuterJoin.prototype.predicate" class="itemtitle itemname">predicate</a></span>
+                    </h3>
+                <div>
+                    <p>The join predicate</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="OuterJoin.prototype.side">
+                <h3 >
+                    <span class="itemtitle">OuterJoin.prototype.<a id="OuterJoin.prototype.side" href="#OuterJoin.prototype.side" class="itemtitle itemname">side</a></span>
+                    </h3>
+                <div>
+                    <p>The side of the outer join</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ParameterValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="ParameterValue" href="#ParameterValue" class="itemtitle itemname">ParameterValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new ParameterValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created ParameterValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ParameterValue.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">ParameterValue.prototype.<a id="ParameterValue.prototype.accept" href="#ParameterValue.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitParameterValue</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ParameterValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">ParameterValue.prototype.<a id="ParameterValue.prototype.type" href="#ParameterValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("parameter")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="ParameterValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">ParameterValue.prototype.<a id="ParameterValue.prototype.value" href="#ParameterValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The parameter name</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="RangeClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="RangeClause" href="#RangeClause" class="itemtitle itemname">RangeClause</a></span>
+                    <span class="itemtitle light">(offset, limit)</span></h3>
+                <div>
+                    <p>Creates a new RangeClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">offset</td>
+                            <td>The offset</td>
+                        </tr>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">limit</td>
+                            <td>The limit</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created RangeClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="RangeClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">RangeClause.prototype.<a id="RangeClause.prototype.accept" href="#RangeClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitRangeClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="RangeClause.prototype.limit">
+                <h3 >
+                    <span class="itemtitle">RangeClause.prototype.<a id="RangeClause.prototype.limit" href="#RangeClause.prototype.limit" class="itemtitle itemname">limit</a></span>
+                    </h3>
+                <div>
+                    <p>The limit (defaults to zero, i.e. no limit)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="RangeClause.prototype.offset">
+                <h3 >
+                    <span class="itemtitle">RangeClause.prototype.<a id="RangeClause.prototype.offset" href="#RangeClause.prototype.offset" class="itemtitle itemname">offset</a></span>
+                    </h3>
+                <div>
+                    <p>The offset (defaults to zero)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Select" href="#Select" class="itemtitle itemname">Select</a></span>
+                    <span class="itemtitle light">(aliases, select, from, join, where, groupBy, having, orderBy, range, isDistinct)</span></h3>
+                <div>
+                    <p>Creates a new Select instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">aliases</td>
+                            <td>An array containing all aliases within this statement</td>
+                        </tr>
+                                                <tr>
+                            <td>SelectClause</td>
+                            <td class="paramname">select</td>
+                            <td>The select clause</td>
+                        </tr>
+                                                <tr>
+                            <td>FromClause</td>
+                            <td class="paramname">from</td>
+                            <td>The from clause</td>
+                        </tr>
+                                                <tr>
+                            <td>JoinClause</td>
+                            <td class="paramname">join</td>
+                            <td>The join clause</td>
+                        </tr>
+                                                <tr>
+                            <td>WhereClause</td>
+                            <td class="paramname">where</td>
+                            <td>The where clause</td>
+                        </tr>
+                                                <tr>
+                            <td>GroupByClause</td>
+                            <td class="paramname">groupBy</td>
+                            <td>The group by expression</td>
+                        </tr>
+                                                <tr>
+                            <td>HavingClause</td>
+                            <td class="paramname">having</td>
+                            <td>The having clause</td>
+                        </tr>
+                                                <tr>
+                            <td>OrderByClause</td>
+                            <td class="paramname">orderBy</td>
+                            <td>The order by clause</td>
+                        </tr>
+                                                <tr>
+                            <td>RangeClause</td>
+                            <td class="paramname">range</td>
+                            <td>The range clause</td>
+                        </tr>
+                                                <tr>
+                            <td>Boolean</td>
+                            <td class="paramname">isDistinct</td>
+                            <td>True if the select is distinct</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Select instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.accept" href="#Select.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitSelect</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.aliases">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.aliases" href="#Select.prototype.aliases" class="itemtitle itemname">aliases</a></span>
+                    </h3>
+                <div>
+                    <p>The list of aliases of this select statement</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.from">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.from" href="#Select.prototype.from" class="itemtitle itemname">from</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the from clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.groupBy">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.groupBy" href="#Select.prototype.groupBy" class="itemtitle itemname">groupBy</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the group by clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.having">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.having" href="#Select.prototype.having" class="itemtitle itemname">having</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the having clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.isDistinct">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.isDistinct" href="#Select.prototype.isDistinct" class="itemtitle itemname">isDistinct</a></span>
+                    </h3>
+                <div>
+                    <p>True for distinct select statements</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.join">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.join" href="#Select.prototype.join" class="itemtitle itemname">join</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the join clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.orderBy">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.orderBy" href="#Select.prototype.orderBy" class="itemtitle itemname">orderBy</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the order by clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.range">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.range" href="#Select.prototype.range" class="itemtitle itemname">range</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the range clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.select">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.select" href="#Select.prototype.select" class="itemtitle itemname">select</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the select clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Select.prototype.where">
+                <h3 >
+                    <span class="itemtitle">Select.prototype.<a id="Select.prototype.where" href="#Select.prototype.where" class="itemtitle itemname">where</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the where clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="SelectClause" href="#SelectClause" class="itemtitle itemname">SelectClause</a></span>
+                    <span class="itemtitle light">(list)</span></h3>
+                <div>
+                    <p>Creates a new SelectClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">list</td>
+                            <td>An array containing the select expressions</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created SelectClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">SelectClause.prototype.<a id="SelectClause.prototype.accept" href="#SelectClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitSelectClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectClause.prototype.get">
+                <h3 >
+                    <span class="itemtitle">SelectClause.prototype.<a id="SelectClause.prototype.get" href="#SelectClause.prototype.get" class="itemtitle itemname">get</a></span>
+                    <span class="itemtitle light">(idx)</span></h3>
+                <div>
+                    <p>Returns the select expression at the given index position</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">idx</td>
+                            <td>The index position</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>SelectExpression</td>
+                            <td> The select expression</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectClause.prototype.length">
+                <h3 >
+                    <span class="itemtitle">SelectClause.prototype.<a id="SelectClause.prototype.length" href="#SelectClause.prototype.length" class="itemtitle itemname">length</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the number of select expressions in this clause</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectClause.prototype.list">
+                <h3 >
+                    <span class="itemtitle">SelectClause.prototype.<a id="SelectClause.prototype.list" href="#SelectClause.prototype.list" class="itemtitle itemname">list</a></span>
+                    </h3>
+                <div>
+                    <p>The list of select expressions</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectEntity">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="SelectEntity" href="#SelectEntity" class="itemtitle itemname">SelectEntity</a></span>
+                    <span class="itemtitle light">(name)</span></h3>
+                <div>
+                    <p>Creates a new SelectEntity instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The name of the entity to select</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created SelectExpression instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectEntity.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">SelectEntity.prototype.<a id="SelectEntity.prototype.accept" href="#SelectEntity.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitSelectEntity</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectEntity.prototype.name">
+                <h3 >
+                    <span class="itemtitle">SelectEntity.prototype.<a id="SelectEntity.prototype.name" href="#SelectEntity.prototype.name" class="itemtitle itemname">name</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the name of the entity to select</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectEntity.prototype.property">
+                <h3 >
+                    <span class="itemtitle">SelectEntity.prototype.<a id="SelectEntity.prototype.property" href="#SelectEntity.prototype.property" class="itemtitle itemname">property</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the name of the entity property to select ("id")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectExpression">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="SelectExpression" href="#SelectExpression" class="itemtitle itemname">SelectExpression</a></span>
+                    <span class="itemtitle light">(expression, alias)</span></h3>
+                <div>
+                    <p>Creates a new SelectExpression instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">expression</td>
+                            <td>The expression</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">alias</td>
+                            <td>Optional alias for the expression</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created SelectExpression instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectExpression.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">SelectExpression.prototype.<a id="SelectExpression.prototype.accept" href="#SelectExpression.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitSelectExpression</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectExpression.prototype.alias">
+                <h3 >
+                    <span class="itemtitle">SelectExpression.prototype.<a id="SelectExpression.prototype.alias" href="#SelectExpression.prototype.alias" class="itemtitle itemname">alias</a></span>
+                    </h3>
+                <div>
+                    <p>The alias of the expression</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SelectExpression.prototype.expression">
+                <h3 >
+                    <span class="itemtitle">SelectExpression.prototype.<a id="SelectExpression.prototype.expression" href="#SelectExpression.prototype.expression" class="itemtitle itemname">expression</a></span>
+                    </h3>
+                <div>
+                    <p>The expression</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="StringValue">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="StringValue" href="#StringValue" class="itemtitle itemname">StringValue</a></span>
+                    <span class="itemtitle light">(value)</span></h3>
+                <div>
+                    <p>Creates a new StringValue instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">value</td>
+                            <td>The value</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created StringValue instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#Value">Value</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="StringValue.prototype.type">
+                <h3 >
+                    <span class="itemtitle">StringValue.prototype.<a id="StringValue.prototype.type" href="#StringValue.prototype.type" class="itemtitle itemname">type</a></span>
+                    </h3>
+                <div>
+                    <p>The type of this value ("string")</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="StringValue.prototype.value">
+                <h3 >
+                    <span class="itemtitle">StringValue.prototype.<a id="StringValue.prototype.value" href="#StringValue.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The value of this StringValue instance</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Summand">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Summand" href="#Summand" class="itemtitle itemname">Summand</a></span>
+                    <span class="itemtitle light">(left, operand, right)</span></h3>
+                <div>
+                    <p>Creates a new Summand instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">left</td>
+                            <td>The left side of the summand</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">operand</td>
+                            <td>The operand</td>
+                        </tr>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">right</td>
+                            <td>The right side of the summand</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Summand instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Summand.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Summand.prototype.<a id="Summand.prototype.accept" href="#Summand.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitSummand</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Summand.prototype.left">
+                <h3 >
+                    <span class="itemtitle">Summand.prototype.<a id="Summand.prototype.left" href="#Summand.prototype.left" class="itemtitle itemname">left</a></span>
+                    </h3>
+                <div>
+                    <p>The left side of this summand</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Summand.prototype.operand">
+                <h3 >
+                    <span class="itemtitle">Summand.prototype.<a id="Summand.prototype.operand" href="#Summand.prototype.operand" class="itemtitle itemname">operand</a></span>
+                    </h3>
+                <div>
+                    <p>The operand</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Summand.prototype.right">
+                <h3 >
+                    <span class="itemtitle">Summand.prototype.<a id="Summand.prototype.right" href="#Summand.prototype.right" class="itemtitle itemname">right</a></span>
+                    </h3>
+                <div>
+                    <p>The right side of this summand</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Value">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Value" href="#Value" class="itemtitle itemname">Value</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Base class for value AST nodes</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Value instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#StringValue">StringValue</a><br /><a href="#IntValue">IntValue</a><br /><a href="#BooleanValue">BooleanValue</a><br /><a href="#NullValue">NullValue</a><br /><a href="#ParameterValue">ParameterValue</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Value.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">Value.prototype.<a id="Value.prototype.accept" href="#Value.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitValue</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="WhereClause">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="WhereClause" href="#WhereClause" class="itemtitle itemname">WhereClause</a></span>
+                    <span class="itemtitle light">(expression)</span></h3>
+                <div>
+                    <p>Creates a new WhereClause instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">expression</td>
+                            <td>The expressions forming this clause</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created WhereClause instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="WhereClause.prototype.accept">
+                <h3 >
+                    <span class="itemtitle">WhereClause.prototype.<a id="WhereClause.prototype.accept" href="#WhereClause.prototype.accept" class="itemtitle itemname">accept</a></span>
+                    <span class="itemtitle light">(visitor)</span></h3>
+                <div>
+                    <p>Calls the method <code>visitWhereClause</code> of the visitor passed as argument, passing
+this instance as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">visitor</td>
+                            <td>The visitor</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>The value returned by the visitor</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="WhereClause.prototype.value">
+                <h3 >
+                    <span class="itemtitle">WhereClause.prototype.<a id="WhereClause.prototype.value" href="#WhereClause.prototype.value" class="itemtitle itemname">value</a></span>
+                    </h3>
+                <div>
+                    <p>The expression</p>
+
+
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../../index.html">&bull; Modules</a>
+      <a href="../../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../../basedialect/index.html">basedialect</a></li>
+            <li><a href="../../cache/index.html">cache</a></li>
+            <li><a href="../../collection/index.html">collection</a></li>
+            <li><a href="../../key/index.html">key</a></li>
+            <li><a href="../../main/index.html">main</a></li>
+            <li><a href="../../mapping/index.html">mapping</a></li>
+            <li><a href="../../storable/index.html">storable</a></li>
+            <li><a href="../../store/index.html">store</a></li>
+            <li><a href="../../transaction/index.html">transaction</a></li>
+            <li><a href="../../types/index.html">types</a></li>
+            <li><a href="../../util/index.html">util</a></li>
+            <li><a href="../../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../../connection/util/index.html">connection/util</a></li>
+            <li><a href="../../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../../query/ast/index.html">query/ast</a></li>
+            <li><a href="../../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../../query/parser/index.html">query/parser</a></li>
+            <li><a href="../../query/query/index.html">query/query</a></li>
+            <li><a href="../../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

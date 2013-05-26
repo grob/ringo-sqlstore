@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Module overview - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./static/jsdoc.css" />
+<link rel="stylesheet" href="./static/style.css" />
+<script type="text/javascript" src="./static/jquery.min.js"></script>
+<script type="text/javascript" src="./static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+            
+    <h1>Modules: Ringo SqlStore</h1>
+
+    <ul class="modulelist">
+                <li >
+
+        <h2><a href="./basedialect/index.html"> basedialect </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Basic database dialect implementation. This class is extended
+by the different DB-specific dialect implementations.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./cache/index.html"> cache </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Generic LRU cache implementation, used for both query and
+entity caches within a Store instance.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./collection/index.html"> collection </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Provides constructors for standard and partitioned collections.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./key/index.html"> key </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Storable key implementation.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./main/index.html"> main </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>The main module of SqlStore</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./mapping/index.html"> mapping </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Provides a Mapping constructor representing the mapping
+definition of an entity defined within a store.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./storable/index.html"> storable </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Base class for mapping JavaScript objects to relational
+databases.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./store/index.html"> store </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Store instances represent the underlying database, providing
+functionality for defining entities, manipulating and querying data.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./transaction/index.html"> transaction </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Transaction implementation, keeping track of modifications
+within a transaction and providing functionality for committing or rolling back.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./types/index.html"> types </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Module providing constructors for the various RDBMS data types.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./util/index.html"> util </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>A module providing various RDBMS related utility functions</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./connection/pool/index.html"> connection/pool </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Basic JDBC connection pool implementation.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./connection/poolworker/index.html"> connection/poolworker </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Worker implementation responsible for triggering stale connection
+cleanup in the connection pool.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./connection/util/index.html"> connection/util </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Provides various utility functions for instantiating JDBC
+connection pools</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./databases/h2/index.html"> databases/h2 </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Dialect implementation for H2 databases</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./databases/mysql5/index.html"> databases/mysql5 </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Dialect implementation for MySQL databases</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./databases/oracle/index.html"> databases/oracle </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Dialect implementation for Oracle databases</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./databases/postgresql/index.html"> databases/postgresql </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Dialect implementation for PostgreSQL databases</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/ast/index.html"> query/ast </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>AST implementation used by the query parser to convert queries
+into a tree of nodes.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/collectorgenerator/index.html"> query/collectorgenerator </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>A module for creating select result set collectors</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/normalizer/index.html"> query/normalizer </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>A query normalizer capable of converting a query AST back into
+a query string</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/parser/index.html"> query/parser </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>A PEG query parser converting query strings into their AST
+representation</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/query/index.html"> query/query </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Provides query functionality for both SqlStore type of queries
+and raw SQL ones.</p>
+
+
+        </div>
+
+        </li>
+                <li >
+
+        <h2><a href="./query/sqlgenerator/index.html"> query/sqlgenerator </a></h2>
+        <div class="jsdoc-fileoverview">
+            <p>Provides an SqlGenerator constructor capable of converting
+a query AST into a raw SQL query suitable for the underlying database.</p>
+
+
+        </div>
+
+        </li>
+        </ul>
+
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="./index.html">&bull; Modules</a>
+      <a href="./index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="./basedialect/index.html">basedialect</a></li>
+            <li><a href="./cache/index.html">cache</a></li>
+            <li><a href="./collection/index.html">collection</a></li>
+            <li><a href="./key/index.html">key</a></li>
+            <li><a href="./main/index.html">main</a></li>
+            <li><a href="./mapping/index.html">mapping</a></li>
+            <li><a href="./storable/index.html">storable</a></li>
+            <li><a href="./store/index.html">store</a></li>
+            <li><a href="./transaction/index.html">transaction</a></li>
+            <li><a href="./types/index.html">types</a></li>
+            <li><a href="./util/index.html">util</a></li>
+            <li><a href="./connection/pool/index.html">connection/pool</a></li>
+            <li><a href="./connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="./connection/util/index.html">connection/util</a></li>
+            <li><a href="./databases/h2/index.html">databases/h2</a></li>
+            <li><a href="./databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="./databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="./databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="./query/ast/index.html">query/ast</a></li>
+            <li><a href="./query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="./query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="./query/parser/index.html">query/parser</a></li>
+            <li><a href="./query/query/index.html">query/query</a></li>
+            <li><a href="./query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

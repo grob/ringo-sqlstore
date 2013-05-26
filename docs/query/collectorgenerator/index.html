@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>query/collectorgenerator - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/jsdoc.css" />
+<link rel="stylesheet" href="../../static/style.css" />
+<script type="text/javascript" src="../../static/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module query/collectorgenerator</h1>
+        <div class="fileoverview">
+            <p>A module for creating select result set collectors</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+                        <h2 class="functions">Functions</h2>
+            <ul class="functions propertyoverview">
+                                <li>
+                    <a href="#createCollector" class="jsdoc-title"> createCollector</a>(store, ast)
+                </li>
+                </ul>
+                        <h2>Properties</h2>
+            <ul class="propertyoverview">
+                                <li>
+                    <a href="#createCollector.prototype.alias" class="jsdoc-title"> createCollector.prototype.alias</a>
+                </li>
+                                <li>
+                    <a href="#createCollector.prototype.columnCnt" class="jsdoc-title"> createCollector.prototype.columnCnt</a>
+                </li>
+                                <li>
+                    <a href="#createCollector.prototype.columnIdx" class="jsdoc-title"> createCollector.prototype.columnIdx</a>
+                </li>
+                                <li>
+                    <a href="#createCollector.prototype.mapping" class="jsdoc-title"> createCollector.prototype.mapping</a>
+                </li>
+                </ul>
+            <div class="classes">
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createCollector">
+                <h3 >
+                    <span class="itemtitle"><a id="createCollector" href="#createCollector" class="itemtitle itemname">createCollector</a></span>
+                    <span class="itemtitle light">(store, ast)</span></h3>
+                <div>
+                    <p>Creates an Array of collector instances for the query AST passed as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to operate on</td>
+                        </tr>
+                                                <tr>
+                            <td>Select</td>
+                            <td class="paramname">ast</td>
+                            <td>The query AST</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing collector instances for all select
+expressions in a query.</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createCollector.prototype.alias">
+                <h3 >
+                    <span class="itemtitle"><a id="createCollector.prototype.alias" href="#createCollector.prototype.alias" class="itemtitle itemname">createCollector.prototype.alias</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the alias for this entity (if specified in the query)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createCollector.prototype.columnCnt">
+                <h3 >
+                    <span class="itemtitle"><a id="createCollector.prototype.columnCnt" href="#createCollector.prototype.columnCnt" class="itemtitle itemname">createCollector.prototype.columnCnt</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the number of columns this collector will handle (1)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createCollector.prototype.columnIdx">
+                <h3 >
+                    <span class="itemtitle"><a id="createCollector.prototype.columnIdx" href="#createCollector.prototype.columnIdx" class="itemtitle itemname">createCollector.prototype.columnIdx</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the column offset index (1-based)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createCollector.prototype.mapping">
+                <h3 >
+                    <span class="itemtitle"><a id="createCollector.prototype.mapping" href="#createCollector.prototype.mapping" class="itemtitle itemname">createCollector.prototype.mapping</a></span>
+                    </h3>
+                <div>
+                    <p>Contains the mapping of this collector</p>
+
+
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../../index.html">&bull; Modules</a>
+      <a href="../../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../../basedialect/index.html">basedialect</a></li>
+            <li><a href="../../cache/index.html">cache</a></li>
+            <li><a href="../../collection/index.html">collection</a></li>
+            <li><a href="../../key/index.html">key</a></li>
+            <li><a href="../../main/index.html">main</a></li>
+            <li><a href="../../mapping/index.html">mapping</a></li>
+            <li><a href="../../storable/index.html">storable</a></li>
+            <li><a href="../../store/index.html">store</a></li>
+            <li><a href="../../transaction/index.html">transaction</a></li>
+            <li><a href="../../types/index.html">types</a></li>
+            <li><a href="../../util/index.html">util</a></li>
+            <li><a href="../../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../../connection/util/index.html">connection/util</a></li>
+            <li><a href="../../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../../query/ast/index.html">query/ast</a></li>
+            <li><a href="../../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../../query/parser/index.html">query/parser</a></li>
+            <li><a href="../../query/query/index.html">query/query</a></li>
+            <li><a href="../../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

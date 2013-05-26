@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>databases/h2 - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/jsdoc.css" />
+<link rel="stylesheet" href="../../static/style.css" />
+<script type="text/javascript" src="../../static/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module databases/h2</h1>
+        <div class="fileoverview">
+            <p>Dialect implementation for H2 databases</p>
+
+
+        </div>
+
+                <div>
+            <h4>See</h4>
+            <div>
+                <a href="../../basedialect/index.html">basedialect</a>
+            </div>
+        </div>
+        <div class="classoverview">
+
+                        <h2 class="functions">Functions</h2>
+            <ul class="functions propertyoverview">
+                                <li>
+                    <a href="#addSqlLimit" class="jsdoc-title"> addSqlLimit</a>(sqlBuf, limit)
+                </li>
+                                <li>
+                    <a href="#addSqlOffset" class="jsdoc-title"> addSqlOffset</a>(sqlBuf, offset)
+                </li>
+                                <li>
+                    <a href="#addSqlRange" class="jsdoc-title"> addSqlRange</a>(sqlBuf, offset, limit)
+                </li>
+                                <li>
+                    <a href="#getSqlNextSequenceValue" class="jsdoc-title"> getSqlNextSequenceValue</a>(sequenceName)
+                </li>
+                                <li>
+                    <a href="#hasSequenceSupport" class="jsdoc-title"> hasSequenceSupport</a>()
+                </li>
+                </ul>
+            <div class="classes">
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="addSqlLimit">
+                <h3 >
+                    <span class="itemtitle"><a id="addSqlLimit" href="#addSqlLimit" class="itemtitle itemname">addSqlLimit</a></span>
+                    <span class="itemtitle light">(sqlBuf, limit)</span></h3>
+                <div>
+                    <p>Extends the SQL statement passed as argument with a limit restriction</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">sqlBuf</td>
+                            <td>The SQL statement</td>
+                        </tr>
+                                                <tr>
+                            <td>Limit</td>
+                            <td class="paramname">limit</td>
+                            <td>The limit</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="addSqlOffset">
+                <h3 >
+                    <span class="itemtitle"><a id="addSqlOffset" href="#addSqlOffset" class="itemtitle itemname">addSqlOffset</a></span>
+                    <span class="itemtitle light">(sqlBuf, offset)</span></h3>
+                <div>
+                    <p>Extends the SQL statement passed as argument with an offset restriction</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">sqlBuf</td>
+                            <td>The SQL statement</td>
+                        </tr>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">offset</td>
+                            <td>The offset</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="addSqlRange">
+                <h3 >
+                    <span class="itemtitle"><a id="addSqlRange" href="#addSqlRange" class="itemtitle itemname">addSqlRange</a></span>
+                    <span class="itemtitle light">(sqlBuf, offset, limit)</span></h3>
+                <div>
+                    <p>Extends the SQL statement passed as argument with a range restriction</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">sqlBuf</td>
+                            <td>The SQL statement</td>
+                        </tr>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">offset</td>
+                            <td>The offset</td>
+                        </tr>
+                                                <tr>
+                            <td>Limit</td>
+                            <td class="paramname">limit</td>
+                            <td>The limit</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="getSqlNextSequenceValue">
+                <h3 >
+                    <span class="itemtitle"><a id="getSqlNextSequenceValue" href="#getSqlNextSequenceValue" class="itemtitle itemname">getSqlNextSequenceValue</a></span>
+                    <span class="itemtitle light">(sequenceName)</span></h3>
+                <div>
+                    <p>Returns the SQL statement for retrieving the next value of a sequence</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">sequenceName</td>
+                            <td>The name of the sequence</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL statement</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="hasSequenceSupport">
+                <h3 >
+                    <span class="itemtitle"><a id="hasSequenceSupport" href="#hasSequenceSupport" class="itemtitle itemname">hasSequenceSupport</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Returns true</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Boolean</td>
+                            <td> True</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../../index.html">&bull; Modules</a>
+      <a href="../../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../../basedialect/index.html">basedialect</a></li>
+            <li><a href="../../cache/index.html">cache</a></li>
+            <li><a href="../../collection/index.html">collection</a></li>
+            <li><a href="../../key/index.html">key</a></li>
+            <li><a href="../../main/index.html">main</a></li>
+            <li><a href="../../mapping/index.html">mapping</a></li>
+            <li><a href="../../storable/index.html">storable</a></li>
+            <li><a href="../../store/index.html">store</a></li>
+            <li><a href="../../transaction/index.html">transaction</a></li>
+            <li><a href="../../types/index.html">types</a></li>
+            <li><a href="../../util/index.html">util</a></li>
+            <li><a href="../../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../../connection/util/index.html">connection/util</a></li>
+            <li><a href="../../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../../query/ast/index.html">query/ast</a></li>
+            <li><a href="../../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../../query/parser/index.html">query/parser</a></li>
+            <li><a href="../../query/query/index.html">query/query</a></li>
+            <li><a href="../../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

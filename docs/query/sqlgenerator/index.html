@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>query/sqlgenerator - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/jsdoc.css" />
+<link rel="stylesheet" href="../../static/style.css" />
+<script type="text/javascript" src="../../static/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module query/sqlgenerator</h1>
+        <div class="fileoverview">
+            <p>Provides an SqlGenerator constructor capable of converting
+a query AST into a raw SQL query suitable for the underlying database.</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+            <div class="classes">
+                                <h2>Class <a href="#SqlGenerator" class="jsdoc-title">SqlGenerator</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SqlGenerator.prototype.createSqlFunction" class="jsdoc-title"> createSqlFunction</a>(ast)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.getEntityMapping" class="jsdoc-title"> getEntityMapping</a>(name)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.getPropertyMapping" class="jsdoc-title"> getPropertyMapping</a>(name, property)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.isAliased" class="jsdoc-title"> isAliased</a>(name)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitAggregation" class="jsdoc-title"> visitAggregation</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitBetweenCondition" class="jsdoc-title"> visitBetweenCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitComparison" class="jsdoc-title"> visitComparison</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitCondition" class="jsdoc-title"> visitCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitConditionList" class="jsdoc-title"> visitConditionList</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitEntity" class="jsdoc-title"> visitEntity</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitExistCondition" class="jsdoc-title"> visitExistCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitExpression" class="jsdoc-title"> visitExpression</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitFactor" class="jsdoc-title"> visitFactor</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitFromClause" class="jsdoc-title"> visitFromClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitGroupByClause" class="jsdoc-title"> visitGroupByClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitHavingClause" class="jsdoc-title"> visitHavingClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitIdent" class="jsdoc-title"> visitIdent</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitInCondition" class="jsdoc-title"> visitInCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitInnerJoin" class="jsdoc-title"> visitInnerJoin</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitIsNullCondition" class="jsdoc-title"> visitIsNullCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitJoinClause" class="jsdoc-title"> visitJoinClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitLikeCondition" class="jsdoc-title"> visitLikeCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitNotCondition" class="jsdoc-title"> visitNotCondition</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitOrderBy" class="jsdoc-title"> visitOrderBy</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitOrderByClause" class="jsdoc-title"> visitOrderByClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitOuterJoin" class="jsdoc-title"> visitOuterJoin</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitParameterValue" class="jsdoc-title"> visitParameterValue</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitSelect" class="jsdoc-title"> visitSelect</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitSelectClause" class="jsdoc-title"> visitSelectClause</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitSelectEntity" class="jsdoc-title"> visitSelectEntity</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitSelectExpression" class="jsdoc-title"> visitSelectExpression</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitSummand" class="jsdoc-title"> visitSummand</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitValue" class="jsdoc-title"> visitValue</a>(node)
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.visitWhereClause" class="jsdoc-title"> visitWhereClause</a>(node)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SqlGenerator.prototype.aliases" class="jsdoc-title"> aliases</a>
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.params" class="jsdoc-title"> params</a>
+                    </li>
+                                        <li>
+                        <a href="#SqlGenerator.prototype.store" class="jsdoc-title"> store</a>
+                    </li>
+                    </ul>
+                                <h3>Static Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#SqlGenerator.createSqlFunction" class="jsdoc-title"> createSqlFunction</a>(store, ast)
+                    </li>
+                    </ul>
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="SqlGenerator" href="#SqlGenerator" class="itemtitle itemname">SqlGenerator</a></span>
+                    <span class="itemtitle light">(store, aliases)</span></h3>
+                <div>
+                    <p>Creates a new SqlGenerator instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to operate on</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">aliases</td>
+                            <td>The entity aliases referenced in the "from" clause
+of the query, if any</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created SqlGenerator instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.createSqlFunction">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.<a id="SqlGenerator.createSqlFunction" href="#SqlGenerator.createSqlFunction" class="itemtitle itemname">createSqlFunction</a></span>
+                    <span class="itemtitle light">(store, ast)</span></h3>
+                <div>
+                    <p>Convenience method for creating the raw SQL query generator function</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to operate on</td>
+                        </tr>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">ast</td>
+                            <td>The query AST</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Function</td>
+                            <td> The SQL generator function</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="#SqlGenerator.prototype.createSqlFunction">SqlGenerator.prototype.createSqlFunction</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.aliases">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.aliases" href="#SqlGenerator.prototype.aliases" class="itemtitle itemname">aliases</a></span>
+                    </h3>
+                <div>
+                    <p>An object containing entity aliases as property names and the
+entity name as values</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.createSqlFunction">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.createSqlFunction" href="#SqlGenerator.prototype.createSqlFunction" class="itemtitle itemname">createSqlFunction</a></span>
+                    <span class="itemtitle light">(ast)</span></h3>
+                <div>
+                    <p>Creates a function suitable for generating a raw SQL query based on the
+AST passed as argument. This function is cached together with the AST it's
+based on in the store's query cache.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Node</td>
+                            <td class="paramname">ast</td>
+                            <td>The query AST as produced by the query parser</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Function</td>
+                            <td> The SQL generator function</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.getEntityMapping">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.getEntityMapping" href="#SqlGenerator.prototype.getEntityMapping" class="itemtitle itemname">getEntityMapping</a></span>
+                    <span class="itemtitle light">(name)</span></h3>
+                <div>
+                    <p>Returns the mapping for the entity with the given name</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The entity name or it's alias</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Mapping</td>
+                            <td> The mapping for the entity</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.getPropertyMapping">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.getPropertyMapping" href="#SqlGenerator.prototype.getPropertyMapping" class="itemtitle itemname">getPropertyMapping</a></span>
+                    <span class="itemtitle light">(name, property)</span></h3>
+                <div>
+                    <p>Returns the mapping for the given property</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The entity name or it's alias</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">property</td>
+                            <td>The property name</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>PrimitiveMapping|ObjectMapping|CollectionMapping</td>
+                            <td> The property mapping</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.isAliased">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.isAliased" href="#SqlGenerator.prototype.isAliased" class="itemtitle itemname">isAliased</a></span>
+                    <span class="itemtitle light">(name)</span></h3>
+                <div>
+                    <p>Returns true if the name passed as argument is an alias for an entity</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">name</td>
+                            <td>The entity name</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Boolean</td>
+                            <td> True if an alias for this entity has been defined in
+the query, false otherwise</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.params">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.params" href="#SqlGenerator.prototype.params" class="itemtitle itemname">params</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the descriptors of values specified in the query.</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.store">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.store" href="#SqlGenerator.prototype.store" class="itemtitle itemname">store</a></span>
+                    </h3>
+                <div>
+                    <p>The store this generatore operates on</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitAggregation">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitAggregation" href="#SqlGenerator.prototype.visitAggregation" class="itemtitle itemname">visitAggregation</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the aggregation passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Aggregation</td>
+                            <td class="paramname">node</td>
+                            <td>The aggregation node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitBetweenCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitBetweenCondition" href="#SqlGenerator.prototype.visitBetweenCondition" class="itemtitle itemname">visitBetweenCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "between" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>BetweenCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The "between" condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitComparison">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitComparison" href="#SqlGenerator.prototype.visitComparison" class="itemtitle itemname">visitComparison</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the comparison passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Comparison</td>
+                            <td class="paramname">node</td>
+                            <td>The comparison node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitCondition" href="#SqlGenerator.prototype.visitCondition" class="itemtitle itemname">visitCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Condition</td>
+                            <td class="paramname">node</td>
+                            <td>The condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitConditionList">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitConditionList" href="#SqlGenerator.prototype.visitConditionList" class="itemtitle itemname">visitConditionList</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the condition list passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>ConditionList</td>
+                            <td class="paramname">node</td>
+                            <td>The condition list node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitEntity">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitEntity" href="#SqlGenerator.prototype.visitEntity" class="itemtitle itemname">visitEntity</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation (<code>[&lt;SchemaName&gt;.]&lt;TableName&gt;[ &lt;alias&gt;]</code>) of
+the entity passed as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Entity</td>
+                            <td class="paramname">node</td>
+                            <td>The entity node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitExistCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitExistCondition" href="#SqlGenerator.prototype.visitExistCondition" class="itemtitle itemname">visitExistCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "exists" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>ExistsCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The "exists" condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitExpression">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitExpression" href="#SqlGenerator.prototype.visitExpression" class="itemtitle itemname">visitExpression</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the expression passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Expression</td>
+                            <td class="paramname">node</td>
+                            <td>The expression node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitFactor">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitFactor" href="#SqlGenerator.prototype.visitFactor" class="itemtitle itemname">visitFactor</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the factor passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Factor</td>
+                            <td class="paramname">node</td>
+                            <td>The factor node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitFromClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitFromClause" href="#SqlGenerator.prototype.visitFromClause" class="itemtitle itemname">visitFromClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "from" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>FromClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "from" clause node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitGroupByClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitGroupByClause" href="#SqlGenerator.prototype.visitGroupByClause" class="itemtitle itemname">visitGroupByClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "group by" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>GroupByClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "group by" clause node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitHavingClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitHavingClause" href="#SqlGenerator.prototype.visitHavingClause" class="itemtitle itemname">visitHavingClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "having" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>HavingClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "having" clause node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitIdent">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitIdent" href="#SqlGenerator.prototype.visitIdent" class="itemtitle itemname">visitIdent</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation (<code>&lt;TableName|alias&gt;.&lt;ColumnName&gt;</code>) of the
+ident passed as argument.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Ident</td>
+                            <td class="paramname">node</td>
+                            <td>The ident node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitInCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitInCondition" href="#SqlGenerator.prototype.visitInCondition" class="itemtitle itemname">visitInCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "in" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>InCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The "in" condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitInnerJoin">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitInnerJoin" href="#SqlGenerator.prototype.visitInnerJoin" class="itemtitle itemname">visitInnerJoin</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "inner join" passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>InnerJoin</td>
+                            <td class="paramname">node</td>
+                            <td>The "inner join" node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitIsNullCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitIsNullCondition" href="#SqlGenerator.prototype.visitIsNullCondition" class="itemtitle itemname">visitIsNullCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "(not) null" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>NullCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitJoinClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitJoinClause" href="#SqlGenerator.prototype.visitJoinClause" class="itemtitle itemname">visitJoinClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "join" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>JoinClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "join clause" node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitLikeCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitLikeCondition" href="#SqlGenerator.prototype.visitLikeCondition" class="itemtitle itemname">visitLikeCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "like" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>LikeCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The "like" condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitNotCondition">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitNotCondition" href="#SqlGenerator.prototype.visitNotCondition" class="itemtitle itemname">visitNotCondition</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "not" condition passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>NotCondition</td>
+                            <td class="paramname">node</td>
+                            <td>The "not" condition node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitOrderBy">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitOrderBy" href="#SqlGenerator.prototype.visitOrderBy" class="itemtitle itemname">visitOrderBy</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "order by" passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>OrderBy</td>
+                            <td class="paramname">node</td>
+                            <td>The "order by" node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitOrderByClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitOrderByClause" href="#SqlGenerator.prototype.visitOrderByClause" class="itemtitle itemname">visitOrderByClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "order by" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>OrderByClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "order by" clause node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitOuterJoin">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitOuterJoin" href="#SqlGenerator.prototype.visitOuterJoin" class="itemtitle itemname">visitOuterJoin</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "outer join" passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>OuterJoin</td>
+                            <td class="paramname">node</td>
+                            <td>The "outer join" node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitParameterValue">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitParameterValue" href="#SqlGenerator.prototype.visitParameterValue" class="itemtitle itemname">visitParameterValue</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Pushes the name of the named parameter referenced in the query (<code>:&lt;name&gt;</code>)
+into the internal <code>params</code> array and returns a question mark as placeholder
+for the parameter in the SQL query</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>ParameterValue</td>
+                            <td class="paramname">node</td>
+                            <td>The parameter value node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> A question mark</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitSelect">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitSelect" href="#SqlGenerator.prototype.visitSelect" class="itemtitle itemname">visitSelect</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the select statement passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Select</td>
+                            <td class="paramname">node</td>
+                            <td>The select node (i.e. the root node of the query AST)</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitSelectClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitSelectClause" href="#SqlGenerator.prototype.visitSelectClause" class="itemtitle itemname">visitSelectClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "select" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>SelectClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "select" clause node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitSelectEntity">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitSelectEntity" href="#SqlGenerator.prototype.visitSelectEntity" class="itemtitle itemname">visitSelectEntity</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the select entity passed as argument (i.e.
+an entity referenced in the select clause)</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>SelectEntity</td>
+                            <td class="paramname">node</td>
+                            <td>The select entity node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitSelectExpression">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitSelectExpression" href="#SqlGenerator.prototype.visitSelectExpression" class="itemtitle itemname">visitSelectExpression</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the select expression passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>SelectExpression</td>
+                            <td class="paramname">node</td>
+                            <td>The select expression node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitSummand">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitSummand" href="#SqlGenerator.prototype.visitSummand" class="itemtitle itemname">visitSummand</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the summand passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Summand</td>
+                            <td class="paramname">node</td>
+                            <td>The summand node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitValue">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitValue" href="#SqlGenerator.prototype.visitValue" class="itemtitle itemname">visitValue</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Pushes the value descriptor (an object containing the type of the value and
+the value itself) into the <code>params</code> array of this generator, and returns a
+question mark as placeholder for the parameter in the SQL query.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Value</td>
+                            <td class="paramname">node</td>
+                            <td>The value node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> A question mark</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="SqlGenerator.prototype.visitWhereClause">
+                <h3 >
+                    <span class="itemtitle">SqlGenerator.prototype.<a id="SqlGenerator.prototype.visitWhereClause" href="#SqlGenerator.prototype.visitWhereClause" class="itemtitle itemname">visitWhereClause</a></span>
+                    <span class="itemtitle light">(node)</span></h3>
+                <div>
+                    <p>Returns the SQL representation of the "where" clause passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>WhereClause</td>
+                            <td class="paramname">node</td>
+                            <td>The "where clause" node</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>String</td>
+                            <td> The SQL representation</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../../index.html">&bull; Modules</a>
+      <a href="../../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../../basedialect/index.html">basedialect</a></li>
+            <li><a href="../../cache/index.html">cache</a></li>
+            <li><a href="../../collection/index.html">collection</a></li>
+            <li><a href="../../key/index.html">key</a></li>
+            <li><a href="../../main/index.html">main</a></li>
+            <li><a href="../../mapping/index.html">mapping</a></li>
+            <li><a href="../../storable/index.html">storable</a></li>
+            <li><a href="../../store/index.html">store</a></li>
+            <li><a href="../../transaction/index.html">transaction</a></li>
+            <li><a href="../../types/index.html">types</a></li>
+            <li><a href="../../util/index.html">util</a></li>
+            <li><a href="../../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../../connection/util/index.html">connection/util</a></li>
+            <li><a href="../../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../../query/ast/index.html">query/ast</a></li>
+            <li><a href="../../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../../query/parser/index.html">query/parser</a></li>
+            <li><a href="../../query/query/index.html">query/query</a></li>
+            <li><a href="../../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

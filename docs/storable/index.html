@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>storable - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../static/jsdoc.css" />
+<link rel="stylesheet" href="../static/style.css" />
+<script type="text/javascript" src="../static/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module storable</h1>
+        <div class="fileoverview">
+            <p>Base class for mapping JavaScript objects to relational
+databases.</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+            <div class="classes">
+                                <h2>Class <a href="#Storable" class="jsdoc-title">Storable</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Storable.prototype.remove" class="jsdoc-title"> remove</a>()
+                    </li>
+                                        <li>
+                        <a href="#Storable.prototype.save" class="jsdoc-title"> save</a>()
+                    </li>
+                                        <li>
+                        <a href="#Storable.prototype.toJSON" class="jsdoc-title"> toJSON</a>()
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Storable.prototype._id" class="jsdoc-title"> _id</a>
+                    </li>
+                    </ul>
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Storable">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Storable" href="#Storable" class="itemtitle itemname">Storable</a></span>
+                    <span class="itemtitle light">(props)</span></h3>
+                <div>
+                    <p>Creates a new Storable instance. This constructor must not be called
+directly, instead define an entity by calling <code>Store.prototype.defineEntity()</code>
+which returns a constructor function implementing this Storable interface.
+This constructor function can then be used for creating instances of
+the defined entity.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">props</td>
+                            <td>Optional object containing the initial property
+values of the storable instance</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="../store/index.html#Store.prototype.defineEntity">store.Store.prototype.defineEntity</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Storable.prototype._id">
+                <h3 >
+                    <span class="itemtitle">Storable.prototype.<a id="Storable.prototype._id" href="#Storable.prototype._id" class="itemtitle itemname">_id</a></span>
+                    </h3>
+                <div>
+                    <p>The ID of this storable (null for transient storables)</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Storable.prototype.remove">
+                <h3 >
+                    <span class="itemtitle">Storable.prototype.<a id="Storable.prototype.remove" href="#Storable.prototype.remove" class="itemtitle itemname">remove</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Removes this storable from the underlying database.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>undefined</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Storable.prototype.save">
+                <h3 >
+                    <span class="itemtitle">Storable.prototype.<a id="Storable.prototype.save" href="#Storable.prototype.save" class="itemtitle itemname">save</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Saves this storable in the underlying database. Use this method for
+both persisting a transient storable or for storing modifications
+in an already persisted storable.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>undefined</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Storable.prototype.toJSON">
+                <h3 >
+                    <span class="itemtitle">Storable.prototype.<a id="Storable.prototype.toJSON" href="#Storable.prototype.toJSON" class="itemtitle itemname">toJSON</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Returns a JSON representation of this storable. Note that this
+method does not recurse, i.e. the resulting object does not contain
+mapped objects or collections.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>Object</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../index.html">&bull; Modules</a>
+      <a href="../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../basedialect/index.html">basedialect</a></li>
+            <li><a href="../cache/index.html">cache</a></li>
+            <li><a href="../collection/index.html">collection</a></li>
+            <li><a href="../key/index.html">key</a></li>
+            <li><a href="../main/index.html">main</a></li>
+            <li><a href="../mapping/index.html">mapping</a></li>
+            <li><a href="../storable/index.html">storable</a></li>
+            <li><a href="../store/index.html">store</a></li>
+            <li><a href="../transaction/index.html">transaction</a></li>
+            <li><a href="../types/index.html">types</a></li>
+            <li><a href="../util/index.html">util</a></li>
+            <li><a href="../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../connection/util/index.html">connection/util</a></li>
+            <li><a href="../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../query/ast/index.html">query/ast</a></li>
+            <li><a href="../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../query/parser/index.html">query/parser</a></li>
+            <li><a href="../query/query/index.html">query/query</a></li>
+            <li><a href="../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

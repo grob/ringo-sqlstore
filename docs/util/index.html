@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>util - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../static/jsdoc.css" />
+<link rel="stylesheet" href="../static/style.css" />
+<script type="text/javascript" src="../static/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module util</h1>
+        <div class="fileoverview">
+            <p>A module providing various RDBMS related utility functions</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+                        <h2 class="functions">Functions</h2>
+            <ul class="functions propertyoverview">
+                                <li>
+                    <a href="#createSequence" class="jsdoc-title"> createSequence</a>(conn, dialect, schemaName, sequenceName)
+                </li>
+                                <li>
+                    <a href="#createTable" class="jsdoc-title"> createTable</a>(store, tableName, columns, primaryKey, engineType)
+                </li>
+                                <li>
+                    <a href="#dropSequence" class="jsdoc-title"> dropSequence</a>(conn, sequenceName, schemaName)
+                </li>
+                                <li>
+                    <a href="#dropTable" class="jsdoc-title"> dropTable</a>(conn, tableName, schemaName)
+                </li>
+                                <li>
+                    <a href="#getColumns" class="jsdoc-title"> getColumns</a>(dbMetaData, tablePattern, schemaPattern, columnPattern)
+                </li>
+                                <li>
+                    <a href="#getPrimaryKeys" class="jsdoc-title"> getPrimaryKeys</a>(dbMetaData, tableName, schemaName)
+                </li>
+                                <li>
+                    <a href="#getTables" class="jsdoc-title"> getTables</a>(conn, schemaName, tableName)
+                </li>
+                                <li>
+                    <a href="#tableExists" class="jsdoc-title"> tableExists</a>(conn, tableName, schemaName)
+                </li>
+                </ul>
+            <div class="classes">
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createSequence">
+                <h3 >
+                    <span class="itemtitle"><a id="createSequence" href="#createSequence" class="itemtitle itemname">createSequence</a></span>
+                    <span class="itemtitle light">(conn, dialect, schemaName, sequenceName)</span></h3>
+                <div>
+                    <p>Creates a sequence</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.Connection</td>
+                            <td class="paramname">conn</td>
+                            <td>The connection to use</td>
+                        </tr>
+                                                <tr>
+                            <td>Dialect</td>
+                            <td class="paramname">dialect</td>
+                            <td>The dialect to use</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">sequenceName</td>
+                            <td>The name of the sequence to create</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="createTable">
+                <h3 >
+                    <span class="itemtitle"><a id="createTable" href="#createTable" class="itemtitle itemname">createTable</a></span>
+                    <span class="itemtitle light">(store, tableName, columns, primaryKey, engineType)</span></h3>
+                <div>
+                    <p>Creates a table</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to create the table for</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tableName</td>
+                            <td>The name of the table to create</td>
+                        </tr>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">columns</td>
+                            <td>An array containing column definitions</td>
+                        </tr>
+                                                <tr>
+                            <td>Array</td>
+                            <td class="paramname">primaryKey</td>
+                            <td>An array containing the primary key columns</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">engineType</td>
+                            <td>Optional engine type, solely for mysql databases</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="dropSequence">
+                <h3 >
+                    <span class="itemtitle"><a id="dropSequence" href="#dropSequence" class="itemtitle itemname">dropSequence</a></span>
+                    <span class="itemtitle light">(conn, sequenceName, schemaName)</span></h3>
+                <div>
+                    <p>Drops the sequence with the given name</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.Connection</td>
+                            <td class="paramname">conn</td>
+                            <td>The connection to use</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">sequenceName</td>
+                            <td>The name of the sequence to drop</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="dropTable">
+                <h3 >
+                    <span class="itemtitle"><a id="dropTable" href="#dropTable" class="itemtitle itemname">dropTable</a></span>
+                    <span class="itemtitle light">(conn, tableName, schemaName)</span></h3>
+                <div>
+                    <p>Drops the table with the given name</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.Connection</td>
+                            <td class="paramname">conn</td>
+                            <td>The connection to use</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tableName</td>
+                            <td>The name of the table</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="getColumns">
+                <h3 >
+                    <span class="itemtitle"><a id="getColumns" href="#getColumns" class="itemtitle itemname">getColumns</a></span>
+                    <span class="itemtitle light">(dbMetaData, tablePattern, schemaPattern, columnPattern)</span></h3>
+                <div>
+                    <p>Returns the columns of a given table</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.DatabaseMetadata</td>
+                            <td class="paramname">dbMetaData</td>
+                            <td>The database metadata</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tablePattern</td>
+                            <td>Optional table name pattern (defaults to "%")</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaPattern</td>
+                            <td>Optional schema name pattern (defaults to "%")</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">columnPattern</td>
+                            <td>Optional column name pattern (defaults to "%")</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing the column metadata</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="getPrimaryKeys">
+                <h3 >
+                    <span class="itemtitle"><a id="getPrimaryKeys" href="#getPrimaryKeys" class="itemtitle itemname">getPrimaryKeys</a></span>
+                    <span class="itemtitle light">(dbMetaData, tableName, schemaName)</span></h3>
+                <div>
+                    <p>Returns the primary keys of a given table</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.DatabaseMetadata</td>
+                            <td class="paramname">dbMetaData</td>
+                            <td>The database metadata</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tableName</td>
+                            <td>The name of the table</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing the table's primary keys</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="getTables">
+                <h3 >
+                    <span class="itemtitle"><a id="getTables" href="#getTables" class="itemtitle itemname">getTables</a></span>
+                    <span class="itemtitle light">(conn, schemaName, tableName)</span></h3>
+                <div>
+                    <p>Returns the tables for the connection passed as argument</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.Connection</td>
+                            <td class="paramname">conn</td>
+                            <td>The connection to use</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tableName</td>
+                            <td>Optional table name</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> The tables</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="tableExists">
+                <h3 >
+                    <span class="itemtitle"><a id="tableExists" href="#tableExists" class="itemtitle itemname">tableExists</a></span>
+                    <span class="itemtitle light">(conn, tableName, schemaName)</span></h3>
+                <div>
+                    <p>Returns true if the database has a table with the given name</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>java.sql.Connection</td>
+                            <td class="paramname">conn</td>
+                            <td>The connection to use</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">tableName</td>
+                            <td>The name of the table</td>
+                        </tr>
+                                                <tr>
+                            <td>String</td>
+                            <td class="paramname">schemaName</td>
+                            <td>Optional schema name</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Boolean</td>
+                            <td> True if the table exists, false otherwise</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../index.html">&bull; Modules</a>
+      <a href="../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../basedialect/index.html">basedialect</a></li>
+            <li><a href="../cache/index.html">cache</a></li>
+            <li><a href="../collection/index.html">collection</a></li>
+            <li><a href="../key/index.html">key</a></li>
+            <li><a href="../main/index.html">main</a></li>
+            <li><a href="../mapping/index.html">mapping</a></li>
+            <li><a href="../storable/index.html">storable</a></li>
+            <li><a href="../store/index.html">store</a></li>
+            <li><a href="../transaction/index.html">transaction</a></li>
+            <li><a href="../types/index.html">types</a></li>
+            <li><a href="../util/index.html">util</a></li>
+            <li><a href="../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../connection/util/index.html">connection/util</a></li>
+            <li><a href="../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../query/ast/index.html">query/ast</a></li>
+            <li><a href="../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../query/parser/index.html">query/parser</a></li>
+            <li><a href="../query/query/index.html">query/query</a></li>
+            <li><a href="../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>

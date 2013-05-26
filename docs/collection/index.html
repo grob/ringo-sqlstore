@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>collection - Ringo SqlStore</title>
+
+        <link rel="shortcut icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="http://ringojs.org/favicon.ico" type="image/x-icon" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,600&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../static/jsdoc.css" />
+<link rel="stylesheet" href="../static/style.css" />
+<script type="text/javascript" src="../static/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jsdoc.js"></script>
+
+
+  </head>
+
+  <body class="jsdoc standalone">
+    <div class="main">
+        <div class="content jsdoc">
+        
+            <h1 class="modulename">Module collection</h1>
+        <div class="fileoverview">
+            <p>Provides constructors for standard and partitioned collections.</p>
+
+
+        </div>
+
+        <div class="classoverview">
+
+            <div class="classes">
+                                <h2>Class <a href="#Collection" class="jsdoc-title">Collection</a></h2>
+                                <h3>Instance Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Collection.prototype.all" class="jsdoc-title"> all</a>()
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.every" class="jsdoc-title"> every</a>(callback, context)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.filter" class="jsdoc-title"> filter</a>(callback, context)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.forEach" class="jsdoc-title"> forEach</a>(callback, context)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.get" class="jsdoc-title"> get</a>(idx)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.indexOf" class="jsdoc-title"> indexOf</a>(storable)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.map" class="jsdoc-title"> map</a>(callback, context)
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.some" class="jsdoc-title"> some</a>(callback, context)
+                    </li>
+                    </ul>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Collection.prototype.entity" class="jsdoc-title"> entity</a>
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.ids" class="jsdoc-title"> ids</a>
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.invalidate" class="jsdoc-title"> invalidate</a>
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.length" class="jsdoc-title"> length</a>
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.name" class="jsdoc-title"> name</a>
+                    </li>
+                                        <li>
+                        <a href="#Collection.prototype.storables" class="jsdoc-title"> storables</a>
+                    </li>
+                    </ul>
+                                <h3>Static Methods</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#Collection.createInstance" class="jsdoc-title"> createInstance</a>(store, collectionMapping, parent)
+                    </li>
+                    </ul>
+                                <h2>Class <a href="#PartitionedCollection" class="jsdoc-title">PartitionedCollection</a></h2>
+                                <h3>Instance Properties</h3>
+                <ul class="propertyoverview">
+                                        <li>
+                        <a href="#PartitionedCollection.prototype.ids" class="jsdoc-title"> ids</a>
+                    </li>
+                                        <li>
+                        <a href="#PartitionedCollection.prototype.partitions" class="jsdoc-title"> partitions</a>
+                    </li>
+                                        <li>
+                        <a href="#PartitionedCollection.prototype.storables" class="jsdoc-title"> storables</a>
+                    </li>
+                    </ul>
+                </div>
+        </div>
+        <div class="details">
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="Collection" href="#Collection" class="itemtitle itemname">Collection</a></span>
+                    <span class="itemtitle light">(store, collectionMapping, selector, parent)</span></h3>
+                <div>
+                    <p>Creates a new Collection instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to operate on</td>
+                        </tr>
+                                                <tr>
+                            <td>Mapping</td>
+                            <td class="paramname">collectionMapping</td>
+                            <td>The collection mapping</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">selector</td>
+                            <td>An object containing the query ast and the sql
+creation function</td>
+                        </tr>
+                                                <tr>
+                            <td>Storable</td>
+                            <td class="paramname">parent</td>
+                            <td>The parent storable</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created Collection instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.createInstance">
+                <h3 >
+                    <span class="itemtitle">Collection.<a id="Collection.createInstance" href="#Collection.createInstance" class="itemtitle itemname">createInstance</a></span>
+                    <span class="itemtitle light">(store, collectionMapping, parent)</span></h3>
+                <div>
+                    <p>Static factory method for creating new collections</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store</td>
+                        </tr>
+                                                <tr>
+                            <td>CollectionMapping</td>
+                            <td class="paramname">collectionMapping</td>
+                            <td>The mapping definition of the collection</td>
+                        </tr>
+                                                <tr>
+                            <td>Storable</td>
+                            <td class="paramname">parent</td>
+                            <td>The parent storable</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Collection</td>
+                            <td> A new Collection instance</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.all">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.all" href="#Collection.prototype.all" class="itemtitle itemname">all</a></span>
+                    <span class="itemtitle light">()</span></h3>
+                <div>
+                    <p>Converts this collection into a plain JavaScript Array</p>
+
+
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing the storables of this collection</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.entity">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.entity" href="#Collection.prototype.entity" class="itemtitle itemname">entity</a></span>
+                    </h3>
+                <div>
+                    <p>The name of the storable entity this collection contains</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.every">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.every" href="#Collection.prototype.every" class="itemtitle itemname">every</a></span>
+                    <span class="itemtitle light">(callback, context)</span></h3>
+                <div>
+                    <p>Executes the provided callback once for each storable in the collection,
+until it finds one where the callback function returns false. Similar
+to <code>Array.prototype.every()</code>.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Function</td>
+                            <td class="paramname">callback</td>
+                            <td>The callback to execute</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">context</td>
+                            <td>Optional context object, representing the `this`.</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Boolean</td>
+                            <td> False if a callback execution returned false, true if
+all callback executions returned true.</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.filter">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.filter" href="#Collection.prototype.filter" class="itemtitle itemname">filter</a></span>
+                    <span class="itemtitle light">(callback, context)</span></h3>
+                <div>
+                    <p>Returns an array containing those storables for which the provided callback
+function returned true. Similar to <code>Array.prototype.filter()</code>.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Function</td>
+                            <td class="paramname">callback</td>
+                            <td>The callback to execute</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">context</td>
+                            <td>Optional context object, representing the `this`.</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing storables</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.forEach">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.forEach" href="#Collection.prototype.forEach" class="itemtitle itemname">forEach</a></span>
+                    <span class="itemtitle light">(callback, context)</span></h3>
+                <div>
+                    <p>Iterates over the collection, executing the callback method for every
+storable found. Similar to <code>Array.prototype.forEach()</code>.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Function</td>
+                            <td class="paramname">callback</td>
+                            <td>The callback to execute</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">context</td>
+                            <td>Optional context object, representing the `this`.</td>
+                        </tr>
+                        </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.get">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.get" href="#Collection.prototype.get" class="itemtitle itemname">get</a></span>
+                    <span class="itemtitle light">(idx)</span></h3>
+                <div>
+                    <p>Returns the storable instance at the given index position</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Number</td>
+                            <td class="paramname">idx</td>
+                            <td>The index position of the storable to return</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Storable</td>
+                            <td> The storable at the given index position, or null</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.ids">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.ids" href="#Collection.prototype.ids" class="itemtitle itemname">ids</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the storable IDs of this collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.indexOf">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.indexOf" href="#Collection.prototype.indexOf" class="itemtitle itemname">indexOf</a></span>
+                    <span class="itemtitle light">(storable)</span></h3>
+                <div>
+                    <p>Returns the index position of the storable passed as argument within
+the collection.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Storable</td>
+                            <td class="paramname">storable</td>
+                            <td>The storable to get the index position for</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Number</td>
+                            <td> The index position of the storable</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.invalidate">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.invalidate" href="#Collection.prototype.invalidate" class="itemtitle itemname">invalidate</a></span>
+                    </h3>
+                <div>
+                    <p>Marks the collection as invalid, forcing a reload on next access. Note
+that when calling this method in an open transaction any pending changes
+affecting the collection will be visible to other threads only after
+successfully committing the transaction.</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.length">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.length" href="#Collection.prototype.length" class="itemtitle itemname">length</a></span>
+                    </h3>
+                <div>
+                    <p>The size of the collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.map">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.map" href="#Collection.prototype.map" class="itemtitle itemname">map</a></span>
+                    <span class="itemtitle light">(callback, context)</span></h3>
+                <div>
+                    <p>Executes the provided callback for every storable in this collection and
+returns an array containing the result values. Similar to <code>Array.prototype.map()</code>.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Function</td>
+                            <td class="paramname">callback</td>
+                            <td>The callback to execute</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">context</td>
+                            <td>Optional context object, representing the `this`.</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Array</td>
+                            <td> An array containing the result values of the callback
+executions.</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.name">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.name" href="#Collection.prototype.name" class="itemtitle itemname">name</a></span>
+                    </h3>
+                <div>
+                    <p>The name of the collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.some">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.some" href="#Collection.prototype.some" class="itemtitle itemname">some</a></span>
+                    <span class="itemtitle light">(callback, context)</span></h3>
+                <div>
+                    <p>Executes the provided callback once for each storable in the collection,
+until it finds one where the callback returned true. If found this method
+immediately returns true, otherwise false. Similar to <code>Array.prototype.some()</code>.</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Function</td>
+                            <td class="paramname">callback</td>
+                            <td>The callback to execute</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">context</td>
+                            <td>Optional context object, representing the `this`.</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td>Boolean</td>
+                            <td> True if a callback execution returned true, false otherwise.</td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="Collection.prototype.storables">
+                <h3 >
+                    <span class="itemtitle">Collection.prototype.<a id="Collection.prototype.storables" href="#Collection.prototype.storables" class="itemtitle itemname">storables</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the storables of this collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="PartitionedCollection">
+                <h3 class="classtitle">
+                    <span class="itemtitle"><a id="PartitionedCollection" href="#PartitionedCollection" class="itemtitle itemname">PartitionedCollection</a></span>
+                    <span class="itemtitle light">(store, collectionMapping, selector, parent)</span></h3>
+                <div>
+                    <p>Creates a new PartitionedCollection instance</p>
+
+
+                </div>
+                                <div>
+                    <h4>Parameters</h4>
+                    <table>
+                                                <tr>
+                            <td>Store</td>
+                            <td class="paramname">store</td>
+                            <td>The store to operate on</td>
+                        </tr>
+                                                <tr>
+                            <td>Mapping</td>
+                            <td class="paramname">collectionMapping</td>
+                            <td>The collection mapping</td>
+                        </tr>
+                                                <tr>
+                            <td>Object</td>
+                            <td class="paramname">selector</td>
+                            <td>An object containing the query ast and the sql
+creation function</td>
+                        </tr>
+                                                <tr>
+                            <td>Storable</td>
+                            <td class="paramname">parent</td>
+                            <td>The parent storable</td>
+                        </tr>
+                        </table>
+                </div>
+                                <div>
+                    <h4>Returns</h4>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>A newly created PartitionedCollection instance</td>
+                        </tr>
+                    </table>
+                </div>
+                                <div>
+                    <h4>See</h4>
+                    <div class="extrainfo">
+                        <a href="../Collection/index.html">Collection</a>
+                    </div>
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="PartitionedCollection.prototype.ids">
+                <h3 >
+                    <span class="itemtitle">PartitionedCollection.prototype.<a id="PartitionedCollection.prototype.ids" href="#PartitionedCollection.prototype.ids" class="itemtitle itemname">ids</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the storable IDs of this collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="PartitionedCollection.prototype.partitions">
+                <h3 >
+                    <span class="itemtitle">PartitionedCollection.prototype.<a id="PartitionedCollection.prototype.partitions" href="#PartitionedCollection.prototype.partitions" class="itemtitle itemname">partitions</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the storable partitions of this collection</p>
+
+
+                </div>
+                </div>
+                        <hr />
+            <!-- tpl-docitem -->
+            <div class="docitem" data-docitem="PartitionedCollection.prototype.storables">
+                <h3 >
+                    <span class="itemtitle">PartitionedCollection.prototype.<a id="PartitionedCollection.prototype.storables" href="#PartitionedCollection.prototype.storables" class="itemtitle itemname">storables</a></span>
+                    </h3>
+                <div>
+                    <p>An array containing the storable partitions of this collection</p>
+
+
+                </div>
+                </div>
+            </div>
+    
+        </div>
+
+        <nav class="jsdoc standalone">
+            <h1>Ringo SqlStore</h1>
+            <div class="jsdocSidenav">
+   <div class="toggles">
+      <a href="../index.html">&bull; Modules</a>
+      <a href="../index_all.html">&bull; Overview</a>
+   </div>
+
+   <input id="filter" type="text" placeholder="Filter modules" />
+
+   <ul id="modulelist">
+            <li><a href="../basedialect/index.html">basedialect</a></li>
+            <li><a href="../cache/index.html">cache</a></li>
+            <li><a href="../collection/index.html">collection</a></li>
+            <li><a href="../key/index.html">key</a></li>
+            <li><a href="../main/index.html">main</a></li>
+            <li><a href="../mapping/index.html">mapping</a></li>
+            <li><a href="../storable/index.html">storable</a></li>
+            <li><a href="../store/index.html">store</a></li>
+            <li><a href="../transaction/index.html">transaction</a></li>
+            <li><a href="../types/index.html">types</a></li>
+            <li><a href="../util/index.html">util</a></li>
+            <li><a href="../connection/pool/index.html">connection/pool</a></li>
+            <li><a href="../connection/poolworker/index.html">connection/poolworker</a></li>
+            <li><a href="../connection/util/index.html">connection/util</a></li>
+            <li><a href="../databases/h2/index.html">databases/h2</a></li>
+            <li><a href="../databases/mysql5/index.html">databases/mysql5</a></li>
+            <li><a href="../databases/oracle/index.html">databases/oracle</a></li>
+            <li><a href="../databases/postgresql/index.html">databases/postgresql</a></li>
+            <li><a href="../query/ast/index.html">query/ast</a></li>
+            <li><a href="../query/collectorgenerator/index.html">query/collectorgenerator</a></li>
+            <li><a href="../query/normalizer/index.html">query/normalizer</a></li>
+            <li><a href="../query/parser/index.html">query/parser</a></li>
+            <li><a href="../query/query/index.html">query/query</a></li>
+            <li><a href="../query/sqlgenerator/index.html">query/sqlgenerator</a></li>
+      </ul>
+</div>
+
+        </nav>
+    </div>
+    </body>
+</html>
