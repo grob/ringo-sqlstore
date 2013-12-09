@@ -1,9 +1,7 @@
 var term = require("ringo/term");
 var assert = require("assert");
 
-var {Store} = require("../lib/sqlstore/store");
-var {ConnectionPool} = require("../lib/sqlstore/connectionpool");
-var {Cache} = require("../lib/sqlstore/cache");
+var {Store, ConnectionPool, Cache} = require("../lib/sqlstore/main");
 var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
@@ -29,7 +27,7 @@ var MAPPING_AUTHOR = {
 exports.setUp = function(dbProps) {
     store = new Store(new ConnectionPool(dbProps));
     term.writeln("------------------------------")
-    term.writeln("Using", store.connectionPool.getProperties().get("driver"));
+    term.writeln("Using", store.connectionPool.getDriverClass());
     store.setQueryCache(new Cache(10000));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.beginTransaction();

@@ -39,7 +39,7 @@ exports.setUp = function(dbProps) {
         (new Author({"name": "Author " + i})).save();
     }
     store.commitTransaction();
-    assert.strictEqual(Author.all().length, maxAuthors);
+    // assert.strictEqual(Author.all().length, maxAuthors);
     term.writeln("Inserted", maxAuthors, "rows");
 };
 
@@ -100,10 +100,12 @@ exports.start = function(cnt, maxWorkers) {
     var queriesPerSec = (1000 / millisPerQuery).toFixed(2);
     term.writeln(term.GREEN, maxWorkers, "workers,", cnt, "queries/worker,",
             millisPerQuery.toFixed(2) + "ms/query,", queriesPerSec, "queries/sec", term.RESET);
-    term.writeln("----------- AVG:", workerMillisAvg.toFixed(2));
+//    term.writeln("----------- AVG:", workerMillisAvg.toFixed(2));
+/*
     workerMsPerQuery.forEach(function(arr, idx) {
         console.log("Worker", idx, arr, "=> avg", arr.reduce(function(prev, current) {
             return prev + current;
         }, 0) / arr.length);
     });
+*/
 };
