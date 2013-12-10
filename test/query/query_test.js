@@ -66,7 +66,6 @@ var populate = function() {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
 };
@@ -92,14 +91,21 @@ exports.testSelectEntity = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
-        assert.isNotNull(book._entity);
+        assert.isNull(book._entity);
     });
     result = store.query("select Book as book from Book");
     assert.strictEqual(result.length, 10);
     // alias is ignored if only one result
     result.forEach(function(book, idx) {
         assert.strictEqual(book._id, idx + 1);
-        assert.isNotNull(book._entity);
+        assert.isNull(book._entity);
+    });
+    // selecting multiple entities
+    result = store.query("select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6");
+    assert.strictEqual(result.length, 5);
+    result.forEach(function(props, idx) {
+        assert.strictEqual(props["Book"]._id, idx + 1);
+        assert.strictEqual(props["Author"]._id, idx + 1);
     });
 };
 
@@ -146,13 +152,23 @@ exports.testSelectProperties = function() {
         assert.strictEqual(props["Book.title"], "Book " + idx);
         assert.strictEqual(props["Author.id"], idx + 1);
     });
-    // selecting multiple entities
-    result = store.query("select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6");
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book"]._id, idx + 1);
-        assert.strictEqual(props["Author"]._id, idx + 1);
-    });
+};
+
+exports.testSelectValues = function() {
+    populate();
+    var result = store.query("select max(Book.id) from Book");
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0], 10);
+    // without aliases
+    result = store.query("select min(Book.id), max(Book.id) from Book");
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0]["MIN(Book.id)"], 1);
+    assert.strictEqual(result[0]["MAX(Book.id)"], 10);
+    // with aliases
+    result = store.query("select min(Book.id) as min, max(Book.id) as max from Book");
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].min, 1);
+    assert.strictEqual(result[0].max, 10);
 };
 
 exports.testNamedParameter = function() {
