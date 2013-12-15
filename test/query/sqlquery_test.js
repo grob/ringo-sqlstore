@@ -31,6 +31,7 @@ var populate = function(cnt) {
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.syncTables();
 };
 
 exports.tearDown = function() {

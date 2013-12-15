@@ -36,6 +36,7 @@ exports.setUp = function() {
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
+    store.syncTables();
 };
 
 exports.tearDown = function() {

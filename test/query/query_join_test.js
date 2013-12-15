@@ -94,6 +94,7 @@ exports.setUp = function() {
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Relation = store.defineEntity("Relation", MAPPING_RELATION);
+    store.syncTables();
 };
 
 exports.tearDown = function() {

@@ -68,6 +68,7 @@ exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
+    store.syncTables();
 };
 
 exports.tearDown = function() {

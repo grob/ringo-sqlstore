@@ -45,6 +45,7 @@ exports.setUp = function() {
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Editor = store.defineEntity("Editor", MAPPING_EDITOR);
+    store.syncTables();
 };
 
 exports.tearDown = function() {

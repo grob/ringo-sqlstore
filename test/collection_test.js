@@ -48,6 +48,7 @@ exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Book = store.defineEntity("Book", MAPPING_BOOK);
+    store.syncTables();
 };
 
 exports.tearDown = function() {
@@ -80,6 +81,7 @@ exports.testBasics = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of all books"
     });
@@ -147,6 +149,7 @@ exports.testWithQueryParameter = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of half of the books"
     });
@@ -177,6 +180,7 @@ exports.testWithForeignProperty = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
@@ -208,6 +212,7 @@ exports.testWithLocalAndForeignProperty = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books",
         "realId": 2 // mimick other author
@@ -236,6 +241,7 @@ exports.testAggressiveLoading = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "John Doe"
     });
@@ -263,6 +269,7 @@ exports.testPartitionedCollection = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
@@ -296,6 +303,7 @@ exports.testReloadInTransaction = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
@@ -346,6 +354,7 @@ exports.testInvalidateInTransaction = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
@@ -384,6 +393,7 @@ exports.testRollbackWithoutReload = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });
@@ -424,6 +434,7 @@ exports.testRollbackWithReload = function() {
             }
         }
     });
+    store.syncTables();
     var author = new Author({
         "name": "Author of just a bunch of books"
     });

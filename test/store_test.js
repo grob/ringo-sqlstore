@@ -30,6 +30,7 @@ exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.syncTables();
     assert.isTrue(Author instanceof Function);
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
@@ -160,6 +161,7 @@ exports.testTypes = function() {
         "typeText": strings.repeat("abcdefghij", 10000)
     };
     var Type = store.defineEntity("TypeTest", mapping);
+    store.syncTables();
     var type = new Type(props);
     type.save();
 

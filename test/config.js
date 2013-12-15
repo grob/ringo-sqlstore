@@ -4,14 +4,17 @@ exports.h2 = {
 };
 
 exports.mysql = {
+//    "url": "jdbc:mysql://localhost/test?jdbcCompliantTruncation=false&elideSetAutoCommits=true&dontTrackOpenResources=true&enableQueryTimeouts=false&useLocalSessionState=true&cachePrepStmts=true&cacheCallableStmts=true&alwaysSendSetIsolation=false&prepStmtCacheSize=1024&cacheServerConfiguration=true&prepStmtCacheSqlLimit=2048&zeroDateTimeBehavior=convertToNull&traceProtocol=false&useUnbufferedInput=false&useReadAheadInput=true&maintainTimeStats=false&useServerPrepStmts=true&cacheRSMetadata=true&poolPreparedStatements=true&maxOpenPreparedStatements=100",
+//    "url": "jdbc:mysql://localhost/test?cachePrepStmts=true&prepStmtCacheSize=50&cacheResultSetMetadata=true&cacheServerConfiguration=true&dontTrackOpenResources=true&elideSetAutoCommits=true",
     "url": "jdbc:mysql://localhost/test",
     "driver": "com.mysql.jdbc.Driver",
 /*
     "pool": "c3p0",
-    "minPoolSize": 5,
-    "acquireIncrement": 2,
-    "numHelperThreads": 6,
-    "maxPoolSize": 20,
+    "minPoolSize": 20,
+    "initialPoolSize": 20,
+    "acquireIncrement": 5,
+    "numHelperThreads": 4,
+    "maxPoolSize": 100,
     "maxStatementsPerConnection": 10,
 */
 /*

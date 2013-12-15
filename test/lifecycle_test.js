@@ -31,6 +31,7 @@ exports.setUp = function() {
     store.setEntityCache(new Cache());
     assert.isNotNull(store);
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.syncTables();
     assert.isTrue(Author instanceof Function);
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
