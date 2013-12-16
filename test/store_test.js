@@ -85,10 +85,13 @@ exports.testCRUD = function() {
     // update
     author.name = name = "Mr. Foo-Bar";
     author.save();
+    assert.strictEqual(author._entity.author_name, name);
+    assert.strictEqual(author._entity.author_id, author._key.id);
 
     // read again
     author = Author.get(1);
     assert.strictEqual(author.name, name);
+    assert.strictEqual(author._entity.author_id, author._key.id);
 
     // remove
     author.remove();
