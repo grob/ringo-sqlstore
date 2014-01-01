@@ -10,6 +10,7 @@ var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
 var Author = null;
+var Book = null;
 
 const MAPPING_AUTHOR = {
     "table": "author",
@@ -22,26 +23,57 @@ const MAPPING_AUTHOR = {
             "type": "string",
             "column": "author_name",
             "nullable": false
+        },
+        "books": {
+            "type": "collection",
+            "query": "from Book b where b.author = :id"
         }
     }
 };
+
+const MAPPING_BOOK = {
+    "table": "book",
+    "id": {
+        "column": "book_id",
+        "sequence": "book_id"
+    },
+    "properties": {
+        "title": {
+            "type": "string",
+            "column": "book_title",
+            "nullable": false
+        },
+        "author": {
+            "type": "object",
+            "entity": "Author",
+            "column": "book_author"
+        }
+    }
+};
+
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    Book = store.defineEntity("Book", MAPPING_BOOK);
     store.syncTables();
 };
 
 exports.tearDown = function() {
     var conn = store.getConnection();
-    var schemaName = Author.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-    if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
-        sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
-        if (Author.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
+    [Book, Author].forEach(function(ctor) {
+        if (ctor == null) {
+            return;
         }
-    }
+        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
+        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
+            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
+            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
+                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
+            }
+        }
+    });
     store.close();
 };
 
@@ -60,13 +92,49 @@ exports.testCommit = function() {
     assert.isTrue(transaction.isDirty());
     store.commitTransaction();
     assert.strictEqual(Author.all().length, 5);
+    assert.strictEqual(Object.keys(transaction.inserted).length, 0);
     return;
+};
+
+exports.testCommitRemove = function() {
+    var transaction = store.beginTransaction();
+    assert.isNotNull(transaction);
+    assert.isFalse(transaction.isDirty());
+    var author = new Author({
+        "name": "Author"
+    });
+    author.save();
+    var books = [];
+    for (var i=0; i<5; i+=1) {
+        let book = new Book({
+            "title": "Book " + (i + 1),
+            "author": author
+        });
+        book.save();
+        books.push(book);
+    }
+    assert.strictEqual(Object.keys(transaction.inserted).length, books.length + 1);
+    store.commitTransaction();
+    assert.isFalse(store.hasTransaction());
+    // populate the author's books collection and ensure it's in entity cache
+    assert.strictEqual(author.books.length, books.length);
+    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    // remove the author, but roll back the transaction - the cached collection
+    // should stay in entity cache
+    transaction = store.beginTransaction();
+    author.remove();
+    transaction.rollback();
+    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    // now remove the author - this must evict the mapped collection from cache
+    transaction = store.beginTransaction();
+    author.remove();
+    transaction.commit();
+    assert.isFalse(store.entityCache.containsKey(author.books._cacheKey));
 };
 
 exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
-    store.beginTransaction();
-    var transaction = store.getTransaction();
+    var transaction = store.beginTransaction();
     assert.isNotNull(transaction);
     assert.isFalse(transaction.isDirty());
 
@@ -84,6 +152,7 @@ exports.testBeginTransaction = function() {
     assert.strictEqual(Author.all().length, 5);
     store.commitTransaction();
     assert.isNull(store.getTransaction());
+    assert.strictEqual(Object.keys(transaction.inserted).length, 0);
     assert.strictEqual(Author.all().length, 5);
 
     // remove test objects
