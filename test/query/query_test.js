@@ -101,13 +101,33 @@ exports.testSelectEntity = function() {
         assert.strictEqual(book._id, idx + 1);
         assert.isNull(book._entity);
     });
-    // selecting multiple entities
-    result = store.query("select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6");
+};
+
+exports.testSelectMultipleEntities = function() {
+    populate();
+    var result = store.query("select Author, Book from Book, Author " +
+            "where Book.author = Author.id and Author.id < 6");
     assert.strictEqual(result.length, 5);
     result.forEach(function(props, idx) {
         assert.strictEqual(props["Book"]._id, idx + 1);
         assert.strictEqual(props["Author"]._id, idx + 1);
     });
+};
+
+exports.testSelectEntityCached = function() {
+    populate();
+    store.setEntityCache(new Cache());
+    var result = store.query("select Book from Book");
+    assert.strictEqual(result.length, 10);
+    assert.strictEqual(store.entityCache.size(), 10);
+    result.forEach(function(book, idx) {
+        assert.strictEqual(book._id, idx + 1);
+        assert.isNull(book._entity);
+        assert.isTrue(store.entityCache.containsKey(book._cacheKey));
+        assert.isNull(store.entityCache.get(book._cacheKey)[1]);
+    });
+    store.entityCache.clear();
+    store.setEntityCache(null);
 };
 
 exports.testSelectEntityAggressive = function() {
@@ -122,7 +142,34 @@ exports.testSelectEntityAggressive = function() {
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
     });
-    result = store.query("select b.*, a.* from Book b, Author a where b.author = a.id");
+};
+
+exports.testSelectEntityAggressiveCached = function() {
+    populate();
+    store.setEntityCache(new Cache());
+    var titleColumn = Book.mapping.getColumnName("title");
+    var result = store.query("select Book.* from Book");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(book, idx) {
+        assert.isTrue(book instanceof Book);
+        assert.isTrue(book.author instanceof Author);
+        assert.strictEqual(book._id, idx + 1);
+        assert.isNotNull(book._entity);
+        assert.strictEqual(book._entity[titleColumn], "Book " + idx);
+        assert.isTrue(store.entityCache.containsKey(book._cacheKey));
+        // books are loaded aggressively, so cache contains the entity objects
+        assert.isNotNull(store.entityCache.get(book._cacheKey)[1]);
+        assert.isTrue(store.entityCache.containsKey(book.author._cacheKey));
+        // but authors are not, therefor the cache contains null
+        assert.isNull(store.entityCache.get(book.author._cacheKey)[1]);
+    });
+    store.entityCache.clear();
+    store.setEntityCache(null);
+};
+
+exports.testSelectMultipleEntitiesAggressive = function() {
+    populate();
+    var result = store.query("select b.*, a.* from Book b, Author a where b.author = a.id");
     assert.strictEqual(result.length, 10);
     result.forEach(function(obj, idx) {
         assert.isTrue(obj.Book instanceof Book);
