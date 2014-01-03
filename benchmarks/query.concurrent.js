@@ -34,6 +34,7 @@ exports.setUp = function(dbProps) {
     term.writeln("Using", store.connectionPool.getDriverClass());
     store.setQueryCache(new Cache(10000));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.syncTables();
     store.beginTransaction();
     for (let i=0; i<maxAuthors; i+=1) {
         (new Author({"name": "Author " + i})).save();
@@ -65,7 +66,6 @@ exports.start = function(cnt, maxWorkers) {
     var workers = new Array(maxWorkers);
     var workerMillis = new Array(maxWorkers);
     var workerMsPerQuery = new Array(maxWorkers);
-    var conns = new Array(maxWorkers);
     for (let i=0; i<maxWorkers; i+=1) {
         var worker = new Worker(module.resolve("./query.concurrent.worker"));
         worker.onmessage = function(event) {

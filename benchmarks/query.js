@@ -26,10 +26,11 @@ var MAPPING_AUTHOR = {
 
 exports.setUp = function(dbProps) {
     store = new Store(new ConnectionPool(dbProps));
-    term.writeln("------------------------------")
+    term.writeln("------------------------------");
     term.writeln("Using", store.connectionPool.getDriverClass());
     store.setQueryCache(new Cache(10000));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.syncTables();
     store.beginTransaction();
     for (let i=0; i<maxAuthors; i+=1) {
         (new Author({"name": "Author " + i})).save();
