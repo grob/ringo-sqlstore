@@ -37,11 +37,11 @@ exports.testGetNextId = function() {
     assert.strictEqual(Author.mapping.id.getNextId(), 1);
     var author = new Author();
     author.save();
-    assert.strictEqual(author._id, 2);
+    assert.strictEqual(author.id, 2);
     assert.strictEqual(Author.mapping.id.getNextId(), 3);
     author = new Author();
     author.save();
-    assert.strictEqual(author._id, 4);
+    assert.strictEqual(author.id, 4);
     return;
 };
 

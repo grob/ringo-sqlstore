@@ -62,7 +62,7 @@ exports.start = function(cnt) {
         let author = store.query("select Author.* from Author where Author.id = :id", {
             "id": id
         })[0];
-        assert.strictEqual(author._id, id);
+        assert.strictEqual(author.id, id);
     }
     var millis = Date.now() - start;
     term.writeln(term.GREEN, cnt, "queries,", millis / cnt + "ms/query", term.RESET);

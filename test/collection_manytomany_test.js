@@ -122,13 +122,13 @@ exports.testSimpleCollection = function() {
     var book = Book.get(1);
     assert.isNotNull(book);
     assert.strictEqual(book.authors.length, 2);
-    assert.strictEqual(book.authors.get(0)._id, authors[0]._id);
-    assert.strictEqual(book.authors.get(1)._id, authors[1]._id);
+    assert.strictEqual(book.authors.get(0).id, authors[0].id);
+    assert.strictEqual(book.authors.get(1).id, authors[1].id);
     var author = Author.get(2);
     assert.isNotNull(author);
     assert.strictEqual(author.books.length, 2);
-    assert.strictEqual(author.books.get(0)._id, books[0]._id);
-    assert.strictEqual(author.books.get(1)._id, books[1]._id);
+    assert.strictEqual(author.books.get(0).id, books[0].id);
+    assert.strictEqual(author.books.get(1).id, books[1].id);
     return;
 };
 
@@ -158,7 +158,7 @@ exports.testAdditionalCriteria = function() {
     var book = Book.get(1);
     assert.strictEqual(book.authors.length, 2);
     assert.strictEqual(book.editors.length, 1);
-    assert.equal(book.editors.get(0)._id, Author.get(1)._id);
+    assert.equal(book.editors.get(0).id, Author.get(1).id);
     return;
 };
 

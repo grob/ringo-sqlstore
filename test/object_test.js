@@ -69,8 +69,8 @@ exports.testAssignObject = function() {
     });
     book.save();
     // author is persisted together with book instance
-    assert.strictEqual(author._id, 1);
-    assert.strictEqual(book.author._id, author._id);
+    assert.strictEqual(author.id, 1);
+    assert.strictEqual(book.author.id, author.id);
     assert.strictEqual(author, book.author);
     // create different book author and assign it as the book's author
     var authorTwo = new Author({
@@ -81,8 +81,8 @@ exports.testAssignObject = function() {
     // authorTwo is persisted when changes of book are
     assert.strictEqual(Author.all().length, 2);
     assert.strictEqual(authorTwo, book.author);
-    assert.strictEqual(book.author._id, authorTwo._id);
-    assert.strictEqual(Book.get(book._id).author._id, authorTwo._id);
+    assert.strictEqual(book.author.id, authorTwo.id);
+    assert.strictEqual(Book.get(book.id).author.id, authorTwo.id);
     // null out the book's author
     book.author = undefined;
     book.save();
@@ -139,18 +139,18 @@ exports.testSimpleCircularReference = function() {
     });
     author.latestBook = book;
     author.save();
-    assert.strictEqual(author._id, 1);
-    assert.strictEqual(book._id, 1);
-    assert.strictEqual(author.latestBook._id, book._id);
-    assert.strictEqual(author.latestBook.author._id, author._id);
-    assert.strictEqual(book.author._id, author._id);
+    assert.strictEqual(author.id, 1);
+    assert.strictEqual(book.id, 1);
+    assert.strictEqual(author.latestBook.id, book.id);
+    assert.strictEqual(author.latestBook.author.id, author.id);
+    assert.strictEqual(book.author.id, author.id);
     assert.strictEqual(author.books.length, 1);
     author = Author.get(1);
-    assert.strictEqual(author._id, 1);
-    assert.strictEqual(book._id, 1);
-    assert.strictEqual(author.latestBook._id, book._id);
-    assert.strictEqual(author.latestBook.author._id, author._id);
-    assert.strictEqual(book.author._id, author._id);
+    assert.strictEqual(author.id, 1);
+    assert.strictEqual(book.id, 1);
+    assert.strictEqual(author.latestBook.id, book.id);
+    assert.strictEqual(author.latestBook.author.id, author.id);
+    assert.strictEqual(book.author.id, author.id);
 };
 
 //start the test runner if we're called directly from command line

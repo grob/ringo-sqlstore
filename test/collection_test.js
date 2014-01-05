@@ -92,40 +92,40 @@ exports.testBasics = function() {
     assert.strictEqual(author.books.length, 11);
     // iteration tests
     for (var i=0; i<author.books.length; i+=1) {
-        assert.strictEqual(author.books.get(i)._id, i + 1);
+        assert.strictEqual(author.books.get(i).id, i + 1);
     }
     var cnt = 0;
     for each (var book in author.books) {
         assert.isTrue(book instanceof Book);
-        assert.strictEqual(book._id, cnt + 1);
+        assert.strictEqual(book.id, cnt + 1);
         cnt += 1;
     }
     assert.strictEqual(cnt, author.books.length);
     cnt = 0;
     author.books.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
-        assert.strictEqual(book._id, cnt + 1);
+        assert.strictEqual(book.id, cnt + 1);
         cnt += 1;
     });
     assert.strictEqual(cnt, author.books.length);
     // array methods
     assert.strictEqual(author.books.indexOf(author.books.get(2)), 2);
     assert.strictEqual(author.books.filter(function(book, idx) {
-        return book._id % 2 === 0;
+        return book.id % 2 === 0;
     }).length, 5);
     author.books.filter(function(book, idx) {
-        return book._id % 2 === 0;
+        return book.id % 2 === 0;
     }).forEach(function(book) {
         assert.isTrue(book instanceof Book);
     });
     assert.isTrue(author.books.some(function(book) {
-        return book._id === 5;
+        return book.id === 5;
     }));
     assert.isTrue(author.books.every(function(book) {
         return book instanceof Book;
     }));
     var ids = author.books.map(function(book) {
-        return book._id;
+        return book.id;
     });
     ids.forEach(function(id, idx) {
         assert.strictEqual(id, idx + 1);
@@ -157,7 +157,7 @@ exports.testWithQueryParameter = function() {
     author = Author.get(1);
     assert.strictEqual(author.books.length, 5);
     author.books.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 7);
+        assert.strictEqual(book.id, idx + 7);
     });
 };
 
@@ -189,7 +189,7 @@ exports.testWithForeignProperty = function() {
     assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 6);
     // due to ordering first book is the last one
-    assert.strictEqual(author.books.get(0)._id, 11);
+    assert.strictEqual(author.books.get(0).id, 11);
     return;
 };
 
@@ -222,7 +222,7 @@ exports.testWithLocalAndForeignProperty = function() {
     assert.isNotUndefined(author.books);
     assert.strictEqual(author.books.length, 5);
     // due to ordering first book is the last one
-    assert.strictEqual(author.books.get(0)._id, 10);
+    assert.strictEqual(author.books.get(0).id, 10);
     return;
 };
 
@@ -277,17 +277,17 @@ exports.testPartitionedCollection = function() {
 
     assert.strictEqual(author.books.length, 51);
     // due to ordering first book is the last one
-    assert.strictEqual(author.books.get(0)._id, 101);
+    assert.strictEqual(author.books.get(0).id, 101);
     assert.isNotUndefined(author.books.partitions[0]);
     assert.strictEqual(author.books.partitions[0].length, 10);
     var book = author.books.get(10);
     assert.isNotUndefined(author.books.partitions[1]);
     assert.strictEqual(author.books.partitions[1].length, 10);
-    assert.strictEqual(book._id, 81);
+    assert.strictEqual(book.id, 81);
     book = author.books.get(50);
     assert.isNotUndefined(author.books.partitions[5]);
     assert.strictEqual(author.books.partitions[5].length, 1);
-    assert.strictEqual(book._id, 1);
+    assert.strictEqual(book.id, 1);
 };
 
 exports.testReloadInTransaction = function() {
@@ -455,7 +455,7 @@ exports.testRollbackWithReload = function() {
     assert.strictEqual(author.books.indexOf(book), -1);
     // since we're in an open transaction, the cached collection is untouched
     assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).indexOf(book._id), 10);
+    assert.strictEqual(store.entityCache.get(author.books._cacheKey).indexOf(book.id), 10);
     // so the remove above isn't visible to other threads
     assert.strictEqual(spawn(function() {
         return Author.get(1).books.length;

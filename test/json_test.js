@@ -61,9 +61,9 @@ exports.testStringify = function() {
         "author": author
     });
     author.latestBook = book;
-    assert.strictEqual(JSON.stringify(author), '{"_id":null,"name":"John Doe"}');
+    assert.strictEqual(JSON.stringify(author), '{"id":null,"name":"John Doe"}');
     author.save();
-    assert.strictEqual(JSON.stringify(author), '{"_id":1,"name":"John Doe"}');
+    assert.strictEqual(JSON.stringify(author), '{"id":1,"name":"John Doe"}');
 };
 
 //start the test runner if we're called directly from command line

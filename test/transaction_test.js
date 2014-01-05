@@ -239,7 +239,7 @@ exports.testInsertIsolation = function() {
     Author.get(1);
     assert.isFalse(store.entityCache.containsKey(author._cacheKey));
     // same happens when querying for the newly created author instance
-    assert.strictEqual(store.query("from Author where Author.id = 1")[0]._id, 1);
+    assert.strictEqual(store.query("from Author where Author.id = 1")[0].id, 1);
     assert.isFalse(store.entityCache.containsKey(author._cacheKey));
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached

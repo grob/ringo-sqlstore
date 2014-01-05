@@ -71,10 +71,10 @@ exports.testStorablePersisting = function() {
     book.save();
     // author.books collection is now populated
     assert.strictEqual(author.books.length, 1);
-    assert.strictEqual(author.books.get(0)._id, book._id);
+    assert.strictEqual(author.books.get(0).id, book.id);
     author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
-    assert.strictEqual(author.books.get(0)._id, book._id);
+    assert.strictEqual(author.books.get(0).id, book.id);
     // removing the author from the book needs explicit removal from the author's
     // books collection
     book.author = null;
@@ -130,11 +130,11 @@ exports.testStorableRemoval = function() {
     });
     book.save();
     assert.strictEqual(author.books.length, 1);
-    assert.strictEqual(author.books.get(0)._id, book._id);
+    assert.strictEqual(author.books.get(0).id, book.id);
     // remove the book - the author's collection is still populated
     book.remove();
     assert.strictEqual(author.books.length, 1);
-    assert.strictEqual(author.books.get(0)._id, book._id);
+    assert.strictEqual(author.books.get(0).id, book.id);
     // retrieve the author again from db/cache - since the collection is
     // cached, and the book hasn't been removed explicitly from the collection,
     // it still has a length of 1, but contains a null value at idx 0

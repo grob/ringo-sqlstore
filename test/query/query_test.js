@@ -91,14 +91,14 @@ exports.testSelectEntity = function() {
     var result = store.query("select Book from Book");
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
         assert.isNull(book._entity);
     });
     result = store.query("select Book as book from Book");
     assert.strictEqual(result.length, 10);
     // alias is ignored if only one result
     result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
         assert.isNull(book._entity);
     });
 };
@@ -109,8 +109,8 @@ exports.testSelectMultipleEntities = function() {
             "where Book.author = Author.id and Author.id < 6");
     assert.strictEqual(result.length, 5);
     result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book"]._id, idx + 1);
-        assert.strictEqual(props["Author"]._id, idx + 1);
+        assert.strictEqual(props["Book"].id, idx + 1);
+        assert.strictEqual(props["Author"].id, idx + 1);
     });
 };
 
@@ -121,7 +121,7 @@ exports.testSelectEntityCached = function() {
     assert.strictEqual(result.length, 10);
     assert.strictEqual(store.entityCache.size(), 10);
     result.forEach(function(book, idx) {
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
         assert.isNull(book._entity);
         assert.isTrue(store.entityCache.containsKey(book._cacheKey));
         assert.isNull(store.entityCache.get(book._cacheKey)[1]);
@@ -138,7 +138,7 @@ exports.testSelectEntityAggressive = function() {
     result.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
         assert.isTrue(book.author instanceof Author);
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
     });
@@ -153,7 +153,7 @@ exports.testSelectEntityAggressiveCached = function() {
     result.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
         assert.isTrue(book.author instanceof Author);
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
         assert.isTrue(store.entityCache.containsKey(book._cacheKey));
@@ -174,10 +174,10 @@ exports.testSelectMultipleEntitiesAggressive = function() {
     result.forEach(function(obj, idx) {
         assert.isTrue(obj.Book instanceof Book);
         assert.isTrue(obj.Author instanceof Author);
-        assert.strictEqual(obj.Book._id, idx + 1);
+        assert.strictEqual(obj.Book.id, idx + 1);
         assert.strictEqual(obj.Book.title, "Book " + idx);
-        assert.strictEqual(obj.Book.author._id, obj.Author._id);
-        assert.strictEqual(obj.Author._id, idx + 1);
+        assert.strictEqual(obj.Book.author.id, obj.Author.id);
+        assert.strictEqual(obj.Author.id, idx + 1);
     });
 };
 
@@ -229,7 +229,7 @@ exports.testNamedParameter = function() {
     result.forEach(function(book, idx) {
         assert.isTrue(book instanceof Book);
         assert.strictEqual(book.title, "Book " + idx);
-        assert.strictEqual(book._id, idx + 1);
+        assert.strictEqual(book.id, idx + 1);
     });
 };
 

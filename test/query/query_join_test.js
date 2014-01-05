@@ -121,15 +121,15 @@ exports.testInnerJoinQuery = function() {
     // all books by author 1
     var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
-    assert.strictEqual(result[0]._id, books[0]._id);
-    assert.strictEqual(result[1]._id, books[1]._id);
+    assert.strictEqual(result[0].id, books[0].id);
+    assert.strictEqual(result[1].id, books[1].id);
     // all authors of book 1 - this time with named parameter
     result = store.query("from Author inner join Relation on Relation.author = Author.id where Relation.book = :bookId", {
         "bookId": 1
     });
     assert.strictEqual(result.length, 2);
-    assert.strictEqual(result[0]._id, authors[0]._id);
-    assert.strictEqual(result[1]._id, authors[1]._id);
+    assert.strictEqual(result[0].id, authors[0].id);
+    assert.strictEqual(result[1].id, authors[1].id);
     return;
 };
 

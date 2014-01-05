@@ -71,15 +71,15 @@ exports.testCRUD = function() {
     assert.isTrue(author._key instanceof Key);
     assert.strictEqual(author._key.type, "Author");
     assert.isNull(author._key.id);
-    assert.isNull(author._id);
+    assert.isNull(author.id);
     author.save();
     assert.strictEqual(author._key.id, 1);
-    assert.strictEqual(author._id, 1);
+    assert.strictEqual(author.id, 1);
 
     // read
     author = Author.get(1);
     assert.isNotNull(author);
-    assert.strictEqual(author._id, 1);
+    assert.strictEqual(author.id, 1);
     assert.strictEqual(author.name, name);
 
     // update
