@@ -263,16 +263,16 @@ exports.testUpdateIsolation = function() {
         return Author.get(1).name;
     }).get(), "John Doe");
     // nor is the change above in cache
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     // even after re-getting the storable its _entity isn't cached
     assert.strictEqual(Author.get(1).name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     // same happens when querying for the newly created author instance
     assert.strictEqual(store.query("from Author a where a.id = 1")[0].name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "Jane Foo");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "Jane Foo");
     assert.strictEqual(spawn(function() {
         return Author.get(1).name;
     }).get(), "Jane Foo");
