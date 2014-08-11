@@ -299,6 +299,39 @@ exports.testRemoveIsolation = function() {
     }).get());
 };
 
+exports.testCommitEvent = function() {
+    var keys = null;
+    store.addListener("commit", function(data) {
+        keys = data;
+    });
+    var author = new Author({
+        "name": "John Doe"
+    });
+    var book = new Book({
+        "title": "Book",
+        "author": author
+    });
+    // inserted
+    book.save();
+    assert.isNotNull(keys);
+    assert.isTrue(keys.inserted.indexOf(author._cacheKey) > -1);
+    assert.isTrue(keys.inserted.indexOf(book._cacheKey) > -1);
+    // updated
+    book.title = "New Book";
+    book.save();
+    assert.isTrue(keys.updated.indexOf(book._cacheKey) > -1);
+    // access the books collection to force loading IDs
+    assert.strictEqual(author.books.length, 1);
+    store.beginTransaction();
+    author.remove();
+    book.remove();
+    store.commitTransaction();
+    assert.isTrue(keys.deleted.indexOf(author._cacheKey) > -1);
+    assert.isTrue(keys.deleted.indexOf(book._cacheKey) > -1);
+    // the author's books collection is removed from cache too
+    assert.isTrue(keys.collections.indexOf(author.books._cacheKey) > -1);
+};
+
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
