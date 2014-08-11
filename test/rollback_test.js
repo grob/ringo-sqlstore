@@ -72,7 +72,6 @@ exports.testUpdateRollback = function() {
         "isAlive": true
     });
     author.save();
-    debugger;
     // the stored entity has been put into the cache after successful save
     assert.isTrue(store.entityCache.containsKey(author._cacheKey));
     assert.strictEqual(author._state, Storable.STATE_CLEAN);
