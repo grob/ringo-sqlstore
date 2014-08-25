@@ -335,6 +335,24 @@ exports.testNotCondition  = function() {
     testQueries(queries, "condition");
 };
 
+exports.testExistsCondition = function() {
+    var queries = [
+        {
+            "query": "exists (from Author)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author)"
+        },
+        {
+            "query": "exists (select Author.id from Author)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author)"
+        },
+        {
+            "query": "exists (from Author where Author.id = 1)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author WHERE $Author.id = ?)"
+        }
+    ];
+    testQueries(queries, "condition");
+};
+
 exports.testOrderByClause = function() {
     var queries = [
         {
