@@ -6,6 +6,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
+var {Storable} = require("../lib/sqlstore/storable");
 var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
@@ -362,17 +363,24 @@ exports.testOnSave = function() {
 };
 
 exports.testOnRemove = function() {
+    var name = "John Doe";
     var calledOnRemove = false;
 
     Author.prototype.onRemove = function() {
         calledOnRemove = true;
+        assert.strictEqual(this._state, Storable.STATE_DELETED);
+        assert.strictEqual(this.name, name);
     };
 
     var author = new Author({
-        "name": "John Doe"
+        "name": name
     });
     author.save();
+    // remove the entity from the cache
+    store.entityCache.clear();
     store.beginTransaction();
+    // remove a newly created instance, i.e. it's data is not
+    // loaded when remove() is called
     Author.get(1).remove();
     assert.isFalse(calledOnRemove);
     store.commitTransaction();
