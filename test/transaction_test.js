@@ -332,6 +332,52 @@ exports.testCommitEvent = function() {
     assert.isTrue(keys.collections.indexOf(author.books._cacheKey) > -1);
 };
 
+exports.testOnSave = function() {
+    var calledOnSave = 0;
+
+    Author.prototype.onSave = function() {
+        calledOnSave += 1;
+    };
+
+    var author = new Author({
+        "name": "John Doe"
+    });
+
+    store.beginTransaction();
+    author.save();
+    // callbacks are executed after transaction has been committed successfully
+    assert.strictEqual(calledOnSave, 0);
+    store.commitTransaction();
+    assert.strictEqual(calledOnSave, 1);
+
+    // author hasn't been modified, so no callback is executed
+    author.save();
+    assert.strictEqual(calledOnSave, 1);
+
+    // this time with implicit transaction
+    author = Author.get(1);
+    author.name = "Jane Foo";
+    author.save();
+    assert.strictEqual(calledOnSave, 2);
+};
+
+exports.testOnRemove = function() {
+    var calledOnRemove = false;
+
+    Author.prototype.onRemove = function() {
+        calledOnRemove = true;
+    };
+
+    var author = new Author({
+        "name": "John Doe"
+    });
+    author.save();
+    store.beginTransaction();
+    Author.get(1).remove();
+    assert.isFalse(calledOnRemove);
+    store.commitTransaction();
+    assert.isTrue(calledOnRemove);
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
