@@ -301,9 +301,9 @@ exports.testRemoveIsolation = function() {
 };
 
 exports.testCommitEvent = function() {
-    var keys = null;
+    var mods = null;
     store.addListener("commit", function(data) {
-        keys = data;
+        mods = data;
     });
     var author = new Author({
         "name": "John Doe"
@@ -314,23 +314,27 @@ exports.testCommitEvent = function() {
     });
     // inserted
     book.save();
-    assert.isNotNull(keys);
-    assert.isTrue(keys.inserted.indexOf(author._cacheKey) > -1);
-    assert.isTrue(keys.inserted.indexOf(book._cacheKey) > -1);
+    assert.isNotNull(mods);
+    assert.isTrue(mods.inserted.hasOwnProperty(author._cacheKey));
+    assert.isTrue(mods.inserted.hasOwnProperty(book._cacheKey));
     // updated
     book.title = "New Book";
     book.save();
-    assert.isTrue(keys.updated.indexOf(book._cacheKey) > -1);
+    assert.isTrue(mods.updated.hasOwnProperty(book._cacheKey));
     // access the books collection to force loading IDs
     assert.strictEqual(author.books.length, 1);
+    // clear the entity cache - remove() should load the entity before deleting
+    // the storable instance
+    store.entityCache.clear();
     store.beginTransaction();
-    author.remove();
-    book.remove();
+    Author.get(1).remove();
+    Book.get(1).remove();
     store.commitTransaction();
-    assert.isTrue(keys.deleted.indexOf(author._cacheKey) > -1);
-    assert.isTrue(keys.deleted.indexOf(book._cacheKey) > -1);
+    assert.isTrue(mods.deleted.hasOwnProperty(author._cacheKey));
+    assert.isTrue(mods.deleted[author._cacheKey]._entity !== Storable.LOAD_LAZY);
+    assert.isTrue(mods.deleted.hasOwnProperty(book._cacheKey));
     // the author's books collection is removed from cache too
-    assert.isTrue(keys.collections.indexOf(author.books._cacheKey) > -1);
+    assert.isTrue(mods.collections.hasOwnProperty(author.books._cacheKey));
 };
 
 exports.testOnSave = function() {
