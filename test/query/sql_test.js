@@ -219,6 +219,18 @@ exports.testParenthesis = function() {
             "sql": "($Author.id = ? AND ($Author.id = ? AND $Author.id = ?))"
         },
         {
+            "query": "Author.id = 1 and (Author.id = 2 or Author.id = 3 or Author.id = 4)",
+            "sql": "($Author.id = ? AND ($Author.id = ? OR $Author.id = ? OR $Author.id = ?))"
+        },
+        {
+            "query": "Author.id = 1 or (Author.id = 2 and (Author.id = 3 or Author.id = 4))",
+            "sql": "($Author.id = ? OR ($Author.id = ? AND ($Author.id = ? OR $Author.id = ?)))"
+        },
+        {
+            "query": "Author.id = 1 and Author.id = 2 and (Author.id = 3 or Author.id = 4)",
+            "sql": "($Author.id = ? AND $Author.id = ? AND ($Author.id = ? OR $Author.id = ?))"
+        },
+        {
             "query": "(Author.id = 1 or Author.id = 2) or (Author.id = 3)",
             "sql": "(($Author.id = ? OR $Author.id = ?) OR $Author.id = ?)"
         }
