@@ -654,8 +654,13 @@ exports.testRange = function() {
     var {sql, params} = SqlGenerator.generate(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 2);
-    assert.strictEqual(params[0], "offset");
-    assert.strictEqual(params[1], "limit");
+    assert.strictEqual(params[0], "limit");
+    assert.strictEqual(params[1], "offset");
+    tree = Parser.parse("select Author from Author limit :limit offset :offset");
+    var {sql, params} = SqlGenerator.generate(store, tree);
+    assert.strictEqual(sql, sqlBuf.join(""));
+    assert.strictEqual(params[0], "limit");
+    assert.strictEqual(params[1], "offset");
 };
 
 exports.testDistinct = function() {
