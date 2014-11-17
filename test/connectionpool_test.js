@@ -63,8 +63,9 @@ exports.testConnectionIsValid = function() {
 
 exports.testConcurrency = function() {
 
-    // starting 10 workers, each aquiring 10 connections
-    var nrOfWorkers = 10;
+    // starting 8 workers, each aquiring 10 connections
+    var nrOfWorkers = 8;
+    var nrOfConnections = 10;
     var connections = new Array(nrOfWorkers);
     var semaphore = new Semaphore();
 
@@ -76,12 +77,16 @@ exports.testConcurrency = function() {
         };
         w.postMessage({
             "workerNr": i,
-            "pool": pool
+            "pool": pool,
+            "nrOfConnections": nrOfConnections
         }, true);
     }
 
     // wait for all workers to finish
     semaphore.tryWait(1000, nrOfWorkers);
+    assert.strictEqual(connections.reduce(function(prev, curr) {
+        return prev + curr.length;
+    }, 0), nrOfWorkers * nrOfConnections);
     var offset = 0;
     var result = connections.every(function(current, cIdx) {
         offset += 1;
@@ -89,13 +94,12 @@ exports.testConcurrency = function() {
             return current.every(function(currentConn, ccIdx) {
                 return other.every(function(otherConn, ocIdx) {
                     // console.log("COMPARING CURRENT", cIdx + "/" + ccIdx, "with OTHER", (oIdx + offset) + "/" + ocIdx);
-                    return currentConn.connection != otherConn.connection;
+                    return !currentConn.connection.equals(otherConn.connection);
                 });
             });
         });
     });
     assert.isTrue(result);
-    return;
 };
 
 //start the test runner if we're called directly from command line

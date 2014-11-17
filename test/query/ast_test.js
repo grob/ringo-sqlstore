@@ -269,16 +269,20 @@ exports.testExpression = function() {
     value = Parser.parse("Author.id = 1 and Author.id = 2", rule);
     assert.strictEqual(value.andConditions.length, 2);
     value = Parser.parse("Author.id = 1 or Author.id = 2", rule);
-    assert.strictEqual(value.andConditions.length, 1);
+    assert.isNull(value.andConditions);
     assert.isTrue(value.orConditions instanceof ast.ConditionList);
-    assert.strictEqual(value.orConditions.length, 1);
-    value = Parser.parse("Author.id = 1 and (Author.id = 2 or Author.id = 3)", rule);
+    assert.strictEqual(value.orConditions.length, 2);
+    value = Parser.parse("Author.id = 1 and (Author.id = 2 or Author.id = 3 or Author.id = 4)", rule);
     assert.strictEqual(value.andConditions.length, 2);
     assert.isNull(value.orConditions);
-    assert.isTrue(value.andConditions.conditions[1].left instanceof ast.Expression);
-    assert.isNull(value.andConditions.conditions[1].right);
-    assert.strictEqual(value.andConditions.conditions[1].left.andConditions.length, 1);
-    assert.strictEqual(value.andConditions.conditions[1].left.orConditions.length, 1);
+    var conditionList = value.andConditions.conditions;
+    assert.isTrue(conditionList[0] instanceof ast.Condition);
+    assert.isTrue(conditionList[1].left instanceof ast.Expression);
+    assert.isNull(conditionList[1].right);
+    var expression = conditionList[1].left;
+    assert.isNull(expression.andConditions);
+    assert.isTrue(expression.orConditions instanceof ast.ConditionList);
+    assert.strictEqual(expression.orConditions.length, 3);
 
     // summands
     value = Parser.parse("Author.id - 2", rule);

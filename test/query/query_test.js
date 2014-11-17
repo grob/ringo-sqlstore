@@ -3,6 +3,7 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../../lib/sqlstore/main");
+var {Storable} = require("../../lib/sqlstore/storable");
 var sqlUtils = require("../../lib/sqlstore/util");
 var store = null;
 var Author = null;
@@ -92,14 +93,14 @@ exports.testSelectEntity = function() {
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book.id, idx + 1);
-        assert.isNull(book._entity);
+        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
     });
     result = store.query("select Book as book from Book");
     assert.strictEqual(result.length, 10);
     // alias is ignored if only one result
     result.forEach(function(book, idx) {
         assert.strictEqual(book.id, idx + 1);
-        assert.isNull(book._entity);
+        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
     });
 };
 
@@ -122,9 +123,9 @@ exports.testSelectEntityCached = function() {
     assert.strictEqual(store.entityCache.size(), 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book.id, idx + 1);
-        assert.isNull(book._entity);
+        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
         assert.isTrue(store.entityCache.containsKey(book._cacheKey));
-        assert.isNull(store.entityCache.get(book._cacheKey)[1]);
+        assert.strictEqual(store.entityCache.get(book._cacheKey), Storable.LOAD_LAZY);
     });
     store.entityCache.clear();
     store.setEntityCache(null);
@@ -158,10 +159,10 @@ exports.testSelectEntityAggressiveCached = function() {
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
         assert.isTrue(store.entityCache.containsKey(book._cacheKey));
         // books are loaded aggressively, so cache contains the entity objects
-        assert.isNotNull(store.entityCache.get(book._cacheKey)[1]);
+        assert.isNotNull(store.entityCache.get(book._cacheKey));
         assert.isTrue(store.entityCache.containsKey(book.author._cacheKey));
         // but authors are not, therefor the cache contains null
-        assert.isNull(store.entityCache.get(book.author._cacheKey)[1]);
+        assert.strictEqual(store.entityCache.get(book.author._cacheKey), Storable.LOAD_LAZY);
     });
     store.entityCache.clear();
     store.setEntityCache(null);

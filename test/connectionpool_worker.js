@@ -1,9 +1,8 @@
 var conns = [];
 
 function onmessage(event) {
-    var workerNr = event.data.workerNr;
-    var pool = event.data.pool;
-    for (var i=0; i<10; i+=1) {
+    var {workerNr, pool, nrOfConnections} = event.data;
+    for (var i=0; i<nrOfConnections; i+=1) {
         conns.push(pool.getConnection());
     }
     event.source.postMessage({

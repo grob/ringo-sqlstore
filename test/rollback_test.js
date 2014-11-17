@@ -87,7 +87,7 @@ exports.testUpdateRollback = function() {
     // but the modified property stays the same
     assert.isNull(author.isAlive);
     // make sure the cached entity object is not affected by the change above
-    var [key, cachedEntity] = store.entityCache.get(author._cacheKey);
+    var cachedEntity = store.entityCache.get(author._cacheKey);
     assert.isTrue(cachedEntity[Author.mapping.getMapping("isAlive").column]);
     author = Author.get(1);
     assert.isTrue(author.isAlive);
@@ -114,7 +114,7 @@ exports.testUpdateRollbackWithTransaction = function() {
     // but the modified property stays the same
     assert.isFalse(author.isAlive);
     // make sure the cached entity object is not affected by the changes above
-    var [key, cachedEntity] = store.entityCache.get(author._cacheKey);
+    var cachedEntity = store.entityCache.get(author._cacheKey);
     assert.isTrue(cachedEntity[Author.mapping.getMapping("isAlive").column]);
     author = Author.get(1);
     assert.isTrue(author.isAlive);
@@ -137,7 +137,7 @@ exports.testRemoveRollback = function() {
     assert.strictEqual(author._state, Storable.STATE_CLEAN);
     assert.strictEqual(author.name, "Jane Foo");
     // make sure the cached entity object is not affected by the changes above
-    var [key, cachedEntity] = store.entityCache.get(author._cacheKey);
+    var cachedEntity = store.entityCache.get(author._cacheKey);
     assert.strictEqual(cachedEntity[Author.mapping.getMapping("name").column], "John Doe");
     author = Author.get(1);
     assert.strictEqual(author.name, "John Doe");

@@ -219,6 +219,18 @@ exports.testParenthesis = function() {
             "sql": "($Author.id = ? AND ($Author.id = ? AND $Author.id = ?))"
         },
         {
+            "query": "Author.id = 1 and (Author.id = 2 or Author.id = 3 or Author.id = 4)",
+            "sql": "($Author.id = ? AND ($Author.id = ? OR $Author.id = ? OR $Author.id = ?))"
+        },
+        {
+            "query": "Author.id = 1 or (Author.id = 2 and (Author.id = 3 or Author.id = 4))",
+            "sql": "($Author.id = ? OR ($Author.id = ? AND ($Author.id = ? OR $Author.id = ?)))"
+        },
+        {
+            "query": "Author.id = 1 and Author.id = 2 and (Author.id = 3 or Author.id = 4)",
+            "sql": "($Author.id = ? AND $Author.id = ? AND ($Author.id = ? OR $Author.id = ?))"
+        },
+        {
             "query": "(Author.id = 1 or Author.id = 2) or (Author.id = 3)",
             "sql": "(($Author.id = ? OR $Author.id = ?) OR $Author.id = ?)"
         }
@@ -332,6 +344,24 @@ exports.testNotCondition  = function() {
         }
     ];
 
+    testQueries(queries, "condition");
+};
+
+exports.testExistsCondition = function() {
+    var queries = [
+        {
+            "query": "exists (from Author)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author)"
+        },
+        {
+            "query": "exists (select Author.id from Author)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author)"
+        },
+        {
+            "query": "exists (from Author where Author.id = 1)",
+            "sql": "EXISTS (SELECT $Author.id FROM $Author WHERE $Author.id = ?)"
+        }
+    ];
     testQueries(queries, "condition");
 };
 
@@ -624,8 +654,13 @@ exports.testRange = function() {
     var {sql, params} = SqlGenerator.generate(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 2);
-    assert.strictEqual(params[0], "offset");
-    assert.strictEqual(params[1], "limit");
+    assert.strictEqual(params[0], "limit");
+    assert.strictEqual(params[1], "offset");
+    tree = Parser.parse("select Author from Author limit :limit offset :offset");
+    var {sql, params} = SqlGenerator.generate(store, tree);
+    assert.strictEqual(sql, sqlBuf.join(""));
+    assert.strictEqual(params[0], "limit");
+    assert.strictEqual(params[1], "offset");
 };
 
 exports.testDistinct = function() {

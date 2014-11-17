@@ -117,6 +117,15 @@ exports.testCollectionInvalidation = function() {
     book.author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
     assert.strictEqual(book.author.books.length, 1);
+    // retrieve the author as new instance, access the collection and remove it
+    // this must lead to removal of the cached collection
+    author = Author.get(1);
+    assert.strictEqual(author.books.length, 1);
+    var cacheKey = author.books._cacheKey;
+    assert.isTrue(store.entityCache.containsKey(cacheKey));
+    // assert.strictEqual(author.books._state, Collection.)
+    author.remove();
+    assert.isFalse(store.entityCache.containsKey(cacheKey));
 };
 
 exports.testStorableRemoval = function() {

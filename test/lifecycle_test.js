@@ -55,7 +55,8 @@ exports.testInternalProps = function() {
     var author = new Author();
     assert.strictEqual(author._props.constructor, Object);
     assert.isFalse(author._props.hasOwnProperty("name"));
-    assert.isUndefined(author._entity);
+    assert.strictEqual(author._entity.constructor, Object);
+    assert.strictEqual(Object.keys(author._entity).length, 0);
     assert.strictEqual(author._key.constructor, Key);
     assert.isNull(author._key.id);
     // name has never been assigned, accessing it returns null (not undefined)

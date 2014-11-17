@@ -6,6 +6,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
+var {Storable} = require("../lib/sqlstore/storable");
 var sqlUtils = require("../lib/sqlstore/util");
 
 var store = null;
@@ -263,16 +264,16 @@ exports.testUpdateIsolation = function() {
         return Author.get(1).name;
     }).get(), "John Doe");
     // nor is the change above in cache
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     // even after re-getting the storable its _entity isn't cached
     assert.strictEqual(Author.get(1).name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     // same happens when querying for the newly created author instance
     assert.strictEqual(store.query("from Author a where a.id = 1")[0].name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "John Doe");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
-    assert.strictEqual(store.entityCache.get(author._cacheKey)[1].author_name, "Jane Foo");
+    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "Jane Foo");
     assert.strictEqual(spawn(function() {
         return Author.get(1).name;
     }).get(), "Jane Foo");
@@ -299,6 +300,96 @@ exports.testRemoveIsolation = function() {
     }).get());
 };
 
+exports.testCommitEvent = function() {
+    var mods = null;
+    store.addListener("commit", function(data) {
+        mods = data;
+    });
+    var author = new Author({
+        "name": "John Doe"
+    });
+    var book = new Book({
+        "title": "Book",
+        "author": author
+    });
+    // inserted
+    book.save();
+    assert.isNotNull(mods);
+    assert.isTrue(mods.inserted.hasOwnProperty(author._cacheKey));
+    assert.isTrue(mods.inserted.hasOwnProperty(book._cacheKey));
+    // updated
+    book.title = "New Book";
+    book.save();
+    assert.isTrue(mods.updated.hasOwnProperty(book._cacheKey));
+    // access the books collection to force loading IDs
+    assert.strictEqual(author.books.length, 1);
+    // clear the entity cache - remove() should load the entity before deleting
+    // the storable instance
+    store.entityCache.clear();
+    store.beginTransaction();
+    Author.get(1).remove();
+    Book.get(1).remove();
+    store.commitTransaction();
+    assert.isTrue(mods.deleted.hasOwnProperty(author._cacheKey));
+    assert.isTrue(mods.deleted[author._cacheKey]._entity !== Storable.LOAD_LAZY);
+    assert.isTrue(mods.deleted.hasOwnProperty(book._cacheKey));
+    // the author's books collection is removed from cache too
+    assert.isTrue(mods.collections.hasOwnProperty(author.books._cacheKey));
+};
+
+exports.testOnSave = function() {
+    var calledOnSave = 0;
+
+    Author.prototype.onSave = function() {
+        calledOnSave += 1;
+    };
+
+    var author = new Author({
+        "name": "John Doe"
+    });
+
+    store.beginTransaction();
+    author.save();
+    // callbacks are executed after transaction has been committed successfully
+    assert.strictEqual(calledOnSave, 0);
+    store.commitTransaction();
+    assert.strictEqual(calledOnSave, 1);
+
+    // author hasn't been modified, so no callback is executed
+    author.save();
+    assert.strictEqual(calledOnSave, 1);
+
+    // this time with implicit transaction
+    author = Author.get(1);
+    author.name = "Jane Foo";
+    author.save();
+    assert.strictEqual(calledOnSave, 2);
+};
+
+exports.testOnRemove = function() {
+    var name = "John Doe";
+    var calledOnRemove = false;
+
+    Author.prototype.onRemove = function() {
+        calledOnRemove = true;
+        assert.strictEqual(this._state, Storable.STATE_DELETED);
+        assert.strictEqual(this.name, name);
+    };
+
+    var author = new Author({
+        "name": name
+    });
+    author.save();
+    // remove the entity from the cache
+    store.entityCache.clear();
+    store.beginTransaction();
+    // remove a newly created instance, i.e. it's data is not
+    // loaded when remove() is called
+    Author.get(1).remove();
+    assert.isFalse(calledOnRemove);
+    store.commitTransaction();
+    assert.isTrue(calledOnRemove);
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
