@@ -218,6 +218,12 @@ exports.testSelectValues = function() {
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0].min, 1);
     assert.strictEqual(result[0].max, 10);
+    // operand with alias
+    result = store.query("select Book.id || '-' || Book.title from Book order by Book asc");
+    assert.strictEqual(result.length, 10);
+    result.forEach(function(str, idx) {
+        assert.strictEqual(str, (idx + 1) + "-Book " + idx);
+    });
 };
 
 exports.testNamedParameter = function() {

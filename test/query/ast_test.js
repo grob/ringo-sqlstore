@@ -80,10 +80,10 @@ exports.testSelectEntity = function() {
 
 exports.testAggregation = function() {
     var rule = "aggregation";
-    for each (var type in ["max", "min", "sum", "count"]) {
+    for each (var type in ["max", "min", "sum", "avg", "count"]) {
         let value = Parser.parse(type + " ( User.id )", rule);
         assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
-        assert.strictEqual(value.type, ast.Aggregation[type.toUpperCase()], "Aggregation " + type);
+        assert.strictEqual(value.type, type.toUpperCase(), "Aggregation " + type);
         value = Parser.parse(type + " (distinct User.id )", rule);
         assert.isTrue(value.isDistinct);
     }
@@ -167,6 +167,14 @@ exports.testSelectExpression = function() {
     assert.isTrue(value.expression instanceof ast.Factor);
     value = Parser.parse("Author.id / 2 as test", rule);
     assert.strictEqual(value.alias, "test");
+
+    // operand
+    value = Parser.parse("'Author#' || Author.id as key", rule);
+    assert.isTrue(value.expression instanceof ast.Operand);
+    assert.strictEqual(value.expression.summands.length, 2);
+    assert.isTrue(value.expression.summands[0] instanceof ast.StringValue);
+    assert.isTrue(value.expression.summands[1] instanceof ast.Ident);
+    assert.strictEqual(value.alias, "key");
 };
 
 exports.testIdent = function() {
@@ -277,6 +285,7 @@ exports.testExpression = function() {
     assert.isNull(value.orConditions);
     var conditionList = value.andConditions.conditions;
     assert.isTrue(conditionList[0] instanceof ast.Condition);
+    assert.isTrue(conditionList[1] instanceof ast.Condition);
     assert.isTrue(conditionList[1].left instanceof ast.Expression);
     assert.isNull(conditionList[1].right);
     var expression = conditionList[1].left;
@@ -286,6 +295,7 @@ exports.testExpression = function() {
 
     // summands
     value = Parser.parse("Author.id - 2", rule);
+    assert.isTrue(value.andConditions.conditions[0].left instanceof ast.Summand);
     assert.isTrue(value.andConditions.conditions[0].left.left instanceof ast.Ident);
     assert.strictEqual(value.andConditions.conditions[0].left.operand, "-");
     assert.isTrue(value.andConditions.conditions[0].left.right instanceof ast.Value);
@@ -345,10 +355,10 @@ exports.testHavingClause = function() {
     var condition = value.value.andConditions.conditions[0];
     assert.isTrue(condition.left instanceof ast.Ident);
     assert.isTrue(condition.right instanceof ast.Comparison);
-    var value = Parser.parse("having max(Author.id) > 10", rule);
+    value = Parser.parse("having max(Author.id) > 10", rule);
     condition = value.value.andConditions.conditions[0];
     assert.isTrue(condition.left instanceof ast.Aggregation);
-    assert.strictEqual(condition.left.type, ast.Aggregation.MAX);
+    assert.strictEqual(condition.left.type, "MAX");
     // multiple having conditions
     value = Parser.parse("having max(Author.id) > 10 and min(Author.id) < 20", rule);
     assert.strictEqual(value.value.andConditions.length, 2);
@@ -464,6 +474,16 @@ exports.testDistinct = function() {
     assert.isTrue(value instanceof ast.Select);
     assert.isTrue(value.isDistinct);
 };
+
+exports.testAllSome = function() {
+    var rule = "condition";
+    var value = Parser.parse("Author.salary > all(select avg(Author.salary) from Author)", rule);
+    assert.isTrue(value.left instanceof ast.Ident);
+    assert.isTrue(value.right instanceof ast.Comparison);
+    assert.isTrue(value.right.value instanceof ast.AllSome);
+    assert.strictEqual(value.right.value.range, "ALL");
+    assert.isTrue(value.right.value.select instanceof ast.Select);
+}
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

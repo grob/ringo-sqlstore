@@ -67,13 +67,19 @@ exports.tearDown = function() {
 
 var testQueries = function(queries, startRule) {
     for each (let {query, sql, values} in queries) {
-        let tree = Parser.parse(query, startRule);
+        let tree;
+        try {
+            tree = Parser.parse(query, startRule);
+        } catch (e) {
+            console.error("Parsing query '" + query + "' failed, reason:", e);
+            continue;
+        }
         let generator = new SqlGenerator(store, tree.aliases);
         let resultSql = tree.accept(generator);
         let params = generator.params;
-        assert.strictEqual(resultSql, getExpectedSql(sql), query);
+        assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
         if (values) {
-            assert.deepEqual(params, values, query);
+            assert.deepEqual(params, values, "Query: " + query);
         }
     }
 };
@@ -154,6 +160,14 @@ exports.testAggregation = function() {
         {
             "query": "select sum(Author.id) from Author",
             "sql": "SELECT SUM($Author.id) FROM $Author"
+        },
+        {
+            "query": "select avg(Author.id) from Author",
+            "sql": "SELECT AVG($Author.id) FROM $Author"
+        },
+        {
+            "query": "select avg(distinct Author.id) from Author",
+            "sql": "SELECT AVG(DISTINCT $Author.id) FROM $Author"
         },
         {
             "query": "select count(Author.id) from Author",
@@ -365,6 +379,16 @@ exports.testExistsCondition = function() {
     testQueries(queries, "condition");
 };
 
+exports.testOperand = function() {
+    var queries = [
+        {
+            "query": "select Author.id || ' - ' || Author.name as key from Author",
+            "sql": "SELECT ($Author.id || ? || $Author.name) FROM $Author"
+        }
+    ];
+    testQueries(queries);
+};
+
 exports.testOrderByClause = function() {
     var queries = [
         {
@@ -547,6 +571,10 @@ exports.testSelectExpression = function() {
         {
             "query": "max(Author.id) - min(Author.id) as authors",
             "sql": "(MAX($Author.id) - MIN($Author.id))"
+        },
+        {
+            "query": "Author.id || ' - ' || Author.name as key",
+            "sql": "($Author.id || ? || $Author.name)"
         }
     ];
     testQueries(queries, "selectExpression");
@@ -587,6 +615,19 @@ exports.testAliases = function() {
             "sql": "SELECT a." + idColumn + " FROM $Author a INNER JOIN $Book b ON a." + idColumn + " = b." + authorIdColumn
         }
     ];
+    testQueries(queries);
+};
+
+exports.testAllSome = function() {
+    var queries = [];
+    for each (let range in ["all", "any", "some"]) {
+        queries.push({
+            "query": "from Author where Author.id = " + range +
+                    "(select avg(Author.id) from Author)",
+            "sql": "SELECT $Author.id FROM $Author WHERE $Author.id = " +
+                    range.toUpperCase() + " (SELECT AVG($Author.id) FROM $Author)"
+        })
+    }
     testQueries(queries);
 };
 
