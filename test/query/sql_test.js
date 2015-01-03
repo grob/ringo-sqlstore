@@ -196,6 +196,14 @@ exports.testWhereClause = function() {
         {
             "query": "from Book, Author where Book.title = 'test'",
             "sql": "SELECT $Book.id, $Author.id FROM $Book, $Author WHERE $Book.title = ?"
+        },
+        {
+            "query": "from Author where Author.id > (select avg(Author.id) from Author)",
+            "sql": "SELECT $Author.id FROM $Author WHERE $Author.id > (SELECT AVG($Author.id) FROM $Author)"
+        },
+        {
+            "query": "from Author where Author.id > all (select avg(Author.id) from Author)",
+            "sql": "SELECT $Author.id FROM $Author WHERE $Author.id > ALL (SELECT AVG($Author.id) FROM $Author)"
         }
     ];
 
@@ -618,14 +626,15 @@ exports.testAliases = function() {
     testQueries(queries);
 };
 
-exports.testAllSome = function() {
+exports.testSubSelect = function() {
     var queries = [];
-    for each (let range in ["all", "any", "some"]) {
+    for each (let range in ["", "all", "any", "some"]) {
         queries.push({
             "query": "from Author where Author.id = " + range +
                     "(select avg(Author.id) from Author)",
             "sql": "SELECT $Author.id FROM $Author WHERE $Author.id = " +
-                    range.toUpperCase() + " (SELECT AVG($Author.id) FROM $Author)"
+                    (range ? range.toUpperCase() + " " : "") +
+                    "(SELECT AVG($Author.id) FROM $Author)"
         })
     }
     testQueries(queries);

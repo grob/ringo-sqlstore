@@ -475,12 +475,12 @@ exports.testDistinct = function() {
     assert.isTrue(value.isDistinct);
 };
 
-exports.testAllSome = function() {
+exports.testSubSelect = function() {
     var rule = "condition";
     var value = Parser.parse("Author.salary > all(select avg(Author.salary) from Author)", rule);
     assert.isTrue(value.left instanceof ast.Ident);
     assert.isTrue(value.right instanceof ast.Comparison);
-    assert.isTrue(value.right.value instanceof ast.AllSome);
+    assert.isTrue(value.right.value instanceof ast.SubSelect);
     assert.strictEqual(value.right.value.range, "ALL");
     assert.isTrue(value.right.value.select instanceof ast.Select);
 }
