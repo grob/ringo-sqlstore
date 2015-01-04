@@ -85,7 +85,7 @@ exports.testAggregation = function() {
         assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
         assert.strictEqual(value.type, type.toUpperCase(), "Aggregation " + type);
         value = Parser.parse(type + " (distinct User.id )", rule);
-        assert.isTrue(value.isDistinct);
+        assert.strictEqual(value.distinct, "DISTINCT");
     }
 };
 
@@ -272,16 +272,16 @@ exports.testExpression = function() {
     assert.isTrue(value instanceof ast.Expression);
     assert.isNotNull(value.andConditions);
     assert.isTrue(value.andConditions instanceof ast.ConditionList);
-    assert.strictEqual(value.andConditions.length, 1);
+    assert.strictEqual(value.andConditions.conditions.length, 1);
     assert.isNull(value.orConditions);
     value = Parser.parse("Author.id = 1 and Author.id = 2", rule);
-    assert.strictEqual(value.andConditions.length, 2);
+    assert.strictEqual(value.andConditions.conditions.length, 2);
     value = Parser.parse("Author.id = 1 or Author.id = 2", rule);
     assert.isNull(value.andConditions);
     assert.isTrue(value.orConditions instanceof ast.ConditionList);
-    assert.strictEqual(value.orConditions.length, 2);
+    assert.strictEqual(value.orConditions.conditions.length, 2);
     value = Parser.parse("Author.id = 1 and (Author.id = 2 or Author.id = 3 or Author.id = 4)", rule);
-    assert.strictEqual(value.andConditions.length, 2);
+    assert.strictEqual(value.andConditions.conditions.length, 2);
     assert.isNull(value.orConditions);
     var conditionList = value.andConditions.conditions;
     assert.isTrue(conditionList[0] instanceof ast.Condition);
@@ -291,7 +291,7 @@ exports.testExpression = function() {
     var expression = conditionList[1].left;
     assert.isNull(expression.andConditions);
     assert.isTrue(expression.orConditions instanceof ast.ConditionList);
-    assert.strictEqual(expression.orConditions.length, 3);
+    assert.strictEqual(expression.orConditions.conditions.length, 3);
 
     // summands
     value = Parser.parse("Author.id - 2", rule);
@@ -351,7 +351,7 @@ exports.testHavingClause = function() {
     var value = Parser.parse("having Author.id > 10", rule);
     assert.isTrue(value instanceof ast.HavingClause);
     assert.isTrue(value.value instanceof ast.Expression);
-    assert.strictEqual(value.value.andConditions.length, 1);
+    assert.strictEqual(value.value.andConditions.conditions.length, 1);
     var condition = value.value.andConditions.conditions[0];
     assert.isTrue(condition.left instanceof ast.Ident);
     assert.isTrue(condition.right instanceof ast.Comparison);
@@ -361,7 +361,7 @@ exports.testHavingClause = function() {
     assert.strictEqual(condition.left.type, "MAX");
     // multiple having conditions
     value = Parser.parse("having max(Author.id) > 10 and min(Author.id) < 20", rule);
-    assert.strictEqual(value.value.andConditions.length, 2);
+    assert.strictEqual(value.value.andConditions.conditions.length, 2);
     for each (let condition in value.value.andConditions.conditions) {
         assert.isTrue(condition.left instanceof ast.Aggregation);
     }
@@ -387,21 +387,21 @@ exports.testFromClause = function() {
 
 exports.testSelectClause = function() {
     var rule = "selectClause";
-    var value = Parser.parse("User.id", rule);
+    var value = Parser.parse("select User.id", rule);
     assert.isTrue(value instanceof ast.SelectClause);
     assert.strictEqual(value.list.length, 1);
     // multiple idents
-    value = Parser.parse("User.id, User.name", rule);
+    value = Parser.parse("select User.id, User.name", rule);
     assert.strictEqual(value.list.length, 2);
     assert.isTrue(value.list[0] instanceof ast.SelectExpression);
     assert.isTrue(value.list[1] instanceof ast.SelectExpression);
     // multiple entities
-    value = Parser.parse("Author, Book", rule);
+    value = Parser.parse("select Author, Book", rule);
     assert.strictEqual(value.list.length, 2);
     assert.isTrue(value.list[0] instanceof ast.SelectExpression);
     assert.isTrue(value.list[1] instanceof ast.SelectExpression);
     // multiple aggregations
-    value = Parser.parse("count(Author.id), min(Book.id)", rule);
+    value = Parser.parse("select count(Author.id), min(Book.id)", rule);
     assert.strictEqual(value.list.length, 2);
     assert.isTrue(value.list[0].expression instanceof ast.Aggregation);
     assert.isTrue(value.list[1].expression instanceof ast.Aggregation);
@@ -411,11 +411,11 @@ exports.testJoinClause = function() {
     var rule = "joinClause";
     var value = Parser.parse("join Book on Author.id = Book.author", rule);
     assert.isTrue(value instanceof ast.JoinClause);
-    assert.strictEqual(value.length, 1);
-    assert.isTrue(value.get(0) instanceof ast.InnerJoin);
+    assert.strictEqual(value.list.length, 1);
+    assert.isTrue(value.list[0] instanceof ast.InnerJoin);
     // multiple joins
     value = Parser.parse("join Book on Author.id = Book.author join Store on Book.store = Store.id", rule);
-    assert.strictEqual(value.length, 2);
+    assert.strictEqual(value.list.length, 2);
 };
 
 exports.testInnerJoin = function() {
@@ -469,10 +469,13 @@ exports.testRangeClause = function() {
     // parameter values for offset and limit are allowed too
 };
 
-exports.testDistinct = function() {
-    var value = Parser.parse("select distinct a from Author as a");
-    assert.isTrue(value instanceof ast.Select);
-    assert.isTrue(value.isDistinct);
+exports.testModifier = function() {
+    var rule = "selectClause";
+    for each (let modifier in ["distinct", "all"]) {
+        let value = Parser.parse("select " + modifier + " a", rule);
+        assert.isTrue(value instanceof ast.SelectClause);
+        assert.strictEqual(value.modifier, modifier.toUpperCase());
+    }
 };
 
 exports.testSubSelect = function() {

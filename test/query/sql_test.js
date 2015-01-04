@@ -713,13 +713,18 @@ exports.testRange = function() {
     assert.strictEqual(params[1], "offset");
 };
 
-exports.testDistinct = function() {
+exports.testSelectModifier = function() {
     var mapping = Author.mapping;
     var idColumn = store.dialect.quote(mapping.getMapping("id").column);
     var tree = Parser.parse("select distinct a from Author as a");
     var expectedSql = getExpectedSql("SELECT DISTINCT a." + idColumn +
             " FROM $Author a");
     var {sql} = SqlGenerator.generate(store, tree);
+    assert.strictEqual(sql, expectedSql);
+    tree = Parser.parse("select all a from Author as a");
+    expectedSql = getExpectedSql("SELECT ALL a." + idColumn +
+            " FROM $Author a");
+    sql = SqlGenerator.generate(store, tree).sql;
     assert.strictEqual(sql, expectedSql);
 };
 
