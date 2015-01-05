@@ -89,30 +89,38 @@ exports.tearDown = function() {
 
 exports.testSelectEntity = function() {
     populate();
-    var result = store.query("select Book from Book");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book.id, idx + 1);
-        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
-    });
-    result = store.query("select Book as book from Book");
-    assert.strictEqual(result.length, 10);
-    // alias is ignored if only one result
-    result.forEach(function(book, idx) {
-        assert.strictEqual(book.id, idx + 1);
-        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
-    });
+    var queries = [
+        "from Book",
+        "select Book from Book",
+        "select Book as book from Book",
+        "select b from Book b",
+        "select b as book from Book b"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10);
+        result.forEach(function(book, idx) {
+            assert.strictEqual(book.id, idx + 1, query);
+            assert.strictEqual(book._entity, Storable.LOAD_LAZY, query);
+        });
+    }
 };
 
 exports.testSelectMultipleEntities = function() {
     populate();
-    var result = store.query("select Author, Book from Book, Author " +
-            "where Book.author = Author.id and Author.id < 6");
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book"].id, idx + 1);
-        assert.strictEqual(props["Author"].id, idx + 1);
-    });
+    var queries = [
+        "select Author, Book from Book, Author where Book.author = Author.id and Author.id < 6",
+        "select a, b from Book b, Author a where b.author = a.id and a.id < 6",
+        "select a, b from Book b, Author a where author = a and a < 6"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 5);
+        result.forEach(function(props, idx) {
+            assert.strictEqual(props["Book"].id, idx + 1);
+            assert.strictEqual(props["Author"].id, idx + 1);
+        });
+    }
 };
 
 exports.testSelectEntityCached = function() {
@@ -133,16 +141,22 @@ exports.testSelectEntityCached = function() {
 
 exports.testSelectEntityAggressive = function() {
     populate();
-    var titleColumn = Book.mapping.getColumnName("title");
-    var result = store.query("select Book.* from Book");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(book, idx) {
-        assert.isTrue(book instanceof Book);
-        assert.isTrue(book.author instanceof Author);
-        assert.strictEqual(book.id, idx + 1);
-        assert.isNotNull(book._entity);
-        assert.strictEqual(book._entity[titleColumn], "Book " + idx);
-    });
+    var queries = [
+        "select Book.* from Book",
+        "select b.* from Book b",
+        "select * from Book b",
+        "select * from Book"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10);
+        result.forEach(function(book, idx) {
+            assert.isTrue(book instanceof Book);
+            assert.isTrue(book.author instanceof Author);
+            assert.strictEqual(book.id, idx + 1);
+            assert.isFalse(book._entity === Storable.LOAD_LAZY);
+        });
+    }
 };
 
 exports.testSelectEntityAggressiveCached = function() {
@@ -170,60 +184,128 @@ exports.testSelectEntityAggressiveCached = function() {
 
 exports.testSelectMultipleEntitiesAggressive = function() {
     populate();
-    var result = store.query("select b.*, a.* from Book b, Author a where b.author = a.id");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(obj, idx) {
-        assert.isTrue(obj.Book instanceof Book);
-        assert.isTrue(obj.Author instanceof Author);
-        assert.strictEqual(obj.Book.id, idx + 1);
-        assert.strictEqual(obj.Book.title, "Book " + idx);
-        assert.strictEqual(obj.Book.author.id, obj.Author.id);
-        assert.strictEqual(obj.Author.id, idx + 1);
-    });
+    var queries = [
+        "select b.*, a.* from Book b, Author a where b.author = a.id",
+        "select b.*, a.* from Book b, Author a where author = a"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10);
+        result.forEach(function(obj, idx) {
+            assert.isTrue(obj.Book instanceof Book);
+            assert.isTrue(obj.Author instanceof Author);
+            assert.isFalse(obj.Book._entity === Storable.LOAD_LAZY);
+            assert.isFalse(obj.Author._entity === Storable.LOAD_LAZY);
+            assert.strictEqual(obj.Book.id, idx + 1);
+            assert.strictEqual(obj.Book.title, "Book " + idx);
+            assert.strictEqual(obj.Book.author.id, obj.Author.id);
+            assert.strictEqual(obj.Author.id, idx + 1);
+        });
+    }
 };
 
 exports.testSelectProperties = function() {
     populate();
-    var result = store.query("select Book.title from Book");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(title, idx) {
-        assert.strictEqual(title, "Book " + idx);
-    });
-    result = store.query("select Book.title, Book.id from Book");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book.title"], "Book " + idx);
-        assert.strictEqual(props["Book.id"], idx + 1);
-    });
-    result = store.query("select Author.id, Book.title from Book, Author where Book.author = Author.id and Author.id < 6");
-    assert.strictEqual(result.length, 5);
-    result.forEach(function(props, idx) {
-        assert.strictEqual(props["Book.title"], "Book " + idx);
-        assert.strictEqual(props["Author.id"], idx + 1);
-    });
+    var queries = [
+        "select Book.title from Book",
+        "select b.title from Book b",
+        "select title from Book b",
+        "select title from Book"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10, query);
+        result.forEach(function(title, idx) {
+            assert.strictEqual(title, "Book " + idx, query);
+        });
+    }
+    queries = [
+        ["select Book.title, Book.id from Book", "Book."],
+        ["select b.title, b.id from Book b", "b."],
+        ["select title, id from Book b", ""],
+        ["select title, id from Book", ""]
+    ];
+    for each (let [query, prefix] in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10, query);
+        result.forEach(function (props, idx) {
+            assert.strictEqual(Object.keys(props).length, 2, query);
+            assert.strictEqual(props[prefix + "id"], idx + 1, query);
+            assert.strictEqual(props[prefix + "title"], "Book " + idx, query);
+        });
+    }
+    queries = [
+        ["select Author.id, Book.title from Book, Author where Book.author = Author.id and Author.id < 6", ["Author.", "Book."]],
+        ["select a.id, b.title from Book b, Author a where b.author = a.id and a.id < 6", ["a.", "b."]],
+        ["select a.id, b.title from Book b, Author a where author = a and a < 6", ["a.", "b."]]
+    ];
+    for each (let [query, propPrefixes] in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 5, query);
+        result.forEach(function (props, idx) {
+            assert.strictEqual(Object.keys(props).length, 2, query);
+            assert.strictEqual(props[propPrefixes[0] + "id"], idx + 1, query);
+            assert.strictEqual(props[propPrefixes[1] + "title"], "Book " + idx, query);
+        });
+    }
 };
 
 exports.testSelectValues = function() {
     populate();
-    var result = store.query("select max(Book.id) from Book");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0], 10);
-    // without aliases
-    result = store.query("select min(Book.id), max(Book.id) from Book");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0]["MIN(Book.id)"], 1);
-    assert.strictEqual(result[0]["MAX(Book.id)"], 10);
-    // with aliases
-    result = store.query("select min(Book.id) as min, max(Book.id) as max from Book");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].min, 1);
-    assert.strictEqual(result[0].max, 10);
+    var queries = [
+        "select max(Book.id) from Book",
+        "select max(b.id) from Book b",
+        "select max(id) from Book b",
+        "select max(id) from Book"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 1, query);
+        assert.strictEqual(result[0], 10, query);
+    }
+    // multiple values without aliases
+    queries = [
+        ["select min(Book.id), max(Book.id) from Book", "Book."],
+        ["select min(b.id), max(b.id) from Book b", "b."],
+        ["select min(id), max(id) from Book b", ""],
+        ["select min(id), max(id) from Book", ""]
+    ];
+    for each (let [query, prefix] in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 1, query);
+        let props = result[0];
+        assert.strictEqual(Object.keys(props).length, 2, query);
+        assert.strictEqual(props["MIN(" + prefix + "id)"], 1, query);
+        assert.strictEqual(props["MAX(" + prefix + "id)"], 10, query);
+    }
+    // multiple values without result object aliases
+    queries = [
+        "select min(Book.id) as min, max(Book.id) as max from Book",
+        "select min(b.id) as min, max(b.id) as max from Book b",
+        "select min(id) as min, max(id) as max from Book b",
+        "select min(id) as min, max(id) as max from Book"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(Object.keys(result[0]).length, 2);
+        assert.strictEqual(result[0].min, 1);
+        assert.strictEqual(result[0].max, 10);
+    }
     // operand with alias
-    result = store.query("select Book.id || '-' || Book.title from Book order by Book asc");
-    assert.strictEqual(result.length, 10);
-    result.forEach(function(str, idx) {
-        assert.strictEqual(str, (idx + 1) + "-Book " + idx);
-    });
+    queries = [
+        "select Book.id || '-' || Book.title from Book order by Book asc",
+        "select b.id || '-' || b.title from Book b order by b.id asc",
+        "select id || '-' || title from Book b order by b asc",
+        "select id || '-' || title from Book order by id asc"
+    ];
+    for each (let query in queries) {
+        let result = store.query(query);
+        assert.strictEqual(result.length, 10, query);
+        result.forEach(function(str, idx) {
+            assert.strictEqual(str, (idx + 1) + "-Book " + idx, query);
+        });
+    }
 };
 
 exports.testNamedParameter = function() {

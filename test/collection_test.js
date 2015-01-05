@@ -252,44 +252,6 @@ exports.testAggressiveLoading = function() {
     }
 };
 
-/**
- * Partitioned collection
- */
-exports.testPartitionedCollection = function() {
-    populate(101);
-    Author = store.defineEntity("Author", {
-        "properties": {
-            "name": {
-                "type": "string"
-            },
-            "books": {
-                "type": "collection",
-                "partitionSize": 10,
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
-            }
-        }
-    });
-    store.syncTables();
-    var author = new Author({
-        "name": "Author of just a bunch of books"
-    });
-    author.save();
-
-    assert.strictEqual(author.books.length, 51);
-    // due to ordering first book is the last one
-    assert.strictEqual(author.books.get(0).id, 101);
-    assert.isNotUndefined(author.books.partitions[0]);
-    assert.strictEqual(author.books.partitions[0].length, 10);
-    var book = author.books.get(10);
-    assert.isNotUndefined(author.books.partitions[1]);
-    assert.strictEqual(author.books.partitions[1].length, 10);
-    assert.strictEqual(book.id, 81);
-    book = author.books.get(50);
-    assert.isNotUndefined(author.books.partitions[5]);
-    assert.strictEqual(author.books.partitions[5].length, 1);
-    assert.strictEqual(book.id, 1);
-};
-
 exports.testReloadInTransaction = function() {
     populate(101);
     Author = store.defineEntity("Author", {

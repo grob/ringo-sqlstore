@@ -626,6 +626,44 @@ exports.testAliases = function() {
     testQueries(queries);
 };
 
+exports.testEntities = function() {
+    var queries = [
+        {
+            "query": "select id from Author",
+            "sql": "SELECT $Author.id FROM $Author"
+        },
+        {
+            "query": "select id, name from Author",
+            "sql": "SELECT $Author.id, $Author.name FROM $Author"
+        },
+        {
+            "query": "select id from Author where name = 'johndoe'",
+            "sql": "SELECT $Author.id FROM $Author WHERE $Author.name = ?"
+        },
+        {
+            "query": "select id from Author order by name desc",
+            "sql": "SELECT $Author.id FROM $Author ORDER BY $Author.name DESC"
+        },
+        {
+            "query": "select id from Author having id > 10",
+            "sql": "SELECT $Author.id FROM $Author HAVING $Author.id > ?"
+        },
+        {
+            "query": "select id from Author, Book where author = id",
+            "sql": "SELECT $Author.id FROM $Author, $Book WHERE $Book.author = $Author.id"
+        },
+        {
+            "query": "from Author, Book where author = id",
+            "sql": "SELECT $Author.id, $Book.id FROM $Author, $Book WHERE $Book.author = $Author.id"
+        },
+        {
+            "query": "from Author join Book on author = id where title = 'test'",
+            "sql": "SELECT $Author.id FROM $Author INNER JOIN $Book ON $Book.author = $Author.id WHERE $Book.title = ?"
+        }
+    ];
+    testQueries(queries);
+};
+
 exports.testSubSelect = function() {
     var queries = [];
     for each (let range in ["", "all", "any", "some"]) {
