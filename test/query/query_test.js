@@ -391,6 +391,15 @@ exports.testSummand = function() {
     });
 };
 
+exports.testSubSelect = function() {
+    populate();
+    var query = "from Author where id = 1 or id = (select author from Book where title = 'Book 2')";
+    var result = store.query(query);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].id, 1);
+    assert.strictEqual(result[1].id, 3);
+};
+
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
     system.exit(runner.run(exports, arguments));
