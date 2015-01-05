@@ -142,7 +142,7 @@ exports.testWithQueryParameter = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.id > :threshold",
+                "query": "from Book where id > :threshold",
                 "params": {
                     "threshold": 6
                 }
@@ -176,7 +176,7 @@ exports.testWithForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where authorId = :id order by id desc"
             }
         }
     });
@@ -208,7 +208,7 @@ exports.testWithLocalAndForeignProperty = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book join Author on Book.authorId = :realId order by Book.id desc"
+                "query": "from Book join Author on authorId = :realId order by id desc"
             }
         }
     });
@@ -261,7 +261,7 @@ exports.testReloadInTransaction = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where authorId = :id order by id desc"
             }
         }
     });
@@ -312,7 +312,7 @@ exports.testInvalidateInTransaction = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where authorId = :id order by id desc"
             }
         }
     });
@@ -351,7 +351,7 @@ exports.testRollbackWithoutReload = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where authorId = :id order by id desc"
             }
         }
     });
@@ -392,7 +392,7 @@ exports.testRollbackWithReload = function() {
             },
             "books": {
                 "type": "collection",
-                "query": "from Book where Book.authorId = :id order by Book.id desc"
+                "query": "from Book where authorId = :id order by id desc"
             }
         }
     });
