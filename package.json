@@ -1,6 +1,6 @@
 {
     "name": "ringo-sqlstore",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "SQL-Storage implementation for RingoJS",
     "keywords": ["rhino", "ringo", "sql", "storage", "orm", "jdbc"],
     "homepage": "https://github.com/grob/ringo-sqlstore",
