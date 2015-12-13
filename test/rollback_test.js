@@ -3,7 +3,7 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
+var utils = require("./utils");
 var {Storable} = require("../lib/sqlstore/storable");
 var store = null;
 var Author = null;
@@ -26,13 +26,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
+    utils.drop(store, Author);
     store.close();
 };
 

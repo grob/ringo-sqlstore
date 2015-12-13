@@ -3,10 +3,10 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../../lib/sqlstore/main");
-var sqlUtils = require("../../lib/sqlstore/util");
+var utils = require("../utils");
 var {Parser} = require("../../lib/sqlstore/query/parser");
 var {SqlGenerator} = require("../../lib/sqlstore/query/sqlgenerator");
-var {getNamedParameter} = require("../../lib/sqlstore/query/query");
+var dataTypes = require("../../lib/sqlstore/datatypes/all");
 var store = null;
 var Author = null;
 var Book = null;
@@ -51,18 +51,8 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
+    utils.drop(store, Author, Book);
     store.close();
-    store = null;
-    Author = null;
-    Book = null;
-    return;
 };
 
 var testQueries = function(queries, startRule) {
@@ -88,9 +78,10 @@ var getExpectedSql = function(str) {
     return str.replace(/\$(\w+)(?:\.(\w+))?/g, function(match, table, property) {
         var mapping = store.getEntityMapping(table);
         if (!property) {
-            return mapping.getQualifiedTableName(store.dialect);
+            return store.dialect.quote(mapping.tableName, mapping.schemaName);
         }
-        return mapping.getQualifiedColumnName(property, store.dialect);
+        var propMapping = mapping.getMapping(property);
+        return store.dialect.quote(propMapping.column, mapping.tableName);
     })
 };
 
@@ -103,12 +94,12 @@ exports.testExpression = function() {
         {
             "query": "Author.id - 2",
             "sql": "($Author.id - ?)",
-            "values": [{"type": "long", "value": 2}]
+            "values": [{"dataType": dataTypes.long, "value": 2}]
         },
         {
             "query": "Author.id + 2",
             "sql": "($Author.id + ?)",
-            "values": [{"type": "long", "value": 2}]
+            "values": [{"dataType": dataTypes.long, "value": 2}]
         }
     ];
 

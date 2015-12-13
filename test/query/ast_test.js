@@ -80,7 +80,7 @@ exports.testSelectEntity = function() {
 
 exports.testAggregation = function() {
     var rule = "aggregation";
-    for each (var type in ["max", "min", "sum", "avg", "count"]) {
+    for each (let type in ["max", "min", "sum", "avg", "count"]) {
         let value = Parser.parse(type + " ( User.id )", rule);
         assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
         assert.strictEqual(value.type, type.toUpperCase(), "Aggregation " + type);
@@ -486,7 +486,7 @@ exports.testSubSelect = function() {
     assert.isTrue(value.right.value instanceof ast.SubSelect);
     assert.strictEqual(value.right.value.range, "ALL");
     assert.isTrue(value.right.value.select instanceof ast.Select);
-}
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

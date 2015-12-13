@@ -3,7 +3,7 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
+var utils = require("./utils");
 var {Storable} = require("../lib/sqlstore/storable");
 var {Key} = require("../lib/sqlstore/key");
 
@@ -40,14 +40,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    var schemaName = Author.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-    if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
-        sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
-        if (Author.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
-        }
-    }
+    utils.drop(store, Author);
     store.close();
 };
 

@@ -4,7 +4,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../../lib/sqlstore/main");
 var {Storable} = require("../../lib/sqlstore/storable");
-var sqlUtils = require("../../lib/sqlstore/util");
+var utils = require("../utils");
 var store = null;
 var Author = null;
 var Book = null;
@@ -73,18 +73,8 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
+    utils.drop(store, Author, Book);
     store.close();
-    store = null;
-    Author = null;
-    Book = null;
-    return;
 };
 
 exports.testSelectEntity = function() {
@@ -162,7 +152,7 @@ exports.testSelectEntityAggressive = function() {
 exports.testSelectEntityAggressiveCached = function() {
     populate();
     store.setEntityCache(new Cache());
-    var titleColumn = Book.mapping.getColumnName("title");
+    var titleColumn = Book.mapping.getMapping("title").column;
     var result = store.query("select Book.* from Book");
     assert.strictEqual(result.length, 10);
     result.forEach(function(book, idx) {

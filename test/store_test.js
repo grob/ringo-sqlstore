@@ -5,7 +5,8 @@ var system = require("system");
 var {Store, Cache} = require("../lib/sqlstore/main");
 var Key = require("../lib/sqlstore/key").Key;
 var Transaction = require("../lib/sqlstore/transaction").Transaction;
-var sqlUtils = require("../lib/sqlstore/util");
+var dbSchema = require("../lib/sqlstore/database/schema");
+var utils = require("./utils");
 var strings = require("ringo/utils/strings.js");
 
 var store = null;
@@ -39,14 +40,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    var schemaName = Author.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-    if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
-        sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
-        if (Author.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
-        }
-    }
+    utils.drop(store, Author);
     store.close();
 };
 
@@ -198,7 +192,7 @@ exports.testTypes = function() {
     }
 
     // drop the table
-    sqlUtils.dropTable(store.getConnection(), store.dialect, mapping.table);
+    dbSchema.dropTable(store.getConnection(), store.dialect, mapping.table);
 };
 
 exports.testNullProps = function() {
