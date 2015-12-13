@@ -2,7 +2,7 @@ var term = require("ringo/term");
 var assert = require("assert");
 
 var {Store, ConnectionPool, Cache} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
+var utils = require("../test/utils");
 
 var store = null;
 var Author = null;
@@ -41,16 +41,7 @@ exports.setUp = function(dbProps) {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
-            }
-        }
-    });
+    utils.drop(store, Author);
     store.close();
 };
 
