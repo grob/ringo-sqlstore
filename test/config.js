@@ -36,8 +36,13 @@ exports.oracle = {
 };
 
 exports.postgresql = {
+    "pool": "hikari",
     "url": "jdbc:postgresql://localhost/test",
     "driver": "org.postgresql.Driver",
     "user": "test",
-    "password": "test"
+    "password": "test",
+    "autoCommit": true,
+    "readOnly": true,
+    "minimumIdle": 10,
+    "maximumPoolSize": 30
 };

@@ -4,7 +4,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
 var utils = require("./utils");
-var {Storable} = require("../lib/sqlstore/storable");
+var constants = require("../lib/sqlstore/constants");
 var store = null;
 var Author = null;
 
@@ -38,7 +38,7 @@ exports.testInsertRollback = function() {
         author.save();
     });
     // since no explicit transaction was opened, the above does an auto-rollback
-    assert.strictEqual(author._state, Storable.STATE_TRANSIENT);
+    assert.strictEqual(author._state, constants.STATE_TRANSIENT);
     // and nothing was put into the cache
     assert.isFalse(store.entityCache.containsKey(author._cacheKey));
 };
@@ -51,10 +51,10 @@ exports.testInsertRollbackWithTransaction = function() {
         "isAlive": true
     });
     author.save();
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // roll back the transaction
     transaction.rollback();
-    assert.strictEqual(author._state, Storable.STATE_TRANSIENT);
+    assert.strictEqual(author._state, constants.STATE_TRANSIENT);
     // nothing was put into the cache
     assert.isFalse(store.entityCache.containsKey(author._cacheKey));
     assert.isNull(Author.get(1));
@@ -68,7 +68,7 @@ exports.testUpdateRollback = function() {
     author.save();
     // the stored entity has been put into the cache after successful save
     assert.isTrue(store.entityCache.containsKey(author._cacheKey));
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     author = Author.get(1);
     // set non-nullable property to null
     author.isAlive = null;
@@ -77,7 +77,7 @@ exports.testUpdateRollback = function() {
     });
     // during auto-rollback (since no explict transaction was opened), the
     // state of the author instance has been reverted back
-    assert.strictEqual(author._state, Storable.STATE_DIRTY);
+    assert.strictEqual(author._state, constants.STATE_DIRTY);
     // but the modified property stays the same
     assert.isNull(author.isAlive);
     // make sure the cached entity object is not affected by the change above
@@ -95,16 +95,16 @@ exports.testUpdateRollbackWithTransaction = function() {
     author.save();
     // the stored entity has been put into the cache after successful save
     assert.isTrue(store.entityCache.containsKey(author._cacheKey));
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // open transaction
     author = Author.get(1);
     var transaction = store.beginTransaction();
     author.isAlive = false;
     author.save();
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // now do a rollback - this should revert the storable's state back to DIRTY
     transaction.rollback();
-    assert.strictEqual(author._state, Storable.STATE_DIRTY);
+    assert.strictEqual(author._state, constants.STATE_DIRTY);
     // but the modified property stays the same
     assert.isFalse(author.isAlive);
     // make sure the cached entity object is not affected by the changes above
@@ -122,13 +122,13 @@ exports.testRemoveRollback = function() {
     author.save();
     store.beginTransaction();
     author.name = "Jane Foo";
-    assert.strictEqual(author._state, Storable.STATE_DIRTY);
+    assert.strictEqual(author._state, constants.STATE_DIRTY);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     store.abortTransaction();
     // FIXME: this is somehow wrong - the state should be reverted to DIRTY,
     // since that was the last state before removing...
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     assert.strictEqual(author.name, "Jane Foo");
     // make sure the cached entity object is not affected by the changes above
     var cachedEntity = store.entityCache.get(author._cacheKey);

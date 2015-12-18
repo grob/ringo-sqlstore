@@ -4,8 +4,8 @@ var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
 var utils = require("./utils");
-var {Storable} = require("../lib/sqlstore/storable");
 var {Key} = require("../lib/sqlstore/key");
+var constants = require("../lib/sqlstore/constants");
 
 var store = null;
 var Author = null;
@@ -36,7 +36,7 @@ exports.setUp = function() {
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
     assert.strictEqual(typeof(Author.all), "function");
-    assert.strictEqual(Author, store.getEntityConstructor("Author"));
+    assert.strictEqual(Author, store.entityRegistry.getConstructor("Author"));
 };
 
 exports.tearDown = function() {
@@ -75,22 +75,22 @@ exports.testLifecycle = function() {
     var author = new Author({
         "name": "John Doe"
     });
-    assert.strictEqual(author._state, Storable.STATE_TRANSIENT);
+    assert.strictEqual(author._state, constants.STATE_TRANSIENT);
     author.save();
     assert.strictEqual(Author.all().length, 1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     author = Author.get(1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // modify
     author.name = "Jane Foo";
-    assert.strictEqual(author._state, Storable.STATE_DIRTY);
+    assert.strictEqual(author._state, constants.STATE_DIRTY);
     author.save();
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // remove
     author = Author.get(1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     assert.strictEqual(Author.all().length, 0);
 };
 
@@ -104,7 +104,7 @@ exports.testAlreadyRemoved = function() {
     // modify removed entity
     author.name = "Jane Foo";
     // state is still STATE_DELETED
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     // saving throws an error
     assert.throws(function() {
         author.save();
@@ -120,10 +120,10 @@ exports.testMultipleRemoval = function() {
     assert.strictEqual(Author.all().length, 1);
     author = Author.get(1);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     assert.strictEqual(Author.all().length, 0);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
 };
 
 //start the test runner if we're called directly from command line

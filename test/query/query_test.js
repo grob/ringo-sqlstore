@@ -3,7 +3,7 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../../lib/sqlstore/main");
-var {Storable} = require("../../lib/sqlstore/storable");
+var constants = require("../../lib/sqlstore/constants");
 var utils = require("../utils");
 var store = null;
 var Author = null;
@@ -91,7 +91,7 @@ exports.testSelectEntity = function() {
         assert.strictEqual(result.length, 10);
         result.forEach(function(book, idx) {
             assert.strictEqual(book.id, idx + 1, query);
-            assert.strictEqual(book._entity, Storable.LOAD_LAZY, query);
+            assert.strictEqual(book._entity, constants.LOAD_LAZY, query);
         });
     }
 };
@@ -121,9 +121,9 @@ exports.testSelectEntityCached = function() {
     assert.strictEqual(store.entityCache.size(), 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book.id, idx + 1);
-        assert.strictEqual(book._entity, Storable.LOAD_LAZY);
+        assert.strictEqual(book._entity, constants.LOAD_LAZY);
         assert.isTrue(store.entityCache.containsKey(book._cacheKey));
-        assert.strictEqual(store.entityCache.get(book._cacheKey), Storable.LOAD_LAZY);
+        assert.strictEqual(store.entityCache.get(book._cacheKey), constants.LOAD_LAZY);
     });
     store.entityCache.clear();
     store.setEntityCache(null);
@@ -144,7 +144,7 @@ exports.testSelectEntityAggressive = function() {
             assert.isTrue(book instanceof Book);
             assert.isTrue(book.author instanceof Author);
             assert.strictEqual(book.id, idx + 1);
-            assert.isFalse(book._entity === Storable.LOAD_LAZY);
+            assert.isFalse(book._entity === constants.LOAD_LAZY);
         });
     }
 };
@@ -166,7 +166,7 @@ exports.testSelectEntityAggressiveCached = function() {
         assert.isNotNull(store.entityCache.get(book._cacheKey));
         assert.isTrue(store.entityCache.containsKey(book.author._cacheKey));
         // but authors are not, therefor the cache contains null
-        assert.strictEqual(store.entityCache.get(book.author._cacheKey), Storable.LOAD_LAZY);
+        assert.strictEqual(store.entityCache.get(book.author._cacheKey), constants.LOAD_LAZY);
     });
     store.entityCache.clear();
     store.setEntityCache(null);
@@ -184,8 +184,8 @@ exports.testSelectMultipleEntitiesAggressive = function() {
         result.forEach(function(obj, idx) {
             assert.isTrue(obj.Book instanceof Book);
             assert.isTrue(obj.Author instanceof Author);
-            assert.isFalse(obj.Book._entity === Storable.LOAD_LAZY);
-            assert.isFalse(obj.Author._entity === Storable.LOAD_LAZY);
+            assert.isFalse(obj.Book._entity === constants.LOAD_LAZY);
+            assert.isFalse(obj.Author._entity === constants.LOAD_LAZY);
             assert.strictEqual(obj.Book.id, idx + 1);
             assert.strictEqual(obj.Book.title, "Book " + idx);
             assert.strictEqual(obj.Book.author.id, obj.Author.id);

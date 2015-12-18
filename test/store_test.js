@@ -36,7 +36,7 @@ exports.setUp = function() {
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
     assert.strictEqual(typeof(Author.all), "function");
-    assert.strictEqual(Author, store.getEntityConstructor("Author"));
+    assert.strictEqual(Author, store.entityRegistry.getConstructor("Author"));
 };
 
 exports.tearDown = function() {

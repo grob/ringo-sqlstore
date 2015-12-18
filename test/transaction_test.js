@@ -5,8 +5,8 @@ var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
-var Transaction = require("../lib/sqlstore/transaction").Transaction;
-var {Storable} = require("../lib/sqlstore/storable");
+var {Transaction} = require("../lib/sqlstore/transaction");
+var constants = require("../lib/sqlstore/constants");
 var utils = require("./utils");
 
 var store = null;
@@ -319,7 +319,7 @@ exports.testCommitEvent = function() {
     Book.get(1).remove();
     store.commitTransaction();
     assert.isTrue(mods.deleted.hasOwnProperty(author._cacheKey));
-    assert.isTrue(mods.deleted[author._cacheKey]._entity !== Storable.LOAD_LAZY);
+    assert.isTrue(mods.deleted[author._cacheKey]._entity !== constants.LOAD_LAZY);
     assert.isTrue(mods.deleted.hasOwnProperty(book._cacheKey));
     // the author's books collection is removed from cache too
     assert.isTrue(mods.collections.hasOwnProperty(author.books._cacheKey));
@@ -360,7 +360,7 @@ exports.testOnRemove = function() {
 
     Author.prototype.onRemove = function() {
         calledOnRemove = true;
-        assert.strictEqual(this._state, Storable.STATE_DELETED);
+        assert.strictEqual(this._state, constants.STATE_DELETED);
         assert.strictEqual(this.name, name);
     };
 
