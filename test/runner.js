@@ -3,6 +3,9 @@ logging.setConfig(getResource("./log4j.properties"));
 var system = require("system");
 var {Parser} = require("ringo/args");
 var config = require("./config");
+
+// use the -t option to change the default database
+// possible options: postgresql, oracle, mysql, h2
 var database = "h2";
 
 var getDbProps = exports.getDbProps = function() {
