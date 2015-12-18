@@ -2,8 +2,8 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var dbMetaData = require("../lib/sqlstore/database/metadata");
+var {Store, Cache} = require("../lib/main");
+var dbMetaData = require("../lib/database/metadata");
 var utils = require("./utils");
 
 var store = null;

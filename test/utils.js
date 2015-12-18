@@ -1,4 +1,4 @@
-var dbSchema = require("../lib/sqlstore/database/schema");
+var dbSchema = require("../lib/database/schema");
 
 exports.drop = function(store) {
     var entities = Array.prototype.slice.call(arguments, 1);

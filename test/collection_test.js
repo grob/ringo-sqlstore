@@ -2,8 +2,8 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var constants = require("../lib/sqlstore/constants");
+var {Store, Cache} = require("../lib/main");
+var constants = require("../lib/constants");
 var utils = require("./utils");
 var store = null;
 var Book = null;

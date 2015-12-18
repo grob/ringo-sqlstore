@@ -2,8 +2,8 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Parser} = require("../../lib/sqlstore/query/parser");
-var ast = require("../../lib/sqlstore/query/ast");
+var {Parser} = require("../../lib/query/parser");
+var ast = require("../../lib/query/ast");
 
 exports.testStringValue = function() {
     var rule = "value_string";

@@ -2,9 +2,9 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
+var {Store, Cache} = require("../lib/main");
 var utils = require("./utils");
-var constants = require("../lib/sqlstore/constants");
+var constants = require("../lib/constants");
 var store = null;
 var Author = null;
 

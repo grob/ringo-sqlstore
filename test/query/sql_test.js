@@ -2,11 +2,11 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../../lib/sqlstore/main");
+var {Store, Cache} = require("../../lib/main");
 var utils = require("../utils");
-var {Parser} = require("../../lib/sqlstore/query/parser");
-var {SqlGenerator} = require("../../lib/sqlstore/query/sqlgenerator");
-var dataTypes = require("../../lib/sqlstore/datatypes/all");
+var {Parser} = require("../../lib/query/parser");
+var {SqlGenerator} = require("../../lib/query/sqlgenerator");
+var dataTypes = require("../../lib/datatypes/all");
 var store = null;
 var Author = null;
 var Book = null;

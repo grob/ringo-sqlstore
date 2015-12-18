@@ -3,7 +3,7 @@ var assert = require("assert");
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 
-var {Store, Cache, ConnectionPool} = require("../lib/sqlstore/main");
+var {Store, Cache, ConnectionPool} = require("../lib/main");
 var utils = require("../test/utils");
 
 var store = null;
@@ -28,10 +28,11 @@ var MAPPING_AUTHOR = {
 };
 
 exports.setUp = function(dbProps) {
+    debugger
     connectionPool = Store.initConnectionPool(dbProps);
     store = new Store(connectionPool);
     term.writeln("------------------------------");
-    term.writeln("Using", store.connectionPool.getDriverClass());
+    term.writeln("Using", store.connectionPool.getDriverClassName());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
     store.beginTransaction();
@@ -98,4 +99,5 @@ exports.start = function(cnt, maxWorkers) {
         }, 0) / arr.length);
     });
 */
+    quit();
 };

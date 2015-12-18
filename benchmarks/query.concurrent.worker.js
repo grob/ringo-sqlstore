@@ -1,7 +1,6 @@
 var term = require("ringo/term");
 var assert = require("assert");
-var {Store} = require("../lib/sqlstore/store");
-var {Cache} = require("../lib/sqlstore/cache");
+var Store = require("../lib/store");
 
 var store = null;
 var Author = null;

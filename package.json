@@ -48,5 +48,5 @@
     "engines": {
         "ringojs": ">= 0.10"
     },
-    "main": "./lib/sqlstore/main.js"
+    "main": "./lib/main.js"
 }

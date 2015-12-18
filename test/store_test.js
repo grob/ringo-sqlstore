@@ -2,9 +2,9 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var Key = require("../lib/sqlstore/key");
-var dbSchema = require("../lib/sqlstore/database/schema");
+var {Store, Cache} = require("../lib/main");
+var Key = require("../lib/key");
+var dbSchema = require("../lib/database/schema");
 var utils = require("./utils");
 var strings = require("ringo/utils/strings.js");
 
