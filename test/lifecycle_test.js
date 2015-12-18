@@ -4,7 +4,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
 var utils = require("./utils");
-var {Key} = require("../lib/sqlstore/key");
+var Key = require("../lib/sqlstore/key");
 var constants = require("../lib/sqlstore/constants");
 
 var store = null;

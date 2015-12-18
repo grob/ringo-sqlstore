@@ -5,7 +5,7 @@ var {Semaphore} = require("ringo/concurrent");
 var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
-var {Transaction} = require("../lib/sqlstore/transaction");
+var Transaction = require("../lib/sqlstore/transaction");
 var constants = require("../lib/sqlstore/constants");
 var utils = require("./utils");
 

@@ -3,8 +3,7 @@ var assert = require("assert");
 var system = require("system");
 
 var {Store, Cache} = require("../lib/sqlstore/main");
-var Key = require("../lib/sqlstore/key").Key;
-var Transaction = require("../lib/sqlstore/transaction").Transaction;
+var Key = require("../lib/sqlstore/key");
 var dbSchema = require("../lib/sqlstore/database/schema");
 var utils = require("./utils");
 var strings = require("ringo/utils/strings.js");
