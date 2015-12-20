@@ -4,6 +4,8 @@ var term = require("ringo/term");
 var {Parser} = require("ringo/args");
 var {Profiler} = require("ringo/profiler");
 var {getOptimizationLevel} = require("ringo/engine");
+var logging = require("ringo/logging");
+logging.setConfig(getResource("../test/log4j.properties"));
 
 var config = require("../test/config");
 var database = "h2";
