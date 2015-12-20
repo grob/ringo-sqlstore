@@ -30,7 +30,7 @@ const MAPPING_BOOK = {
             "type": "string",
             "column": "book_title",
             "length": 255,
-            "nullable": false,
+            "nullable": false
         }
     }
 };
@@ -82,7 +82,7 @@ var populate = function() {
             relation.save();
             relations.push(relation);
         });
-    })
+    });
     store.commitTransaction();
     return [authors, books, relations];
 };
@@ -102,7 +102,7 @@ exports.tearDown = function() {
 };
 
 exports.testInnerJoinQuery = function() {
-    var [authors, books, relations] = populate();
+    var [authors, books] = populate();
     // all books by author 1
     var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
@@ -115,7 +115,6 @@ exports.testInnerJoinQuery = function() {
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].id, authors[0].id);
     assert.strictEqual(result[1].id, authors[1].id);
-    return;
 };
 
 //start the test runner if we're called directly from command line

@@ -219,19 +219,19 @@ term =
 
 condition_rhs =
     IS not:NOT? NULL {
-        return new ast.IsNullCondition(not.length > 0);
+        return new ast.IsNullCondition(not !== null);
     }
     / not:NOT? BETWEEN start:term AND end:term {
-        return new ast.BetweenCondition(start, end, not.length > 0);
+        return new ast.BetweenCondition(start, end, not !== null);
     }
     / not:NOT? IN LPAREN values:( select / valueList ) RPAREN {
-        return new ast.InCondition(values, not.length > 0);
+        return new ast.InCondition(values, not !== null);
     }
     / compare:compare rhs:compare_rhs {
         return new ast.Comparison(compare, rhs);
     }
     / not:NOT? LIKE term:term {
-        return new ast.LikeCondition(term, not.length > 0);
+        return new ast.LikeCondition(term, not !== null);
     }
 
 compare_rhs =
@@ -392,7 +392,6 @@ FIRST       = "first"i ws { return -1; }
 LAST        = "last"i ws { return 1; }
 HAVING      = "having"i ws { return "HAVING"; }
 SELECT      = "select"i ws { return "SELECT"; }
-AS          = "as"i ws { return "AS"; }
 DISTINCT    = "distinct"i ws { return "DISTINCT"; }
 FROM        = "from"i ws { return "FROM"; }
 EXISTS      = "exists"i ws { return "EXISTS"; }

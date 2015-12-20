@@ -1,0 +1,7 @@
+/**
+ * @fileoverview A PEG query parser converting query strings into their AST
+ * representation
+ * @see http://pegjs.majda.cz/
+ */
+var ast = require("./ast");
+

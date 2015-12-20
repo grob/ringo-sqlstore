@@ -4,7 +4,7 @@ var system = require("system");
 
 var {Store, Cache} = require("../../lib/main");
 var utils = require("../utils");
-var {Parser} = require("../../lib/query/parser");
+var Parser = require("../../lib/query/parser");
 var SqlGenerator = require("../../lib/query/sqlgenerator");
 var dataTypes = require("../../lib/datatypes/all");
 var store = null;
@@ -55,11 +55,11 @@ exports.tearDown = function() {
     store.close();
 };
 
-var testQueries = function(queries, startRule) {
+var testQueries = function(queries, options) {
     for each (let {query, sql, values} in queries) {
         let tree;
         try {
-            tree = Parser.parse(query, startRule);
+            tree = Parser.parse(query, options || {});
         } catch (e) {
             console.error("Parsing query '" + query + "' failed, reason:", e);
             continue;
@@ -271,7 +271,7 @@ exports.testBetweenCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testIsNullCondition = function() {
@@ -286,7 +286,7 @@ exports.testIsNullCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testInCondition = function() {
@@ -322,7 +322,7 @@ exports.testInCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testLikeCondition = function() {
@@ -344,7 +344,7 @@ exports.testLikeCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testNotCondition  = function() {
@@ -357,7 +357,7 @@ exports.testNotCondition  = function() {
         }
     ];
 
-    testQueries(queries, "condition");
+    testQueries(queries, {"startRule": "condition"});
 };
 
 exports.testExistsCondition = function() {
@@ -375,7 +375,7 @@ exports.testExistsCondition = function() {
             "sql": "EXISTS (SELECT $Author.id FROM $Author WHERE $Author.id = ?)"
         }
     ];
-    testQueries(queries, "condition");
+    testQueries(queries, {"startRule": "condition"});
 };
 
 exports.testOperand = function() {
@@ -428,7 +428,7 @@ exports.testOrderByClause = function() {
         }
     ];
 
-    testQueries(queries, "orderByClause");
+    testQueries(queries, {"startRule": "orderByClause"});
 };
 
 exports.testGroupByClause = function() {
@@ -443,7 +443,7 @@ exports.testGroupByClause = function() {
         }
     ];
 
-    testQueries(queries, "groupByClause");
+    testQueries(queries, {"startRule": "groupByClause"});
 };
 
 exports.testHavingClause = function() {
@@ -465,7 +465,7 @@ exports.testHavingClause = function() {
         }
     ];
 
-    testQueries(queries, "havingClause");
+    testQueries(queries, {"startRule": "havingClause"});
 };
 
 exports.testFromClause = function() {
@@ -484,7 +484,7 @@ exports.testFromClause = function() {
         }
     ];
 
-    testQueries(queries, "fromClause");
+    testQueries(queries, {"startRule": "fromClause"});
 };
 
 exports.testInnerJoin = function() {
@@ -499,7 +499,7 @@ exports.testInnerJoin = function() {
         }
     ];
 
-    testQueries(queries, "innerJoin");
+    testQueries(queries, {"startRule": "innerJoin"});
 };
 
 exports.testOuterJoin = function() {
@@ -514,7 +514,7 @@ exports.testOuterJoin = function() {
         }
     ];
 
-    testQueries(queries, "outerJoin");
+    testQueries(queries, {"startRule": "outerJoin"});
 };
 
 exports.testNamedParameter = function() {
@@ -576,7 +576,7 @@ exports.testSelectExpression = function() {
             "sql": "($Author.id || ? || $Author.name)"
         }
     ];
-    testQueries(queries, "selectExpression");
+    testQueries(queries, {"startRule": "selectExpression"});
 };
 
 exports.testAliases = function() {
