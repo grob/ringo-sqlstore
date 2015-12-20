@@ -3,7 +3,7 @@ var assert = require("assert");
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 
-var {Store, Cache, ConnectionPool} = require("../lib/main");
+var {Store, Cache} = require("../lib/main");
 var utils = require("../test/utils");
 
 var store = null;
@@ -28,7 +28,6 @@ var MAPPING_AUTHOR = {
 };
 
 exports.setUp = function(dbProps) {
-    debugger
     connectionPool = Store.initConnectionPool(dbProps);
     store = new Store(connectionPool);
     term.writeln("------------------------------");

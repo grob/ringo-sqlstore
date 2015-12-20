@@ -33,6 +33,7 @@ function onmessage(event) {
         let author = store.query("select Author.* from Author where Author.id = :id", {
             "id": id
         })[0];
+        //let author = store.sqlQuery("select * from \"author\" where \"author_id\" = ?", [id])[0];
         msPerQuery[i] = Date.now() - s;
     }
     event.source.postMessage({
