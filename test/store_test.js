@@ -28,7 +28,6 @@ const MAPPING_AUTHOR = {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
     assert.isTrue(Author instanceof Function);
@@ -144,7 +143,7 @@ exports.testTypes = function() {
         "typeInteger": 12345678,
         "typeLong": 12345678910,
         "typeShort": 12345,
-        "typeFloat": 10.99,
+        "typeFloat": (new java.lang.Float(10.99)).floatValue(),
         "typeDouble": 2199.99,
         "typeCharacter": "T",
         "typeString": "Test",

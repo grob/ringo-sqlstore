@@ -41,7 +41,6 @@ const MAPPING_EDITOR = {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Editor = store.defineEntity("Editor", MAPPING_EDITOR);

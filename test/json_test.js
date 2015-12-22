@@ -34,7 +34,6 @@ const MAPPING_BOOK = {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     store.syncTables();
