@@ -378,7 +378,6 @@ OR          = "or"i !"der"i ws { return "OR"; }
 LPAREN      = "(" ws { return "("; }
 RPAREN      = ")" ws { return ")"; }
 BETWEEN     = "between"i ws { return "BETWEEN"; }
-DOUBLEPIPE  = "||" ws { return "||"; }
 GROUP       = "group"i ws { return "GROUP"; }
 BY          = "by"i ws { return "BY"; }
 WHERE       = "where"i ws { return "WHERE"; }

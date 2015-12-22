@@ -381,7 +381,7 @@ exports.testOperand = function() {
     var queries = [
         {
             "query": "select Author.id || ' - ' || Author.name as key from Author",
-            "sql": "SELECT ($Author.id || ? || $Author.name) FROM $Author"
+            "sql": "SELECT CONCAT($Author.id, ?, $Author.name) FROM $Author"
         }
     ];
     testQueries(queries);
@@ -572,7 +572,7 @@ exports.testSelectExpression = function() {
         },
         {
             "query": "Author.id || ' - ' || Author.name as key",
-            "sql": "($Author.id || ? || $Author.name)"
+            "sql": "CONCAT($Author.id, ?, $Author.name)"
         }
     ];
     testQueries(queries, {"startRule": "selectExpression"});
