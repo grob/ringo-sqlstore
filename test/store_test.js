@@ -151,7 +151,7 @@ exports.testTypes = function() {
         "typeDate": new Date(2010, 7, 11),
         "typeTime": new Date(0, 0, 0, 17, 36, 04, 723),
         "typeTimestamp": new Date(2010, 7, 11, 36, 04, 723),
-        "typeBinary": java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 100000),
+        "typeBinary": "test".toByteArray(),
         "typeText": strings.repeat("abcdefghij", 10000)
     };
     var Type = store.defineEntity("TypeTest", mapping);
