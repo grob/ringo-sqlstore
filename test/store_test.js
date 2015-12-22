@@ -50,7 +50,6 @@ exports.testKey = function() {
     assert.throws(function() {
         key.id = 2;
     });
-    return;
 };
 
 exports.testCRUD = function() {
@@ -162,35 +161,33 @@ exports.testTypes = function() {
 
     // read again
     type = Type.get(1);
-    for (var propName in props) {
-        var origValue = props[propName];
-        var value = type[propName];
-        switch (propName) {
+    for each (let [key, expected] in Iterator(props)) {
+        let value = type[key];
+        switch (key) {
             case "typeDate":
-                assert.strictEqual(value.getFullYear(), origValue.getFullYear());
-                assert.strictEqual(value.getMonth(), origValue.getMonth());
-                assert.strictEqual(value.getDate(), origValue.getDate());
+                assert.strictEqual(value.getFullYear(), expected.getFullYear());
+                assert.strictEqual(value.getMonth(), expected.getMonth());
+                assert.strictEqual(value.getDate(), expected.getDate());
                 break;
             case "typeTime":
-                assert.strictEqual(value.getHours(), origValue.getHours());
-                assert.strictEqual(value.getMinutes(), origValue.getMinutes());
-                assert.strictEqual(value.getSeconds(), origValue.getSeconds());
+                assert.strictEqual(value.getHours(), expected.getHours());
+                assert.strictEqual(value.getMinutes(), expected.getMinutes());
+                assert.strictEqual(value.getSeconds(), expected.getSeconds());
                 break;
             case "typeTimestamp":
-                assert.strictEqual(value.getFullYear(), origValue.getFullYear());
-                assert.strictEqual(value.getMonth(), origValue.getMonth());
-                assert.strictEqual(value.getDate(), origValue.getDate());
+                assert.strictEqual(value.getFullYear(), expected.getFullYear());
+                assert.strictEqual(value.getMonth(), expected.getMonth());
+                assert.strictEqual(value.getDate(), expected.getDate());
                 break;
             case "typeBinary":
-                assert.isTrue(java.util.Arrays.equals(value, origValue));
+                assert.isTrue(java.util.Arrays.equals(value, expected));
                 break;
             default:
-                assert.strictEqual(value, origValue);
+                assert.strictEqual(value, expected);
         }
     }
 
-    // drop the table
-    dbSchema.dropTable(store.getConnection(), store.dialect, mapping.table);
+    utils.drop(store, Type);
 };
 
 exports.testNullProps = function() {
