@@ -2,10 +2,9 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../../lib/main");
+var Store = require("../../lib/store");
 var utils = require("../utils");
 var Parser = require("../../lib/query/parser");
-var SqlGenerator = require("../../lib/query/sqlgenerator");
 var dataTypes = require("../../lib/datatypes/all");
 var store = null;
 var Author = null;
@@ -42,6 +41,14 @@ const MAPPING_BOOK = {
     }
 };
 
+var generateSql = function(store, tree) {
+    var generator = new store.dialect.SqlGenerator(store);
+    return {
+        "sql": tree.accept(generator),
+        "params": generator.params
+    };
+};
+
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
@@ -63,7 +70,7 @@ var testQueries = function(queries, options) {
             console.error("Parsing query '" + query + "' failed, reason:", e);
             continue;
         }
-        let generator = new SqlGenerator(store, tree.aliases);
+        let generator = new store.dialect.SqlGenerator(store);
         let resultSql = tree.accept(generator);
         let params = generator.params;
         assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
@@ -683,13 +690,13 @@ exports.testOffset = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, 10);
 
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as offset
     tree = Parser.parse("select Author from Author offset :offset");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 1);
     assert.strictEqual(params[0], "offset");
@@ -700,13 +707,13 @@ exports.testLimit = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
 
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as limit
     tree = Parser.parse("select Author from Author limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 1);
     assert.strictEqual(params[0], "limit");
@@ -717,25 +724,25 @@ exports.testRange = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
 
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as offset/limit
     tree = Parser.parse("select Author from Author offset :offset limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, "?", "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 2);
     assert.strictEqual(params[0], "limit");
     assert.strictEqual(params[1], "offset");
     tree = Parser.parse("select Author from Author limit :limit offset :offset");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params[0], "limit");
     assert.strictEqual(params[1], "offset");
@@ -747,12 +754,12 @@ exports.testSelectModifier = function() {
     var tree = Parser.parse("select distinct a from Author as a");
     var expectedSql = getExpectedSql("SELECT DISTINCT a." + idColumn +
             " FROM $Author a");
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, expectedSql);
     tree = Parser.parse("select all a from Author as a");
     expectedSql = getExpectedSql("SELECT ALL a." + idColumn +
             " FROM $Author a");
-    sql = SqlGenerator.generate(store, tree).sql;
+    sql = generateSql(store, tree).sql;
     assert.strictEqual(sql, expectedSql);
 };
 

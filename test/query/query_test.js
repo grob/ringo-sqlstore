@@ -383,7 +383,7 @@ exports.testSummand = function() {
 
 exports.testSubSelect = function() {
     populate();
-    var query = "from Author where id = 1 or id = (select author from Book where title = 'Book 2')";
+    var query = "from Author where id = 1 or id = (select author from Book where title = 'Book 2') order by id";
     var result = store.query(query);
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].id, 1);
