@@ -71,10 +71,12 @@ exports.start = function(cnt, maxWorkers) {
     }
     term.writeln("Setup", maxWorkers, "workers");
 
-    var queryCache = new Cache(10000);
+    var queryCache = new Cache(10);
+    var start = Date.now();
     workers.forEach(function(worker, idx) {
         worker.postMessage({
             "workerNr": idx,
+            "mapping": MAPPING_AUTHOR,
             "maxAuthors": maxAuthors,
             "connectionPool": connectionPool,
             "queryCache": queryCache,
@@ -82,13 +84,14 @@ exports.start = function(cnt, maxWorkers) {
         }, true);
     });
     semaphore.wait(maxWorkers);
+    var totalMillis = Date.now() - start;
     term.writeln(maxWorkers, "workers finished");
     var workerMillisAvg = workerMillis.reduce(function(prev, current) {
             return prev + current;
         }, 0) / maxWorkers;
     var millisPerQuery = workerMillisAvg / cnt;
     var queriesPerSec = (1000 / millisPerQuery).toFixed(2);
-    term.writeln(term.GREEN, maxWorkers, "workers,", cnt, "queries/worker,",
+    term.writeln(term.GREEN, totalMillis + "ms, ", maxWorkers, "workers,", cnt, "queries/worker,",
             millisPerQuery.toFixed(2) + "ms/query,", queriesPerSec, "queries/sec", term.RESET);
     //term.writeln("----------- AVG:", workerMillisAvg.toFixed(2));
 /*
