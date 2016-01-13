@@ -6,6 +6,7 @@ var Store = require("../../lib/store");
 var utils = require("../utils");
 var Parser = require("../../lib/query/parser");
 var dataTypes = require("../../lib/datatypes/all");
+var dialects = require("../../lib/dialects/all");
 var store = null;
 var Author = null;
 var Book = null;
@@ -73,6 +74,9 @@ var testQueries = function(queries, options) {
         let generator = new store.dialect.SqlGenerator(store);
         let resultSql = tree.accept(generator);
         let params = generator.params;
+        if (typeof(sql) === "object" && !!sql) {
+            sql = sql[store.dialect.type] || sql.common;
+        }
         assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
         if (values) {
             assert.deepEqual(params, values, "Query: " + query);
@@ -88,7 +92,7 @@ var getExpectedSql = function(str) {
         }
         var propMapping = mapping.getMapping(property);
         return store.dialect.quote(propMapping.column, mapping.tableName);
-    })
+    });
 };
 
 exports.testExpression = function() {
@@ -105,6 +109,14 @@ exports.testExpression = function() {
         {
             "query": "Author.id + 2",
             "sql": "($Author.id + ?)",
+            "values": [{"dataType": dataTypes.long, "value": 2}]
+        },
+        {
+            "query": "Author.id % 2",
+            "sql": {
+                "oracle": "MOD($Author.id, ?)",
+                "common": "($Author.id % ?)"
+            },
             "values": [{"dataType": dataTypes.long, "value": 2}]
         }
     ];
@@ -388,7 +400,10 @@ exports.testOperand = function() {
     var queries = [
         {
             "query": "select Author.id || ' - ' || Author.name as key from Author",
-            "sql": "SELECT CONCAT($Author.id, ?, $Author.name) FROM $Author"
+            "sql": {
+                "oracle": "SELECT CONCAT($Author.id, CONCAT(?, $Author.name)) FROM $Author",
+                "common": "SELECT CONCAT($Author.id, ?, $Author.name) FROM $Author"
+            }
         }
     ];
     testQueries(queries);
@@ -579,7 +594,10 @@ exports.testSelectExpression = function() {
         },
         {
             "query": "Author.id || ' - ' || Author.name as key",
-            "sql": "CONCAT($Author.id, ?, $Author.name)"
+            "sql": {
+                "oracle": "CONCAT($Author.id, CONCAT(?, $Author.name))",
+                "common": "CONCAT($Author.id, ?, $Author.name)"
+            }
         }
     ];
     testQueries(queries, {"startRule": "selectExpression"});
