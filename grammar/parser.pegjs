@@ -65,9 +65,8 @@ aggregation =
         return new ast.Aggregation(type, ident, d);
     }
 
-// FIXME: is this really the only way to not use a reserved word as an alias?
 alias =
-    AS? alias:(& (FROM / INNER / OUTER / LEFT / RIGHT / JOIN / ON / WHERE / GROUP / HAVING / ORDER / OFFSET / LIMIT) / name) ws {
+    AS? !(comma / EOF / FROM / WHERE / INNER / OUTER / LEFT / RIGHT / JOIN / ON / GROUP / HAVING / ORDER / OFFSET / LIMIT) alias:name ws {
         return alias;
     }
 
@@ -259,7 +258,7 @@ nulls =
     }
 
 entity =
-    entity:name_entity ws alias:alias? {
+    entity:name_entity alias:alias? {
         return new ast.Entity(entity, alias || null);
     }
 
@@ -325,7 +324,8 @@ lower       = l:"<" ws { return l; }
 greater     = g:">" ws { return g; }
 neq         = neq:"!=" ws { return neq; }
 
-ws          = [ \t\r\n]* { return " " }
+ws          = c:wsm? { return c; }
+wsm         = [ \t\r\n]+ { return " "; }
 escape_char = "\\"
 squote      = "'"
 dquote      = '"'
@@ -369,50 +369,51 @@ E           = [Ee] { return "e"; }
 TRUE        = "true"i ws { return true; }
 FALSE       = "false"i ws { return false; }
 NULL        = "null"i ws { return new ast.NullValue(); }
-IS          = "is"i ws { return "IS"; }
-IN          = "in"i ws { return "IN"; }
-NOT         = "not"i ws { return "NOT"; }
+IS          = "is"i wsm { return "IS"; }
+IN          = "in"i ws &LPAREN { return "IN"; }
+NOT         = "not"i wsm { return "NOT"; }
 LIKE        = "like"i ws { return "LIKE"; }
-AND         = "and"i ws { return "AND"; }
-OR          = "or"i !"der"i ws { return "OR"; }
+AND         = "and"i wsm { return "AND"; }
+OR          = "or"i wsm { return "OR"; }
 LPAREN      = "(" ws { return "("; }
 RPAREN      = ")" ws { return ")"; }
-BETWEEN     = "between"i ws { return "BETWEEN"; }
-GROUP       = "group"i ws { return "GROUP"; }
-BY          = "by"i ws { return "BY"; }
-WHERE       = "where"i ws { return "WHERE"; }
-GROUPBY     = GROUP ws BY ws { return "GROUP BY" }
-ORDER       = "order"i ws { return "ORDER"; }
-ORDERBY     = ORDER ws BY ws { return "ORDER BY"; }
+BETWEEN     = "between"i wsm { return "BETWEEN"; }
+GROUP       = "group"i wsm { return "GROUP"; }
+BY          = "by"i wsm { return "BY"; }
+WHERE       = "where"i wsm { return "WHERE"; }
+GROUPBY     = GROUP BY { return "GROUP BY" }
+ORDER       = "order"i wsm { return "ORDER"; }
+ORDERBY     = ORDER BY { return "ORDER BY"; }
 ASC         = "asc"i ws { return 1; }
 DESC        = "desc"i ws { return -1; }
 NULLS       = "nulls"i ws { return "NULLS"; }
 FIRST       = "first"i ws { return -1; }
 LAST        = "last"i ws { return 1; }
-HAVING      = "having"i ws { return "HAVING"; }
-SELECT      = "select"i ws { return "SELECT"; }
+HAVING      = "having"i wsm { return "HAVING"; }
+SELECT      = "select"i wsm { return "SELECT"; }
 DISTINCT    = "distinct"i ws { return "DISTINCT"; }
-FROM        = "from"i ws { return "FROM"; }
-EXISTS      = "exists"i ws { return "EXISTS"; }
-INNER       = "inner"i ws { return "INNER"; }
-LEFT        = "left"i ws { return "LEFT"; }
-RIGHT       = "right"i ws { return "RIGHT"; }
-OUTER       = "outer"i ws { return "OUTER"; }
-JOIN        = "join"i ws { return "JOIN"; }
-ON          = "on"i ws  { return "ON"; }
-MAX         = "max"i ws { return "MAX"; }
-MIN         = "min"i ws { return "MIN"; }
-SUM         = "sum"i ws { return "SUM"; }
-AVG         = "avg"i ws { return "AVG"; }
-COUNT       = "count"i ws { return "COUNT"; }
-OFFSET      = "offset"i ws { return "OFFSET"; }
-LIMIT       = "limit"i ws { return "LIMIT"; }
-AS          = "as"i ws { return "AS"; }
+FROM        = "from"i wsm { return "FROM"; }
+EXISTS      = "exists"i ws &LPAREN { return "EXISTS"; }
+INNER       = "inner"i wsm { return "INNER"; }
+LEFT        = "left"i wsm { return "LEFT"; }
+RIGHT       = "right"i wsm { return "RIGHT"; }
+OUTER       = "outer"i wsm { return "OUTER"; }
+JOIN        = "join"i wsm { return "JOIN"; }
+ON          = "on"i wsm { return "ON"; }
+MAX         = "max"i ws &LPAREN { return "MAX"; }
+MIN         = "min"i ws &LPAREN { return "MIN"; }
+SUM         = "sum"i ws &LPAREN { return "SUM"; }
+AVG         = "avg"i ws &LPAREN { return "AVG"; }
+COUNT       = "count"i ws &LPAREN { return "COUNT"; }
+OFFSET      = "offset"i wsm { return "OFFSET"; }
+LIMIT       = "limit"i wsm { return "LIMIT"; }
+AS          = "as"i wsm { return "AS"; }
 PLUS        = "+" ws { return "+"; }
 MINUS       = "-" ws { return "-"; }
 MULTIPLY    = "*" ws { return "*"; }
 DIVISION    = "/" ws { return "/"; }
 MODULO      = "%" ws { return "%"; }
-ALL         = "all"i ws { return "ALL"; }
-ANY         = "any"i ws { return "ANY"; }
-SOME        = "some"i ws { return "SOME"; }
+ALL         = "all"i (wsm / &LPAREN) { return "ALL"; }
+ANY         = "any"i ws &LPAREN { return "ANY"; }
+SOME        = "some"i ws &LPAREN { return "SOME"; }
+EOF         = !.

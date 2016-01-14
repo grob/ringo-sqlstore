@@ -781,6 +781,18 @@ exports.testSelectModifier = function() {
     assert.strictEqual(sql, expectedSql);
 };
 
+exports.testIssue32 = function() {
+    var Notification = store.defineEntity("Notification", {"properties": {}});
+    var query = "from Notification where Notification.id > :id";
+    var expectedSql = getExpectedSql("SELECT $Notification.id FROM $Notification WHERE $Notification.id > ?");
+    try {
+        var tree = Parser.parse(query);
+        var {sql} = generateSql(store, tree);
+        assert.strictEqual(sql, expectedSql);
+    } finally {
+        utils.drop(store, Notification);
+    }
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
