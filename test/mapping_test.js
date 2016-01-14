@@ -1,98 +1,293 @@
 var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
+var strings = require("ringo/utils/strings");
 
-var {Store, Cache} = require("../lib/main");
+var Store = require("../lib/store");
 var dbMetaData = require("../lib/database/metadata");
+var dialects = require("../lib/dialects/all");
 var utils = require("./utils");
 
 var store = null;
-var Author = null;
+var Model = null;
 
-const MAPPING_AUTHOR = {
-    "table": "author",
-    "id": {
-        "column": "author_id"
-    },
-    "properties": {
-        "name": {
-            "column": "author_name",
-            "type": "string",
-            "length": 200,
-            "nullable": false,
-            "unique": true
-        },
-        "income": {
-            "column": "author_income",
-            "type": "double",
-            "precision": 8,
-            "scale": 2
-        }
+var getColumnMetaData = function(mapping, propertName) {
+    var propMapping = mapping.getMapping(propertName);
+    var conn = store.getConnection();
+    var metaData = null;
+    try {
+        metaData = conn.getMetaData();
+        return dbMetaData.getColumns(metaData, mapping.tableName,
+                null, propMapping.column)[0] || null;
+    } finally {
+        conn && conn.close();
+    }
+};
+
+var getIndexInfo = function(mapping, isUnique) {
+    var conn = store.getConnection();
+    var metaData = null;
+    try {
+        metaData = conn.getMetaData();
+        return dbMetaData.getIndexes(metaData, mapping.tableName,
+                null, isUnique === true, true);
+    } finally {
+        conn && conn.close();
     }
 };
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    Author = store.defineEntity("Author", MAPPING_AUTHOR);
-    store.syncTables();
 };
 
 exports.tearDown = function() {
-    utils.drop(store, Author);
+    Model && utils.drop(store, Model);
     store.close();
 };
 
 exports.testGetNextId = function() {
     // directly calling getNextId() must increment the mapping's internal ID
     // counter, although the ID is not used
-    assert.strictEqual(Author.mapping.id.sequence.getNextId(store), 1);
-    var values = {"name": "John Doe"};
-    var author = new Author(values);
-    author.save();
-    assert.strictEqual(author.id, 2);
-    assert.strictEqual(Author.mapping.id.sequence.getNextId(store), 3);
-    author = new Author(values);
-    author.save();
-    assert.strictEqual(author.id, 4);
+    Model = store.defineEntity("Model", {
+        "properties": {
+            "name": "string"
+        }
+    });
+    store.syncTables();
+    assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 1);
+    var model = new Model({"name": "John Doe"});
+    model.save();
+    assert.strictEqual(model.id, 2);
+    assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 3);
+    model = new Model({"name": "Jane Foo"});
+    model.save();
+    assert.strictEqual(model.id, 4);
 };
 
-exports.testLength = function() {
-    var conn = store.getConnection();
-    var metaData = null;
-    try {
-        metaData = conn.getMetaData();
-        var column = dbMetaData.getColumns(metaData, MAPPING_AUTHOR.table,
-                null, MAPPING_AUTHOR.properties.name.column)[0] || null;
-        assert.strictEqual(column.length, MAPPING_AUTHOR.properties.name.length);
-    } finally {
-        conn && conn.close();
+exports.testGetNextIdNativeSequence = function() {
+    if (store.dialect.hasSequenceSupport === true) {
+        Model = store.defineEntity("Model", {
+            "id": {
+                "sequence": "model_id"
+            },
+            "properties": {
+                "name": "string"
+            }
+        });
+        store.syncTables();
+        assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 1);
+        var model = new Model({"name": "John Doe"});
+        model.save();
+        assert.strictEqual(model.id, 2);
+        assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 3);
+        model = new Model({"name": "Jane Foo"});
+        model.save();
+        assert.strictEqual(model.id, 4);
     }
 };
 
 exports.testNullable = function() {
-    var conn = store.getConnection();
-    var metaData = null;
-    try {
-        metaData = conn.getMetaData();
-        var column = dbMetaData.getColumns(metaData, MAPPING_AUTHOR.table,
-                null, MAPPING_AUTHOR.properties.name.column)[0] || null;
-        assert.isFalse(column.nullable);
-    } finally {
-        conn && conn.close();
-    }
+    Model = store.defineEntity("Model", {
+        "properties": {
+            "name": {
+                "type": "string",
+                "nullable": false
+            }
+        }
+    });
+    store.syncTables();
+    // check table index metadata
+    assert.isFalse(getColumnMetaData(Model.mapping, "name").nullable);
+    // functional test
+    new Model({"name": "John Doe"}).save();
+    assert.strictEqual(Model.all().length, 1);
+    assert.throws(function() {
+        new Model().save();
+    }, java.sql.SQLException);
+};
+
+exports.testUnique = function() {
+    Model = store.defineEntity("Model", {
+        "table": "t_model",
+        "properties": {
+            "name": {
+                "type": "string",
+                "length": 20,
+                "unique": true
+            }
+        }
+    });
+    store.syncTables();
+    // check table index metadata
+    var indexInfo = getIndexInfo(Model.mapping, true);
+    assert.isTrue(indexInfo.some(function(index) {
+        return index.column === Model.mapping.properties.name.column &&
+                        index.isUnique === true;
+    }));
+    // functional test
+    var props = {"name": "John Doe"};
+    new Model(props).save();
+    assert.throws(function() {
+        new Model(props).save();
+    }, java.sql.SQLException);
+};
+
+exports.testLength = function() {
+    Model = store.defineEntity("Model", {
+        "table": "t_model",
+        "properties": {
+            "name": {
+                "type": "string",
+                "length": 10
+            }
+        }
+    });
+    store.syncTables();
+    // check table index metadata
+    assert.strictEqual(getColumnMetaData(Model.mapping, "name").length,
+            Model.mapping.properties.name.length);
+    // functional test
+    new Model({"name": "abcdefghij"}).save();
+    assert.throws(function() {
+        new Model({"name": "abcdefghijk"}).save();
+    }, java.sql.SQLException);
 };
 
 exports.testPrecisionScale = function() {
-    var conn = store.getConnection();
-    var metaData = null;
-    try {
-        metaData = conn.getMetaData();
-        var column = dbMetaData.getColumns(metaData, MAPPING_AUTHOR.table,
-                null, MAPPING_AUTHOR.properties.income.column)[0] || null;
-        assert.strictEqual(column.length, MAPPING_AUTHOR.properties.income.precision);
-        assert.strictEqual(column.scale, MAPPING_AUTHOR.properties.income.scale);
-    } finally {
-        conn && conn.close();
+    Model = store.defineEntity("Model", {
+        "table": "t_model",
+        "properties": {
+            "doublep": {
+                "type": "double",
+                "precision": 6
+            },
+            "doubleps": {
+                "type": "double",
+                "precision": 6,
+                "scale": 2
+            }
+        }
+    });
+    store.syncTables();
+    var metaData = getColumnMetaData(Model.mapping, "doublep");
+    assert.strictEqual(metaData.length, 6);
+    assert.strictEqual(metaData.scale, 0);
+    metaData = getColumnMetaData(Model.mapping, "doubleps");
+    assert.strictEqual(metaData.length, 6);
+    assert.strictEqual(metaData.scale, 2);
+};
+
+exports.testTypes = function() {
+    var mapping = {
+        "table": "typetest",
+        "properties": {
+            "typeInteger": {
+                "type": "integer"
+            },
+            "typeLong": {
+                "type": "long"
+            },
+            "typeShort": {
+                "type": "short"
+            },
+            "typeDouble": {
+                "type": "double"
+            },
+            "typeDoubleP": {
+                "type": "double",
+                "precision": 6
+            },
+            "typeDoublePs": {
+                "type": "double",
+                "precision": 6,
+                "scale": 2
+            },
+            "typeCharacter": {
+                "type": "character"
+            },
+            "typeString": {
+                "type": "string"
+            },
+            "typeBoolean": {
+                "type": "boolean"
+            },
+            "typeDate": {
+                "type": "date"
+            },
+            "typeTime": {
+                "type": "time"
+            },
+            "typeTimestamp": {
+                "type": "timestamp"
+            },
+            "typeBinary": {
+                "type": "binary"
+            },
+            "typeText": {
+                "type": "text"
+            }
+        }
+    };
+    Model = store.defineEntity("Model", mapping);
+    store.syncTables();
+
+    /* this doesn't work with oracle databases, because integers
+       are always returned as java.sql.DECIMAL
+
+    for each (let [key, definition] in Iterator(mapping.properties)) {
+        let metaData = getColumnMetaData(Model.mapping, key);
+        console.log(key, metaData.toSource());
+        console.log(definition.type, metaData.name, metaData.type);
+        assert.strictEqual(jdbcDataTypes[metaData.type],
+                dataTypes[definition.type], "Data type of " + key);
+    }
+     */
+
+    var props = {
+        "typeInteger": 12345678,
+        "typeLong": 12345678910,
+        "typeShort": 12345,
+        "typeDouble": 2199.99,
+        "typeDoubleP": 2200,
+        "typeDoublePs": 2199.99,
+        "typeCharacter": "T",
+        "typeString": "Test",
+        "typeBoolean": true,
+        "typeDate": new Date(2010, 7, 11, 0, 0, 0, 0),
+        "typeTime": new Date(1970, 0, 1, 17, 36, 4, 723),
+        "typeTimestamp": new Date(2010, 7, 11, 36, 4, 23, 723),
+        "typeBinary": "test".toByteArray(),
+        "typeText": strings.repeat("abcdefghij", 10000)
+    };
+    var model = new Model(props);
+    model.save();
+
+    // read values
+    model = Model.get(1);
+    for each (let [key, definition] in Iterator(mapping.properties)) {
+        let value = model[key];
+        let expected = props[key];
+        switch (definition.type) {
+            case "date":
+            case "time":
+            case "timestamp":
+                assert.strictEqual(value.getFullYear(), expected.getFullYear());
+                assert.strictEqual(value.getMonth(), expected.getMonth());
+                assert.strictEqual(value.getDate(), expected.getDate());
+                assert.strictEqual(value.getHours(), expected.getHours());
+                assert.strictEqual(value.getMinutes(), expected.getMinutes());
+                assert.strictEqual(value.getSeconds(), expected.getSeconds());
+                // mysql doesn't know about millis...
+                if (store.dialect !== dialects.mysql) {
+                    assert.strictEqual(value.getMilliseconds(), expected.getMilliseconds());
+                }
+                break;
+            case "binary":
+                assert.isTrue(java.util.Arrays.equals(value, expected));
+                break;
+            default:
+                assert.strictEqual(value, expected);
+        }
     }
 };
 
