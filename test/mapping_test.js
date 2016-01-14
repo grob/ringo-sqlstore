@@ -271,15 +271,18 @@ exports.testTypes = function() {
             case "date":
             case "time":
             case "timestamp":
-                assert.strictEqual(value.getFullYear(), expected.getFullYear());
-                assert.strictEqual(value.getMonth(), expected.getMonth());
-                assert.strictEqual(value.getDate(), expected.getDate());
-                assert.strictEqual(value.getHours(), expected.getHours());
-                assert.strictEqual(value.getMinutes(), expected.getMinutes());
-                assert.strictEqual(value.getSeconds(), expected.getSeconds());
-                // mysql doesn't know about millis...
-                if (store.dialect !== dialects.mysql) {
-                    assert.strictEqual(value.getMilliseconds(), expected.getMilliseconds());
+                assert.strictEqual(value.getFullYear(), expected.getFullYear(), key);
+                assert.strictEqual(value.getMonth(), expected.getMonth(), key);
+                assert.strictEqual(value.getDate(), expected.getDate(), key);
+                assert.strictEqual(value.getHours(), expected.getHours(), key);
+                assert.strictEqual(value.getMinutes(), expected.getMinutes(), key);
+                assert.strictEqual(value.getSeconds(), expected.getSeconds(), key);
+                // mysql < 5.6.4 doesn't know about millis,
+                // and oracle doesn't store millis in DATE columns...
+                if (store.dialect === dialects.h2 ||
+                        store.dialect === dialects.postgresql ||
+                        (store.dialect === dialects.oracle && definition.type !== "time")) {
+                    assert.strictEqual(value.getMilliseconds(), expected.getMilliseconds(), key);
                 }
                 break;
             case "binary":
