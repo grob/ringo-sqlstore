@@ -1,0 +1,1 @@
+exports.testJSONDatatypes = require("./datatype_json_test");

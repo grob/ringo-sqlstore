@@ -14,6 +14,10 @@ exports.testRollback = require("./rollback_test");
 exports.testTransaction = require("./transaction_test");
 exports.testQuery = require("./query/all");
 
+if (arguments.slice(0).indexOf("postgresql") > 0) {
+    exports.testPostgreSQL = require("./postgresql/all");
+}
+
 if (require.main == module.id) {
     system.exit(runner.run(exports, arguments));
 }
