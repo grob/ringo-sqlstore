@@ -2,8 +2,9 @@ var assert = require("assert");
 var system = require("system");
 
 var config = require("../config");
-var {Store, Cache} = require("../../lib/sqlstore/main");
-var sqlUtils = require("../../lib/sqlstore/util");
+var {Store, Cache} = require("../../lib/main");
+var metaData = require("../../lib/database/metadata");
+var dbSchema = require("../../lib/database/schema");
 
 const MAPPING_EVENT_JSON = {
     "properties": {
@@ -32,9 +33,8 @@ exports.setUp = function() {
 exports.tearDown = function() {
     var conn = store.getConnection();
     [Event, EventB].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
+        if (metaData.tableExists(conn, store.dialect, ctor.mapping.tableName, ctor.mapping.schemaName)) {
+            dbSchema.dropTable(conn, store.dialect, ctor.mapping.tableName, ctor.mapping.schemaName);
         }
     });
     store.close();
@@ -59,8 +59,6 @@ exports.testSaveObject = function() {
 
     assert.strictEqual(Event.all().length, 1);
     assert.strictEqual(EventB.all().length, 1);
-
-    return;
 };
 
 exports.testQueryObjects = function() {

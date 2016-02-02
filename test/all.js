@@ -12,6 +12,7 @@ exports.testStore = require("./store_test");
 exports.testRollback = require("./rollback_test");
 exports.testTransaction = require("./transaction_test");
 exports.testQuery = require("./query/all");
+exports.testDatabase = require("./database/all");
 
 if (arguments.slice(0).indexOf("postgresql") > 0) {
     exports.testPostgreSQL = require("./postgresql/all");

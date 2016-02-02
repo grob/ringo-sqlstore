@@ -15,10 +15,12 @@ exports.mysql = {
 };
 
 exports.oracle = {
-    "url": "jdbc:oracle:thin:@192.168.1.25:1521:XE",
-    "driver": "oracle.jdbc.driver.OracleDriver",
-    "user": "test",
-    "password": "test"
+    "url": "jdbc:oracle:thin:@192.164.192.176:1523:ORFON4",
+    "driver": "oracle.jdbc.OracleDriver",
+    "user": "orf_sqlstore",
+    "password": "rh!n0",
+    "minimumIdle": 10,
+    "maximumPoolSize": 30
 };
 
 exports.postgresql = {

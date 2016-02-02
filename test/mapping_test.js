@@ -11,14 +11,12 @@ var utils = require("./utils");
 var store = null;
 var Model = null;
 
-var getColumnMetaData = function(mapping, propertName) {
+var getColumnMetaData = function(store, mapping, propertName) {
     var propMapping = mapping.getMapping(propertName);
     var conn = store.getConnection();
-    var metaData = null;
     try {
-        metaData = conn.getMetaData();
-        return dbMetaData.getColumns(metaData, mapping.tableName,
-                null, propMapping.column)[0] || null;
+        return dbMetaData.getColumns(conn, store.dialect, mapping.tableName,
+                        null, propMapping.column)[0] || null;
     } finally {
         conn && conn.close();
     }
@@ -26,10 +24,8 @@ var getColumnMetaData = function(mapping, propertName) {
 
 var getIndexInfo = function(mapping, isUnique) {
     var conn = store.getConnection();
-    var metaData = null;
     try {
-        metaData = conn.getMetaData();
-        return dbMetaData.getIndexes(metaData, mapping.tableName,
+        return dbMetaData.getIndexes(conn, store.dialect, mapping.tableName,
                 null, isUnique === true, true);
     } finally {
         conn && conn.close();
@@ -97,7 +93,7 @@ exports.testNullable = function() {
     });
     store.syncTables();
     // check table index metadata
-    assert.isFalse(getColumnMetaData(Model.mapping, "name").nullable);
+    assert.isFalse(getColumnMetaData(store, Model.mapping, "name").nullable);
     // functional test
     new Model({"name": "John Doe"}).save();
     assert.strictEqual(Model.all().length, 1);
@@ -144,7 +140,7 @@ exports.testLength = function() {
     });
     store.syncTables();
     // check table index metadata
-    assert.strictEqual(getColumnMetaData(Model.mapping, "name").length,
+    assert.strictEqual(getColumnMetaData(store, Model.mapping, "name").length,
             Model.mapping.properties.name.length);
     // functional test
     new Model({"name": "abcdefghij"}).save();
@@ -169,10 +165,10 @@ exports.testPrecisionScale = function() {
         }
     });
     store.syncTables();
-    var metaData = getColumnMetaData(Model.mapping, "doublep");
+    var metaData = getColumnMetaData(store, Model.mapping, "doublep");
     assert.strictEqual(metaData.length, 6);
     assert.strictEqual(metaData.scale, 0);
-    metaData = getColumnMetaData(Model.mapping, "doubleps");
+    metaData = getColumnMetaData(store, Model.mapping, "doubleps");
     assert.strictEqual(metaData.length, 6);
     assert.strictEqual(metaData.scale, 2);
 };
