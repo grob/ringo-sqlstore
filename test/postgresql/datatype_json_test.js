@@ -1,10 +1,10 @@
+var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var config = require("../config");
 var {Store, Cache} = require("../../lib/main");
-var metaData = require("../../lib/database/metadata");
-var dbSchema = require("../../lib/database/schema");
+var config = require("../config");
+var utils = require("../utils");
 
 const MAPPING_EVENT_JSON = {
     "properties": {
@@ -23,7 +23,7 @@ const MAPPING_EVENT_JSONB = {
 var store, Event, EventB;
 
 exports.setUp = function() {
-    store = new Store(Store.initConnectionPool(config["postgresql"]));
+    store = new Store(Store.initConnectionPool(config.postgresql));
     store.setEntityCache(new Cache());
     Event = store.defineEntity("Event", MAPPING_EVENT_JSON);
     EventB = store.defineEntity("EventB", MAPPING_EVENT_JSONB);
@@ -31,12 +31,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Event, EventB].forEach(function(ctor) {
-        if (metaData.tableExists(conn, store.dialect, ctor.mapping.tableName, ctor.mapping.schemaName)) {
-            dbSchema.dropTable(conn, store.dialect, ctor.mapping.tableName, ctor.mapping.schemaName);
-        }
-    });
+    utils.drop(store, Event, EventB);
     store.close();
 };
 
@@ -127,6 +122,7 @@ exports.testQueryObjects = function() {
     assert.strictEqual(result[1].data.rating, 3, "wrong rating");
 };
 
-if (require.main === module) {
-    system.exit(require("test").run(module.id));
+//start the test runner if we're called directly from command line
+if (require.main == module.id) {
+    system.exit(runner.run(exports, arguments));
 }
