@@ -41,47 +41,6 @@ exports.tearDown = function() {
     store.close();
 };
 
-exports.testGetNextId = function() {
-    // directly calling getNextId() must increment the mapping's internal ID
-    // counter, although the ID is not used
-    Model = store.defineEntity("Model", {
-        "properties": {
-            "name": "string"
-        }
-    });
-    store.syncTables();
-    assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 1);
-    var model = new Model({"name": "John Doe"});
-    model.save();
-    assert.strictEqual(model.id, 2);
-    assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 3);
-    model = new Model({"name": "Jane Foo"});
-    model.save();
-    assert.strictEqual(model.id, 4);
-};
-
-exports.testGetNextIdNativeSequence = function() {
-    if (store.dialect.hasSequenceSupport === true) {
-        Model = store.defineEntity("Model", {
-            "id": {
-                "sequence": "model_id"
-            },
-            "properties": {
-                "name": "string"
-            }
-        });
-        store.syncTables();
-        assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 1);
-        var model = new Model({"name": "John Doe"});
-        model.save();
-        assert.strictEqual(model.id, 2);
-        assert.strictEqual(Model.mapping.id.sequence.getNextId(store), 3);
-        model = new Model({"name": "Jane Foo"});
-        model.save();
-        assert.strictEqual(model.id, 4);
-    }
-};
-
 exports.testNullable = function() {
     Model = store.defineEntity("Model", {
         "properties": {

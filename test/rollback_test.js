@@ -40,7 +40,12 @@ exports.testInsertRollback = function() {
     // since no explicit transaction was opened, the above does an auto-rollback
     assert.strictEqual(author._state, constants.STATE_TRANSIENT);
     // and nothing was put into the cache
-    assert.isFalse(store.entityCache.containsKey(author._cacheKey));
+    assert.strictEqual(store.entityCache.size(), 0);
+    // trying to access the _cacheKey throws an exception because
+    // the storable is still in transient state
+    assert.throws(function() {
+        assert.isNotNull(author._cacheKey);
+    });
 };
 
 exports.testInsertRollbackWithTransaction = function() {

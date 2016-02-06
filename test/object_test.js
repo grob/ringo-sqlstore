@@ -82,7 +82,6 @@ exports.testAssignObject = function() {
     assert.strictEqual(Book.get(1).author, null);
     // authorTwo is still there
     assert.strictEqual(Author.all().length, 2);
-    return;
 };
 
 exports.testAssignWrongObject = function() {
@@ -102,7 +101,6 @@ exports.testAssignWrongObject = function() {
     assert.throws(function() {
         book.save();
     });
-    return;
 };
 
 exports.testAssignLazyLoaded = function() {
@@ -119,7 +117,6 @@ exports.testAssignLazyLoaded = function() {
     // after persisting the book, the author's book collection
     // must be populated
     assert.strictEqual(author.books.length, 1);
-    return;
 };
 
 exports.testSimpleCircularReference = function() {
@@ -139,6 +136,7 @@ exports.testSimpleCircularReference = function() {
     assert.strictEqual(book.author.id, author.id);
     assert.strictEqual(author.books.length, 1);
     author = Author.get(1);
+    book = Book.get(1);
     assert.strictEqual(author.id, 1);
     assert.strictEqual(book.id, 1);
     assert.strictEqual(author.latestBook.id, book.id);

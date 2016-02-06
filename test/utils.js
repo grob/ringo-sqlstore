@@ -5,9 +5,11 @@ exports.drop = function(store) {
     var conn = store.getConnection();
     try {
         entities.forEach(function(Entity) {
-            dbSchema.dropTable(conn, store.dialect, Entity.mapping.tableName,
-                    Entity.mapping.schemaName);
-            Entity.mapping.id.sequence.drop(conn, store.dialect);
+            var {tableName, schemaName, id} = Entity.mapping;
+            dbSchema.dropTable(conn, store.dialect, tableName, schemaName);
+            if (id.sequence && store.dialect.hasSequenceSupport) {
+                dbSchema.dropSequence(conn, store.dialect, id.sequence);
+            }
         });
     } finally {
         conn.close();

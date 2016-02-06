@@ -11,16 +11,15 @@ var store = null;
 var Author = null;
 
 const MAPPING_AUTHOR = {
-    // "schema": "TEST",
-    "table": "author",
+    "table": "t_author",
     "id": {
-        "column": "author_id",
+        "column": "aut_id",
         "sequence": "author_id"
     },
     "properties": {
         "name": {
             "type": "string",
-            "column": "author_name"
+            "column": "aut_name"
         }
     }
 };
@@ -75,13 +74,13 @@ exports.testCRUD = function() {
     // update
     author.name = name = "Mr. Foo-Bar";
     author.save();
-    assert.strictEqual(author._entity.author_name, name);
-    assert.strictEqual(author._entity.author_id, author._key.id);
+    assert.strictEqual(author._entity[MAPPING_AUTHOR.properties.name.column], name);
+    assert.strictEqual(author._entity[MAPPING_AUTHOR.id.column], author._key.id);
 
     // read again
     author = Author.get(1);
     assert.strictEqual(author.name, name);
-    assert.strictEqual(author._entity.author_id, author._key.id);
+    assert.strictEqual(author._entity[MAPPING_AUTHOR.id.column], author._key.id);
 
     // remove
     author.remove();
