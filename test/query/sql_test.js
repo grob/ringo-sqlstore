@@ -2,11 +2,11 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../../lib/sqlstore/main");
-var sqlUtils = require("../../lib/sqlstore/util");
-var {Parser} = require("../../lib/sqlstore/query/parser");
-var {SqlGenerator} = require("../../lib/sqlstore/query/sqlgenerator");
-var {getNamedParameter} = require("../../lib/sqlstore/query/query");
+var Store = require("../../lib/store");
+var utils = require("../utils");
+var Parser = require("../../lib/query/parser");
+var dataTypes = require("../../lib/datatypes/all");
+var dialects = require("../../lib/dialects/all");
 var store = null;
 var Author = null;
 var Book = null;
@@ -42,41 +42,41 @@ const MAPPING_BOOK = {
     }
 };
 
+var generateSql = function(store, tree) {
+    var generator = new store.dialect.SqlGenerator(store);
+    return {
+        "sql": tree.accept(generator),
+        "params": generator.params
+    };
+};
+
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     store.syncTables();
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
+    utils.drop(store, Author, Book);
     store.close();
-    store = null;
-    Author = null;
-    Book = null;
-    return;
 };
 
-var testQueries = function(queries, startRule) {
+var testQueries = function(queries, options) {
     for each (let {query, sql, values} in queries) {
         let tree;
         try {
-            tree = Parser.parse(query, startRule);
+            tree = Parser.parse(query, options || {});
         } catch (e) {
             console.error("Parsing query '" + query + "' failed, reason:", e);
             continue;
         }
-        let generator = new SqlGenerator(store, tree.aliases);
+        let generator = new store.dialect.SqlGenerator(store);
         let resultSql = tree.accept(generator);
         let params = generator.params;
+        if (typeof(sql) === "object" && !!sql) {
+            sql = sql[store.dialect.type] || sql.common;
+        }
         assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
         if (values) {
             assert.deepEqual(params, values, "Query: " + query);
@@ -88,10 +88,11 @@ var getExpectedSql = function(str) {
     return str.replace(/\$(\w+)(?:\.(\w+))?/g, function(match, table, property) {
         var mapping = store.getEntityMapping(table);
         if (!property) {
-            return mapping.getQualifiedTableName(store.dialect);
+            return store.dialect.quote(mapping.tableName, mapping.schemaName);
         }
-        return mapping.getQualifiedColumnName(property, store.dialect);
-    })
+        var propMapping = mapping.getMapping(property);
+        return store.dialect.quote(propMapping.column, mapping.tableName);
+    });
 };
 
 exports.testExpression = function() {
@@ -103,12 +104,20 @@ exports.testExpression = function() {
         {
             "query": "Author.id - 2",
             "sql": "($Author.id - ?)",
-            "values": [{"type": "long", "value": 2}]
+            "values": [{"dataType": dataTypes.long, "value": 2}]
         },
         {
             "query": "Author.id + 2",
             "sql": "($Author.id + ?)",
-            "values": [{"type": "long", "value": 2}]
+            "values": [{"dataType": dataTypes.long, "value": 2}]
+        },
+        {
+            "query": "Author.id % 2",
+            "sql": {
+                "oracle": "MOD($Author.id, ?)",
+                "common": "($Author.id % ?)"
+            },
+            "values": [{"dataType": dataTypes.long, "value": 2}]
         }
     ];
 
@@ -280,7 +289,7 @@ exports.testBetweenCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testIsNullCondition = function() {
@@ -295,7 +304,7 @@ exports.testIsNullCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testInCondition = function() {
@@ -331,7 +340,7 @@ exports.testInCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testLikeCondition = function() {
@@ -353,7 +362,7 @@ exports.testLikeCondition = function() {
         }
     ];
 
-    testQueries(queries, "condition_rhs");
+    testQueries(queries, {"startRule": "condition_rhs"});
 };
 
 exports.testNotCondition  = function() {
@@ -366,7 +375,7 @@ exports.testNotCondition  = function() {
         }
     ];
 
-    testQueries(queries, "condition");
+    testQueries(queries, {"startRule": "condition"});
 };
 
 exports.testExistsCondition = function() {
@@ -384,14 +393,17 @@ exports.testExistsCondition = function() {
             "sql": "EXISTS (SELECT $Author.id FROM $Author WHERE $Author.id = ?)"
         }
     ];
-    testQueries(queries, "condition");
+    testQueries(queries, {"startRule": "condition"});
 };
 
 exports.testOperand = function() {
     var queries = [
         {
             "query": "select Author.id || ' - ' || Author.name as key from Author",
-            "sql": "SELECT ($Author.id || ? || $Author.name) FROM $Author"
+            "sql": {
+                "oracle": "SELECT CONCAT($Author.id, CONCAT(?, $Author.name)) FROM $Author",
+                "common": "SELECT CONCAT($Author.id, ?, $Author.name) FROM $Author"
+            }
         }
     ];
     testQueries(queries);
@@ -437,7 +449,7 @@ exports.testOrderByClause = function() {
         }
     ];
 
-    testQueries(queries, "orderByClause");
+    testQueries(queries, {"startRule": "orderByClause"});
 };
 
 exports.testGroupByClause = function() {
@@ -452,7 +464,7 @@ exports.testGroupByClause = function() {
         }
     ];
 
-    testQueries(queries, "groupByClause");
+    testQueries(queries, {"startRule": "groupByClause"});
 };
 
 exports.testHavingClause = function() {
@@ -474,7 +486,7 @@ exports.testHavingClause = function() {
         }
     ];
 
-    testQueries(queries, "havingClause");
+    testQueries(queries, {"startRule": "havingClause"});
 };
 
 exports.testFromClause = function() {
@@ -493,7 +505,7 @@ exports.testFromClause = function() {
         }
     ];
 
-    testQueries(queries, "fromClause");
+    testQueries(queries, {"startRule": "fromClause"});
 };
 
 exports.testInnerJoin = function() {
@@ -508,7 +520,7 @@ exports.testInnerJoin = function() {
         }
     ];
 
-    testQueries(queries, "innerJoin");
+    testQueries(queries, {"startRule": "innerJoin"});
 };
 
 exports.testOuterJoin = function() {
@@ -523,7 +535,7 @@ exports.testOuterJoin = function() {
         }
     ];
 
-    testQueries(queries, "outerJoin");
+    testQueries(queries, {"startRule": "outerJoin"});
 };
 
 exports.testNamedParameter = function() {
@@ -582,10 +594,13 @@ exports.testSelectExpression = function() {
         },
         {
             "query": "Author.id || ' - ' || Author.name as key",
-            "sql": "($Author.id || ? || $Author.name)"
+            "sql": {
+                "oracle": "CONCAT($Author.id, CONCAT(?, $Author.name))",
+                "common": "CONCAT($Author.id, ?, $Author.name)"
+            }
         }
     ];
-    testQueries(queries, "selectExpression");
+    testQueries(queries, {"startRule": "selectExpression"});
 };
 
 exports.testAliases = function() {
@@ -693,13 +708,13 @@ exports.testOffset = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, 10);
 
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as offset
     tree = Parser.parse("select Author from Author offset :offset");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 1);
     assert.strictEqual(params[0], "offset");
@@ -710,13 +725,13 @@ exports.testLimit = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
 
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as limit
     tree = Parser.parse("select Author from Author limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 1);
     assert.strictEqual(params[0], "limit");
@@ -727,25 +742,25 @@ exports.testRange = function() {
     var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
 
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     // parameter value as offset/limit
     tree = Parser.parse("select Author from Author offset :offset limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, "?", "?");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params.length, 2);
     assert.strictEqual(params[0], "limit");
     assert.strictEqual(params[1], "offset");
     tree = Parser.parse("select Author from Author limit :limit offset :offset");
-    var {sql, params} = SqlGenerator.generate(store, tree);
+    var {sql, params} = generateSql(store, tree);
     assert.strictEqual(sql, sqlBuf.join(""));
     assert.strictEqual(params[0], "limit");
     assert.strictEqual(params[1], "offset");
@@ -757,15 +772,27 @@ exports.testSelectModifier = function() {
     var tree = Parser.parse("select distinct a from Author as a");
     var expectedSql = getExpectedSql("SELECT DISTINCT a." + idColumn +
             " FROM $Author a");
-    var {sql} = SqlGenerator.generate(store, tree);
+    var {sql} = generateSql(store, tree);
     assert.strictEqual(sql, expectedSql);
     tree = Parser.parse("select all a from Author as a");
     expectedSql = getExpectedSql("SELECT ALL a." + idColumn +
             " FROM $Author a");
-    sql = SqlGenerator.generate(store, tree).sql;
+    sql = generateSql(store, tree).sql;
     assert.strictEqual(sql, expectedSql);
 };
 
+exports.testIssue32 = function() {
+    var Notification = store.defineEntity("Notification", {"properties": {}});
+    var query = "from Notification where Notification.id > :id";
+    var expectedSql = getExpectedSql("SELECT $Notification.id FROM $Notification WHERE $Notification.id > ?");
+    try {
+        var tree = Parser.parse(query);
+        var {sql} = generateSql(store, tree);
+        assert.strictEqual(sql, expectedSql);
+    } finally {
+        utils.drop(store, Notification);
+    }
+};
 
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {

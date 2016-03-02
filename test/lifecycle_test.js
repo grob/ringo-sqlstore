@@ -2,10 +2,10 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
-var {Storable} = require("../lib/sqlstore/storable");
-var {Key} = require("../lib/sqlstore/key");
+var {Store, Cache} = require("../lib/main");
+var utils = require("./utils");
+var Key = require("../lib/key");
+var constants = require("../lib/constants");
 
 var store = null;
 var Author = null;
@@ -28,7 +28,6 @@ const MAPPING_AUTHOR = {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     assert.isNotNull(store);
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
@@ -36,18 +35,11 @@ exports.setUp = function() {
     // static constructor functions
     assert.strictEqual(typeof(Author.get), "function");
     assert.strictEqual(typeof(Author.all), "function");
-    assert.strictEqual(Author, store.getEntityConstructor("Author"));
+    assert.strictEqual(Author, store.entityRegistry.getConstructor("Author"));
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    var schemaName = Author.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-    if (sqlUtils.tableExists(conn, Author.mapping.tableName, schemaName)) {
-        sqlUtils.dropTable(conn, store.dialect, Author.mapping.tableName, schemaName);
-        if (Author.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-            sqlUtils.dropSequence(conn, store.dialect, Author.mapping.id.sequence, schemaName);
-        }
-    }
+    utils.drop(store, Author);
     store.close();
 };
 
@@ -82,22 +74,22 @@ exports.testLifecycle = function() {
     var author = new Author({
         "name": "John Doe"
     });
-    assert.strictEqual(author._state, Storable.STATE_TRANSIENT);
+    assert.strictEqual(author._state, constants.STATE_TRANSIENT);
     author.save();
     assert.strictEqual(Author.all().length, 1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     author = Author.get(1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // modify
     author.name = "Jane Foo";
-    assert.strictEqual(author._state, Storable.STATE_DIRTY);
+    assert.strictEqual(author._state, constants.STATE_DIRTY);
     author.save();
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     // remove
     author = Author.get(1);
-    assert.strictEqual(author._state, Storable.STATE_CLEAN);
+    assert.strictEqual(author._state, constants.STATE_CLEAN);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     assert.strictEqual(Author.all().length, 0);
 };
 
@@ -111,7 +103,7 @@ exports.testAlreadyRemoved = function() {
     // modify removed entity
     author.name = "Jane Foo";
     // state is still STATE_DELETED
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     // saving throws an error
     assert.throws(function() {
         author.save();
@@ -127,10 +119,10 @@ exports.testMultipleRemoval = function() {
     assert.strictEqual(Author.all().length, 1);
     author = Author.get(1);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
     assert.strictEqual(Author.all().length, 0);
     author.remove();
-    assert.strictEqual(author._state, Storable.STATE_DELETED);
+    assert.strictEqual(author._state, constants.STATE_DELETED);
 };
 
 //start the test runner if we're called directly from command line

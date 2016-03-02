@@ -2,13 +2,12 @@ var term = require("ringo/term");
 var assert = require("assert");
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
-
-var {ConnectionPool} = require("../lib/sqlstore/connection/pool");
+var {init} = require("../lib/connectionpool");
 
 var connectionPool = null;
 
 exports.setUp = function(dbProps) {
-    connectionPool = new ConnectionPool(dbProps);
+     connectionPool = init(dbProps);
 };
 
 exports.tearDown = function() {
@@ -19,7 +18,7 @@ exports.start = function(cnt, maxWorkers) {
     cnt || (cnt = 20000);
     maxWorkers = maxWorkers || (maxWorkers = 100);
 
-    term.writeln("Using", connectionPool.getDriverClass());
+    term.writeln("Using", connectionPool.getDriverClassName());
     var semaphore = new Semaphore();
     var workers = new Array(maxWorkers);
     var workerMillis = new Array(maxWorkers);

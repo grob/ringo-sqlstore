@@ -2,9 +2,8 @@ var runner = require("../runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../../lib/sqlstore/main");
-var {Query} = require("../../lib/sqlstore/query/query");
-var sqlUtils = require("../../lib/sqlstore/util");
+var {Store, Cache} = require("../../lib/main");
+var utils = require("../utils");
 var store = null;
 var Author = null;
 var Book = null;
@@ -31,7 +30,7 @@ const MAPPING_BOOK = {
             "type": "string",
             "column": "book_title",
             "length": 255,
-            "nullable": false,
+            "nullable": false
         }
     }
 };
@@ -83,14 +82,13 @@ var populate = function() {
             relation.save();
             relations.push(relation);
         });
-    })
+    });
     store.commitTransaction();
     return [authors, books, relations];
 };
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     Relation = store.defineEntity("Relation", MAPPING_RELATION);
@@ -98,26 +96,12 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book, Relation].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
-            }
-        }
-    });
+    utils.drop(store, Author, Book, Relation);
     store.close();
-    store = null;
-    Author = null;
-    Book = null;
-    Relation = null;
-    return;
 };
 
 exports.testInnerJoinQuery = function() {
-    var [authors, books, relations] = populate();
+    var [authors, books] = populate();
     // all books by author 1
     var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
@@ -130,7 +114,6 @@ exports.testInnerJoinQuery = function() {
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].id, authors[0].id);
     assert.strictEqual(result[1].id, authors[1].id);
-    return;
 };
 
 //start the test runner if we're called directly from command line

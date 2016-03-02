@@ -3,8 +3,8 @@ var assert = require("assert");
 var {Worker} = require("ringo/worker");
 var {Semaphore} = require("ringo/concurrent");
 
-var {Store, Cache, ConnectionPool} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
+var {Store, Cache} = require("../lib/main");
+var utils = require("../test/utils");
 
 var store = null;
 var connectionPool = null;
@@ -31,7 +31,7 @@ exports.setUp = function(dbProps) {
     connectionPool = Store.initConnectionPool(dbProps);
     store = new Store(connectionPool);
     term.writeln("------------------------------");
-    term.writeln("Using", store.connectionPool.getDriverClass());
+    term.writeln("Using", store.connectionPool.getDriverClassName());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
     store.beginTransaction();
@@ -44,16 +44,7 @@ exports.setUp = function(dbProps) {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
-            }
-        }
-    });
+    utils.drop(store, Author);
     store.close();
 };
 
@@ -80,10 +71,12 @@ exports.start = function(cnt, maxWorkers) {
     }
     term.writeln("Setup", maxWorkers, "workers");
 
-    var queryCache = new Cache(10000);
+    var queryCache = new Cache(10);
+    var start = Date.now();
     workers.forEach(function(worker, idx) {
         worker.postMessage({
             "workerNr": idx,
+            "mapping": MAPPING_AUTHOR,
             "maxAuthors": maxAuthors,
             "connectionPool": connectionPool,
             "queryCache": queryCache,
@@ -91,13 +84,14 @@ exports.start = function(cnt, maxWorkers) {
         }, true);
     });
     semaphore.wait(maxWorkers);
+    var totalMillis = Date.now() - start;
     term.writeln(maxWorkers, "workers finished");
     var workerMillisAvg = workerMillis.reduce(function(prev, current) {
             return prev + current;
         }, 0) / maxWorkers;
     var millisPerQuery = workerMillisAvg / cnt;
     var queriesPerSec = (1000 / millisPerQuery).toFixed(2);
-    term.writeln(term.GREEN, maxWorkers, "workers,", cnt, "queries/worker,",
+    term.writeln(term.GREEN, totalMillis + "ms, ", maxWorkers, "workers,", cnt, "queries/worker,",
             millisPerQuery.toFixed(2) + "ms/query,", queriesPerSec, "queries/sec", term.RESET);
     //term.writeln("----------- AVG:", workerMillisAvg.toFixed(2));
 /*
@@ -107,4 +101,5 @@ exports.start = function(cnt, maxWorkers) {
         }, 0) / arr.length);
     });
 */
+    quit();
 };

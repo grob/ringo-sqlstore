@@ -1,3 +1,5 @@
+var logging = require("ringo/logging");
+logging.setConfig(getResource("./log4j.properties"));
 var system = require("system");
 var {Parser} = require("ringo/args");
 var config = require("./config");
@@ -12,7 +14,6 @@ var getDbProps = exports.getDbProps = function() {
 
 var set = exports.set = function(name) {
     database = name;
-    return;
 };
 
 var setDatabase = exports.setDatabase = function(args) {

@@ -2,9 +2,9 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var {Collection} = require("../lib/sqlstore/collection");
-var sqlUtils = require("../lib/sqlstore/util");
+var {Store, Cache} = require("../lib/main");
+var constants = require("../lib/constants");
+var utils = require("./utils");
 var store = null;
 var Book = null;
 var Author = null;
@@ -52,16 +52,7 @@ exports.setUp = function() {
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Book, Author].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-            if (ctor.mapping.id.hasSequence() && store.dialect.hasSequenceSupport()) {
-                sqlUtils.dropSequence(conn, store.dialect, ctor.mapping.id.sequence, schemaName);
-            }
-        }
-    });
+    utils.drop(store, Author, Book);
     store.close();
 };
 
@@ -279,14 +270,14 @@ exports.testReloadInTransaction = function() {
     });
     book.save();
     author.books.invalidate();
-    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
     // the collection manipulation above isn't visible to other threads
     assert.strictEqual(spawn(function() {
         return Author.get(1).books.length;
     }).get(), 51);
     // but for this thread the collection already contains the added book
     assert.strictEqual(author.books.length, 52);
-    assert.strictEqual(author.books._state, Collection.STATE_CLEAN);
+    assert.strictEqual(author.books._state, constants.STATE_CLEAN);
     // even when retrieving a new author instance, the above added book is
     // contained in the collection
     assert.strictEqual(Author.get(1).books.length, 52);
@@ -376,7 +367,7 @@ exports.testRollbackWithoutReload = function() {
     assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
     store.abortTransaction();
     // the collection is reverted to it's previous state
-    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
     assert.strictEqual(store.entityCache.get(author.books._cacheKey), author.books.ids);
     // store's cache is untouched
     assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
@@ -408,7 +399,7 @@ exports.testRollbackWithReload = function() {
     var book = author.books.get(10);
     book.remove();
     author.books.invalidate();
-    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
     // accessing .length reloads the collection
     assert.strictEqual(author.books.length, 50);
     // reloading the collection creates a new IDs array different from the one in cache
@@ -425,7 +416,7 @@ exports.testRollbackWithReload = function() {
 
     store.abortTransaction();
     // the collection is reverted to it's previous state
-    assert.strictEqual(author.books._state, Collection.STATE_UNLOADED);
+    assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
     assert.strictEqual(store.entityCache.get(author.books._cacheKey), author.books.ids);
     assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
 };

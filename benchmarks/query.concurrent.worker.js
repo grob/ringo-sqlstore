@@ -1,32 +1,16 @@
 var term = require("ringo/term");
 var assert = require("assert");
-var {Store} = require("../lib/sqlstore/store");
-var {Cache} = require("../lib/sqlstore/cache");
+var Store = require("../lib/store");
 
 var store = null;
 var Author = null;
-
-var MAPPING_AUTHOR = {
-    // "schema": "TEST",
-    "table": "author",
-    "id": {
-        "column": "author_id",
-        "sequence": "author_id"
-    },
-    "properties": {
-        "name": {
-            "type": "string",
-            "column": "author_name",
-            "nullable": false
-        }
-    }
-};
 
 function onmessage(event) {
     var start = Date.now();
     store = new Store(event.data.connectionPool);
     store.setQueryCache(event.data.queryCache);
-    Author = store.defineEntity("Author", MAPPING_AUTHOR);
+    store.setEntityCache(event.data.entityCache || null);
+    Author = store.defineEntity("Author", event.data.mapping);
     var msPerQuery = [];
     for (let i=0; i<event.data.cnt; i+=1) {
         let s = Date.now();
@@ -34,6 +18,7 @@ function onmessage(event) {
         let author = store.query("select Author.* from Author where Author.id = :id", {
             "id": id
         })[0];
+        //let author = store.sqlQuery("select * from \"author\" where \"author_id\" = ?", [id])[0];
         msPerQuery[i] = Date.now() - s;
     }
     event.source.postMessage({

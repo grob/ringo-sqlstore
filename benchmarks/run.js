@@ -4,6 +4,8 @@ var term = require("ringo/term");
 var {Parser} = require("ringo/args");
 var {Profiler} = require("ringo/profiler");
 var {getOptimizationLevel} = require("ringo/engine");
+var logging = require("ringo/logging");
+logging.setConfig(getResource("../test/log4j.properties"));
 
 var config = require("../test/config");
 var database = "h2";
@@ -29,11 +31,11 @@ var run = function() {
             profiler.attach();
         }
         benchmark.start.apply(null, arguments);
+        if (profiler !== null) {
+            console.log("\n" + profiler.formatResult(30))
+        }
     } finally {
         benchmark.tearDown(dbProps);
-    }
-    if (profiler !== null) {
-        console.log("\n" + profiler.formatResult(30))
     }
 };
 
@@ -46,8 +48,8 @@ if (require.main == module.id) {
                 "' is not defined in config.js", term.RESET);
         system.exit(-1);
     }
+    console.dir(dbProps);
     var path = args.shift();
-    var file = null;
     if (!path) {
         term.writeln(term.RED, "Missing benchmark module argument", term.RESET);
         printUsage();
@@ -61,4 +63,4 @@ if (require.main == module.id) {
     }
     run.apply(null, args);
     system.exit(1);
-};
+}

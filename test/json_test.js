@@ -2,8 +2,8 @@ var runner = require("./runner");
 var assert = require("assert");
 var system = require("system");
 
-var {Store, Cache} = require("../lib/sqlstore/main");
-var sqlUtils = require("../lib/sqlstore/util");
+var {Store, Cache} = require("../lib/main");
+var utils = require("./utils");
 var store = null;
 var Author = null;
 var Book = null;
@@ -34,20 +34,13 @@ const MAPPING_BOOK = {
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
-    store.setEntityCache(new Cache());
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     Book = store.defineEntity("Book", MAPPING_BOOK);
     store.syncTables();
 };
 
 exports.tearDown = function() {
-    var conn = store.getConnection();
-    [Author, Book].forEach(function(ctor) {
-        var schemaName = ctor.mapping.schemaName || store.dialect.getDefaultSchema(conn);
-        if (sqlUtils.tableExists(conn, ctor.mapping.tableName, schemaName)) {
-            sqlUtils.dropTable(conn, store.dialect, ctor.mapping.tableName, schemaName);
-        }
-    });
+    utils.drop(store, Author, Book);
     store.close();
 };
 

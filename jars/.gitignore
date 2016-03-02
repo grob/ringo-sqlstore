@@ -1,0 +1,6 @@
+*
+!/.gitignore
+!/h2*.jar
+!/concurrentlinkedhashmap*.jar
+!/HikariCP*.jar
+!/javassist.jar
