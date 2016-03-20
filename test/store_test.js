@@ -6,6 +6,7 @@ var {Store} = require("../lib/main");
 var Key = require("../lib/key");
 var utils = require("./utils");
 var strings = require("ringo/utils/strings.js");
+var metaData = require("../lib/database/metadata");
 
 var store = null;
 var Author = null;
@@ -48,6 +49,28 @@ exports.testKey = function() {
     assert.throws(function() {
         key.id = 2;
     });
+};
+
+exports.testSyncTables = function() {
+    try {
+        var conn = store.getConnection();
+        metaData.tableExists(conn, store.dialect, MAPPING_AUTHOR.table);
+        if (store.dialect.hasSequenceSupport) {
+            metaData.sequenceExists(conn, store.dialect, MAPPING_AUTHOR.id.sequence);
+        }
+        var columns = metaData.getColumns(conn, store.dialect, MAPPING_AUTHOR.table);
+        assert.strictEqual(columns.length, 2);
+        var names = columns.reduce(function(arr, column) {
+            arr.push(column.name);
+            return arr;
+        }, []);
+        assert.deepEqual(names, [
+            MAPPING_AUTHOR.id.column,
+            MAPPING_AUTHOR.properties.name.column
+        ]);
+    } finally {
+        conn.close();
+    }
 };
 
 exports.testCRUD = function() {
