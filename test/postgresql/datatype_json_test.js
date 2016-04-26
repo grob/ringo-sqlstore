@@ -24,7 +24,6 @@ var store, Event, EventB;
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(config.postgresql));
-    store.setEntityCache(new Cache());
     Event = store.defineEntity("Event", MAPPING_EVENT_JSON);
     EventB = store.defineEntity("EventB", MAPPING_EVENT_JSONB);
     store.syncTables();
@@ -54,6 +53,19 @@ exports.testSaveObject = function() {
 
     assert.strictEqual(Event.all().length, 1);
     assert.strictEqual(EventB.all().length, 1);
+};
+
+exports.testGetSetNull = function() {
+    var values = [null, undefined];
+    for each (let value in values) {
+        let event = new Event({
+            "slog": "some event",
+            "data": value
+        });
+        event.save();
+        assert.isNotNull(Event.get(event.id, true));
+        assert.isNull(Event.get(event.id, true).data);
+    }
 };
 
 exports.testQueryObjects = function() {
