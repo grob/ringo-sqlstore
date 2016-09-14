@@ -116,6 +116,19 @@ exports.testInnerJoinQuery = function() {
     assert.strictEqual(result[1].id, authors[1].id);
 };
 
+exports.testMultipleJoins = function() {
+    var [authors, books] = populate();
+    var result = store.query("from Book b " +
+            "join Relation r on r.book = b.id " +
+            "join Author a on r.author = a.id " +
+            "where a.id = 1");
+    assert.strictEqual(result.length, 2);
+    result.forEach(function(obj, idx) {
+        assert.isTrue(obj instanceof Book);
+        assert.strictEqual(obj.id, books[idx].id);
+    });
+};
+
 //start the test runner if we're called directly from command line
 if (require.main == module.id) {
     system.exit(runner.run(exports, arguments));
