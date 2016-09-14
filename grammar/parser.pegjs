@@ -240,7 +240,7 @@ compare_rhs =
     / operand
 
 valueList =
-    head:value tail:( comma value)* {
+    head:expression tail:( comma expression)* {
         return toArray(head, tail);
     }
 

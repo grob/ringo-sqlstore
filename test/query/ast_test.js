@@ -231,12 +231,32 @@ exports.testInCondition = function() {
     assert.isTrue(value instanceof ast.InCondition);
     assert.strictEqual(value.values.length, 3);
     assert.isFalse(value.isNot);
-    value.values.forEach(function(val) {
-        assert.isTrue(val instanceof ast.IntValue);
+    value.values.forEach(function(val, idx) {
+        assert.isTrue(val instanceof ast.Expression);
+        assert.strictEqual(val.andConditions.conditions.length, 1);
+        let condition = val.andConditions.conditions[0];
+        assert.isTrue(condition.left instanceof ast.IntValue);
+        assert.strictEqual(condition.left.value, idx + 1);
     });
     value = Parser.parse("not in (1,2,3)", options);
     assert.isTrue(value instanceof ast.InCondition);
     assert.isTrue(value.isNot);
+};
+
+exports.testInConditionExpression = function() {
+    var options = {"startRule": "condition_rhs"};
+    var value = Parser.parse("in (1 + 2)", options);
+    assert.strictEqual(value.values.length, 1);
+    assert.isFalse(value.isNot);
+    value.values.forEach(function(val, idx) {
+        assert.isTrue(val instanceof ast.Expression);
+        assert.strictEqual(val.andConditions.conditions.length, 1);
+        let condition = val.andConditions.conditions[0];
+        assert.isTrue(condition.left instanceof ast.Summand);
+        assert.strictEqual(condition.left.left.value, 1);
+        assert.strictEqual(condition.left.operand, "+");
+        assert.strictEqual(condition.left.right.value, 2);
+    });
 };
 
 exports.testLikeCondition = function() {
