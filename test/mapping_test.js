@@ -10,6 +10,7 @@ var utils = require("./utils");
 
 var store = null;
 var Model = null;
+var ParentModel = null;
 
 var getColumnMetaData = function(store, mapping, propertName) {
     var propMapping = mapping.getMapping(propertName);
@@ -38,6 +39,7 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     Model && utils.drop(store, Model);
+    ParentModel && utils.drop(store, ParentModel);
     store.close();
 };
 
@@ -47,17 +49,31 @@ exports.testNullable = function() {
             "name": {
                 "type": "string",
                 "nullable": false
+            },
+            "parent": {
+                "type": "object",
+                "entity": "ParentModel",
+                "nullable": false
             }
+        }
+    });
+    ParentModel = store.defineEntity("ParentModel", {
+        "properties": {
+            "name": "string"
         }
     });
     store.syncTables();
     // check table index metadata
     assert.isFalse(getColumnMetaData(store, Model.mapping, "name").nullable);
+    assert.isFalse(getColumnMetaData(store, Model.mapping, "parent").nullable);
     // functional test
-    new Model({"name": "John Doe"}).save();
+    new Model({"name": "John Doe", "parent": new ParentModel()}).save();
     assert.strictEqual(Model.all().length, 1);
     assert.throws(function() {
         new Model().save();
+    }, java.sql.SQLException);
+    assert.throws(function() {
+        new Model({"name": "model"}).save();
     }, java.sql.SQLException);
 };
 
