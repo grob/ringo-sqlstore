@@ -4,6 +4,7 @@ var system = require("system");
 exports.testCollectionManyToMany = require("./collection_manytomany_test");
 exports.testCollection = require("./collection_test");
 exports.testCollectionCache = require("./collection_cache_test");
+exports.testIndex = require("./index_test");
 exports.testJSON = require("./json_test");
 exports.testLifecycle = require("./lifecycle_test");
 exports.testMapping = require("./mapping_test");

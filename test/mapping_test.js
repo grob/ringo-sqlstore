@@ -91,9 +91,11 @@ exports.testUnique = function() {
     store.syncTables();
     // check table index metadata
     var indexInfo = getIndexInfo(Model.mapping, true);
-    assert.isTrue(indexInfo.some(function(index) {
-        return index.column === Model.mapping.properties.name.column &&
-                        index.isUnique === true;
+    assert.isTrue(Object.keys(indexInfo).some(function(key) {
+        let index = indexInfo[key];
+        return index.isUnique === true && index.columns.some(function(column) {
+            return column.name === Model.mapping.properties.name.column;
+        });
     }));
     // functional test
     var props = {"name": "John Doe"};
