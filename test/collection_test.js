@@ -215,7 +215,7 @@ exports.testWithLocalAndForeignProperty = function() {
 exports.testAggressiveLoading = function() {
     populate(11);
     // this is important, because populating also populates the cache
-    store.entityCache.clear();
+    store.entityCache.invalidateAll();
     Author = store.defineEntity("Author", {
         "properties": {
             "name": {
@@ -281,7 +281,7 @@ exports.testReloadInTransaction = function() {
     // the store's cache
     store.commitTransaction();
     // after commit the ids of the above collection is stored in cache
-    const cachedIds = store.entityCache.get(author.books._cacheKey);
+    const cachedIds = store.entityCache.getIfPresent(author.books._cacheKey);
     assert.strictEqual(cachedIds, author.books.ids);
     // after commit the change is visible to other threads too
     assert.strictEqual(spawn(function() {
@@ -309,7 +309,7 @@ exports.testInvalidateInTransaction = function() {
     author.save();
     // make sure the collection is cached
     assert.strictEqual(author.books.length, 51);
-    assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
+    assert.strictEqual(author.books.ids, store.entityCache.getIfPresent(author.books._cacheKey));
 
     store.beginTransaction();
     const book = new Book({
@@ -319,13 +319,13 @@ exports.testInvalidateInTransaction = function() {
     });
     book.save();
     author.books.invalidate();
-    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author.books._cacheKey));
     // cached collection is untouched
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).length, 51);
     store.commitTransaction();
     // after commit, the collection has been removed from the cache, since
     // it hasn't been reloaded during the transaction
-    assert.isFalse(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author.books._cacheKey));
 };
 
 exports.testRollbackWithoutReload = function() {
@@ -348,7 +348,7 @@ exports.testRollbackWithoutReload = function() {
     author.save();
     // make sure the collection is cached
     assert.strictEqual(author.books.length, 51);
-    assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
+    assert.strictEqual(author.books.ids, store.entityCache.getIfPresent(author.books._cacheKey));
     store.beginTransaction();
     const book = new Book({
         "title": "New Book 2",
@@ -357,16 +357,16 @@ exports.testRollbackWithoutReload = function() {
     });
     book.save();
     author.books.invalidate();
-    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author.books._cacheKey));
     // cached collection is untouched
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).length, 51);
     store.abortTransaction();
     // the collection is reverted to it's previous state
     assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey), author.books.ids);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey), author.books.ids);
     // store's cache is untouched
-    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
+    assert.isNotNull(store.entityCache.getIfPresent(author.books._cacheKey));
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).length, 51);
 };
 
 exports.testRollbackWithReload = function() {
@@ -389,7 +389,7 @@ exports.testRollbackWithReload = function() {
     author.save();
     // make sure the collection is cached
     assert.strictEqual(author.books.length, 51);
-    assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
+    assert.strictEqual(author.books.ids, store.entityCache.getIfPresent(author.books._cacheKey));
     store.beginTransaction();
     const book = author.books.get(10);
     book.remove();
@@ -398,12 +398,12 @@ exports.testRollbackWithReload = function() {
     // accessing .length reloads the collection
     assert.strictEqual(author.books.length, 50);
     // reloading the collection creates a new IDs array different from the one in cache
-    assert.isFalse(store.entityCache.get(author.books._cacheKey) === author.books.ids);
+    assert.isFalse(store.entityCache.getIfPresent(author.books._cacheKey) === author.books.ids);
     // the removed book isn't in collection anymore
     assert.strictEqual(author.books.indexOf(book), -1);
     // since we're in an open transaction, the cached collection is untouched
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).indexOf(book.id), 10);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).length, 51);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).indexOf(book.id), 10);
     // so the remove above isn't visible to other threads
     assert.strictEqual(spawn(function() {
         return Author.get(1).books.length;
@@ -412,8 +412,8 @@ exports.testRollbackWithReload = function() {
     store.abortTransaction();
     // the collection is reverted to it's previous state
     assert.strictEqual(author.books._state, constants.STATE_UNLOADED);
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey), author.books.ids);
-    assert.strictEqual(store.entityCache.get(author.books._cacheKey).length, 51);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey), author.books.ids);
+    assert.strictEqual(store.entityCache.getIfPresent(author.books._cacheKey).length, 51);
 };
 
 //start the test runner if we're called directly from command line

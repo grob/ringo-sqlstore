@@ -1,6 +1,5 @@
 *
 !/.gitignore
 !/h2*.jar
-!/concurrentlinkedhashmap*.jar
 !/HikariCP*.jar
-!/javassist.jar
+!/caffeine-2.6.0.jar

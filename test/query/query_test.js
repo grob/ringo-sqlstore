@@ -118,14 +118,14 @@ exports.testSelectEntityCached = function() {
     store.setEntityCache(new Cache());
     const result = store.query("select Book from Book");
     assert.strictEqual(result.length, 10);
-    assert.strictEqual(store.entityCache.size(), 10);
+    assert.strictEqual(store.entityCache.estimatedSize(), 10);
     result.forEach(function(book, idx) {
         assert.strictEqual(book.id, idx + 1);
         assert.strictEqual(book._entity, constants.LOAD_LAZY);
-        assert.isTrue(store.entityCache.containsKey(book._cacheKey));
-        assert.strictEqual(store.entityCache.get(book._cacheKey), constants.LOAD_LAZY);
+        assert.isNotNull(store.entityCache.getIfPresent(book._cacheKey));
+        assert.strictEqual(store.entityCache.getIfPresent(book._cacheKey), constants.LOAD_LAZY);
     });
-    store.entityCache.clear();
+    store.entityCache.invalidateAll();
     store.setEntityCache(null);
 };
 
@@ -161,14 +161,14 @@ exports.testSelectEntityAggressiveCached = function() {
         assert.strictEqual(book.id, idx + 1);
         assert.isNotNull(book._entity);
         assert.strictEqual(book._entity[titleColumn], "Book " + idx);
-        assert.isTrue(store.entityCache.containsKey(book._cacheKey));
+        assert.isNotNull(store.entityCache.getIfPresent(book._cacheKey));
         // books are loaded aggressively, so cache contains the entity objects
-        assert.isNotNull(store.entityCache.get(book._cacheKey));
-        assert.isTrue(store.entityCache.containsKey(book.author._cacheKey));
+        assert.isNotNull(store.entityCache.getIfPresent(book._cacheKey));
+        assert.isNotNull(store.entityCache.getIfPresent(book.author._cacheKey));
         // but authors are not, therefor the cache contains null
-        assert.strictEqual(store.entityCache.get(book.author._cacheKey), constants.LOAD_LAZY);
+        assert.strictEqual(store.entityCache.getIfPresent(book.author._cacheKey), constants.LOAD_LAZY);
     });
-    store.entityCache.clear();
+    store.entityCache.invalidateAll();
     store.setEntityCache(null);
 };
 

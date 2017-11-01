@@ -106,18 +106,18 @@ exports.testCommitRemove = function() {
     assert.isFalse(store.hasTransaction());
     // populate the author's books collection and ensure it's in entity cache
     assert.strictEqual(author.books.length, books.length);
-    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author.books._cacheKey));
     // remove the author, but roll back the transaction - the cached collection
     // should stay in entity cache
     transaction = store.beginTransaction();
     author.remove();
     transaction.rollback();
-    assert.isTrue(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author.books._cacheKey));
     // now remove the author - this must evict the mapped collection from cache
     transaction = store.beginTransaction();
     author.remove();
     transaction.commit();
-    assert.isFalse(store.entityCache.containsKey(author.books._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author.books._cacheKey));
 };
 
 exports.testBeginTransaction = function() {
@@ -220,16 +220,16 @@ exports.testInsertIsolation = function() {
         return Author.get(1);
     }).get());
     // nor is the storable's _entity in cache
-    assert.isFalse(store.entityCache.containsKey(author._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author._cacheKey));
     // even after re-getting the storable its _entity isn't cached
     Author.get(1);
-    assert.isFalse(store.entityCache.containsKey(author._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author._cacheKey));
     // same happens when querying for the newly created author instance
     assert.strictEqual(store.query("from Author where Author.id = 1")[0].id, 1);
-    assert.isFalse(store.entityCache.containsKey(author._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author._cacheKey));
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
-    assert.isTrue(store.entityCache.containsKey(author._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author._cacheKey));
     assert.isTrue(author._key.equals(spawn(function() {
         return Author.get(1)._key;
     }).get()));
@@ -240,7 +240,7 @@ exports.testUpdateIsolation = function() {
         "name": "John Doe"
     });
     author.save();
-    assert.isTrue(store.entityCache.containsKey(author._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author._cacheKey));
     store.beginTransaction();
     author.name = "Jane Foo";
     author.save();
@@ -249,16 +249,16 @@ exports.testUpdateIsolation = function() {
         return Author.get(1).name;
     }).get(), "John Doe");
     // nor is the change above in cache
-    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
+    assert.strictEqual(store.entityCache.getIfPresent(author._cacheKey).author_name, "John Doe");
     // even after re-getting the storable its _entity isn't cached
     assert.strictEqual(Author.get(1).name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
+    assert.strictEqual(store.entityCache.getIfPresent(author._cacheKey).author_name, "John Doe");
     // same happens when querying for the newly created author instance
     assert.strictEqual(store.query("from Author a where a.id = 1")[0].name, "Jane Foo");
-    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "John Doe");
+    assert.strictEqual(store.entityCache.getIfPresent(author._cacheKey).author_name, "John Doe");
     store.commitTransaction();
     // after commit the storable is visible and it's _entity cached
-    assert.strictEqual(store.entityCache.get(author._cacheKey).author_name, "Jane Foo");
+    assert.strictEqual(store.entityCache.getIfPresent(author._cacheKey).author_name, "Jane Foo");
     assert.strictEqual(spawn(function() {
         return Author.get(1).name;
     }).get(), "Jane Foo");
@@ -276,10 +276,10 @@ exports.testRemoveIsolation = function() {
         return Author.get(1);
     }).get());
     // nor is the change above in cache
-    assert.isTrue(store.entityCache.containsKey(author._cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(author._cacheKey));
     store.commitTransaction();
     // after commit the storable is gone from cache and for other threads too
-    assert.isFalse(store.entityCache.containsKey(author._cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(author._cacheKey));
     assert.isNull(spawn(function() {
         return Author.get(1);
     }).get());
@@ -310,7 +310,7 @@ exports.testCommitEvent = function() {
     assert.strictEqual(author.books.length, 1);
     // clear the entity cache - remove() should load the entity before deleting
     // the storable instance
-    store.entityCache.clear();
+    store.entityCache.invalidateAll();
     store.beginTransaction();
     Author.get(1).remove();
     Book.get(1).remove();
@@ -366,7 +366,7 @@ exports.testOnRemove = function() {
     });
     author.save();
     // remove the entity from the cache
-    store.entityCache.clear();
+    store.entityCache.invalidateAll();
     store.beginTransaction();
     // remove a newly created instance, i.e. it's data is not
     // loaded when remove() is called

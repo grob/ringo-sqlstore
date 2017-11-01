@@ -111,10 +111,10 @@ exports.testCollectionInvalidation = function() {
     author = Author.get(1);
     assert.strictEqual(author.books.length, 1);
     const cacheKey = author.books._cacheKey;
-    assert.isTrue(store.entityCache.containsKey(cacheKey));
+    assert.isNotNull(store.entityCache.getIfPresent(cacheKey));
     // assert.strictEqual(author.books._state, Collection.)
     author.remove();
-    assert.isFalse(store.entityCache.containsKey(cacheKey));
+    assert.isNull(store.entityCache.getIfPresent(cacheKey));
 };
 
 exports.testStorableRemoval = function() {
