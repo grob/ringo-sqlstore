@@ -1,13 +1,13 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var Parser = require("../../lib/query/parser");
-var ast = require("../../lib/query/ast");
+const Parser = require("../../lib/query/parser");
+const ast = require("../../lib/query/ast");
 
 exports.testStringValue = function() {
-    var options = {"startRule": "value_string"};
-    var value = Parser.parse('"test"', options);
+    const options = {"startRule": "value_string"};
+    let value = Parser.parse('"test"', options);
     assert.isTrue(value instanceof ast.StringValue);
     assert.strictEqual(value.value, "test");
     // escaped string
@@ -17,8 +17,8 @@ exports.testStringValue = function() {
 };
 
 exports.testIntValue = function() {
-    var options = {"startRule": "value_int"};
-    var value = Parser.parse("123", options);
+    const options = {"startRule": "value_int"};
+    const value = Parser.parse("123", options);
     assert.isTrue(value instanceof ast.IntValue);
     assert.strictEqual(value.value, 123);
     assert.strictEqual(Parser.parse("10e3", options).value, 10000);
@@ -27,8 +27,8 @@ exports.testIntValue = function() {
 };
 
 exports.testDecimalValue = function() {
-    var options = {"startRule": "value_decimal"};
-    var value = Parser.parse("12.3", options);
+    const options = {"startRule": "value_decimal"};
+    const value = Parser.parse("12.3", options);
     assert.isTrue(value instanceof ast.DecimalValue);
     assert.strictEqual(value.value, 12.3);
     assert.strictEqual(Parser.parse("1.2e3", options).value, 1200);
@@ -37,36 +37,36 @@ exports.testDecimalValue = function() {
 };
 
 exports.testNumericValue = function() {
-    var options = {"startRule": "value_numeric"};
+    const options = {"startRule": "value_numeric"};
     assert.isTrue(Parser.parse("123", options) instanceof ast.IntValue);
     assert.isTrue(Parser.parse("12.3", options) instanceof ast.DecimalValue);
 };
 
 exports.testNullValue = function() {
-    var options = {"startRule": "NULL"};
-    var value = Parser.parse("null", options);
+    const options = {"startRule": "NULL"};
+    const value = Parser.parse("null", options);
     assert.isTrue(value instanceof ast.NullValue);
     assert.strictEqual(value.value, null);
 };
 
 exports.testBooleanValue = function() {
-    var options = {"startRule": "boolean"};
-    var value = Parser.parse("true", options);
+    const options = {"startRule": "boolean"};
+    const value = Parser.parse("true", options);
     assert.isTrue(value instanceof ast.BooleanValue);
     assert.strictEqual(value.value, true);
     assert.strictEqual(Parser.parse("false", options).value, false);
 };
 
 exports.testParameterValue = function() {
-    var options = {"startRule": "value_parameter"};
-    var value = Parser.parse(":name", options);
+    const options = {"startRule": "value_parameter"};
+    const value = Parser.parse(":name", options);
     assert.isTrue(value instanceof ast.ParameterValue);
     assert.strictEqual(value.value, "name");
 };
 
 exports.testEntity = function() {
-    var options = {"startRule": "entity"};
-    var value = Parser.parse("User", options);
+    const options = {"startRule": "entity"};
+    let value = Parser.parse("User", options);
     assert.isTrue(value instanceof ast.Entity);
     assert.strictEqual(value.name, "User");
     value = Parser.parse("User as u", options);
@@ -74,26 +74,26 @@ exports.testEntity = function() {
 };
 
 exports.testSelectEntity = function() {
-    var options = {"startRule": "selectEntity"};
-    var value = Parser.parse("User.*", options);
+    const options = {"startRule": "selectEntity"};
+    const value = Parser.parse("User.*", options);
     assert.isTrue(value instanceof ast.SelectEntity);
     assert.strictEqual(value.name, "User");
 };
 
 exports.testAggregation = function() {
-    var options = {"startRule": "aggregation"};
-    for each (let type in ["max", "min", "sum", "avg", "count"]) {
+    const options = {"startRule": "aggregation"};
+    ["max", "min", "sum", "avg", "count"].forEach(function(type) {
         let value = Parser.parse(type + " ( User.id )", options);
         assert.isTrue(value instanceof ast.Aggregation, "Aggregation " + type);
         assert.strictEqual(value.type, type.toUpperCase(), "Aggregation " + type);
         value = Parser.parse(type + " (distinct User.id )", options);
         assert.strictEqual(value.distinct, "DISTINCT");
-    }
+    });
 };
 
 exports.testSelectExpression = function() {
-    var options = {"startRule": "selectExpression"};
-    var value;
+    const options = {"startRule": "selectExpression"};
+    let value;
     // non-aliased ident
     value = Parser.parse("Author.id", options);
     assert.isTrue(value instanceof ast.SelectExpression);
@@ -180,32 +180,31 @@ exports.testSelectExpression = function() {
 };
 
 exports.testIdent = function() {
-    var options = {"startRule": "ident"};
-    var value = Parser.parse("User.id", options);
+    const options = {"startRule": "ident"};
+    const value = Parser.parse("User.id", options);
     assert.strictEqual(value.entity, "User");
     assert.strictEqual(value.property, "id");
     // TODO: assert.strictEqual(Parser.parse("id", options).entity, null);
 };
 
 exports.testComparisonOperators = function() {
-    var options = {"startRule": "compare"};
-    var operators = ["<>", "<=", ">=", "=", "<", ">", "!="];
-    for each (let operator in operators) {
+    const options = {"startRule": "compare"};
+    ["<>", "<=", ">=", "=", "<", ">", "!="].forEach(function(operator) {
         assert.strictEqual(Parser.parse(operator, options), operator);
-    }
+    });
 };
 
 exports.testComparison = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("= 1", options);
+    const options = {"startRule": "condition_rhs"};
+    const value = Parser.parse("= 1", options);
     assert.isTrue(value instanceof ast.Comparison);
     assert.strictEqual(value.operator, "=");
     assert.isTrue(value.value instanceof ast.IntValue);
 };
 
 exports.testIsNullCondition = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("is null", options);
+    const options = {"startRule": "condition_rhs"};
+    let value = Parser.parse("is null", options);
     assert.isTrue(value instanceof ast.IsNullCondition);
     assert.isFalse(value.isNot);
     // not null
@@ -214,8 +213,8 @@ exports.testIsNullCondition = function() {
 };
 
 exports.testBetweenCondition = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("between 1 and 10", options);
+    const options = {"startRule": "condition_rhs"};
+    let value = Parser.parse("between 1 and 10", options);
     assert.isTrue(value instanceof ast.BetweenCondition);
     assert.isTrue(value.start instanceof ast.IntValue);
     assert.isTrue(value.end instanceof ast.IntValue);
@@ -226,8 +225,8 @@ exports.testBetweenCondition = function() {
 };
 
 exports.testInCondition = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("in (1,2,3)", options);
+    const options = {"startRule": "condition_rhs"};
+    let value = Parser.parse("in (1,2,3)", options);
     assert.isTrue(value instanceof ast.InCondition);
     assert.strictEqual(value.values.length, 3);
     assert.isFalse(value.isNot);
@@ -244,8 +243,8 @@ exports.testInCondition = function() {
 };
 
 exports.testInConditionExpression = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("in (1 + 2)", options);
+    const options = {"startRule": "condition_rhs"};
+    const value = Parser.parse("in (1 + 2)", options);
     assert.strictEqual(value.values.length, 1);
     assert.isFalse(value.isNot);
     value.values.forEach(function(val, idx) {
@@ -260,8 +259,8 @@ exports.testInConditionExpression = function() {
 };
 
 exports.testLikeCondition = function() {
-    var options = {"startRule": "condition_rhs"};
-    var value = Parser.parse("like '%test%'", options);
+    const options = {"startRule": "condition_rhs"};
+    let value = Parser.parse("like '%test%'", options);
     assert.isTrue(value instanceof ast.LikeCondition);
     assert.isFalse(value.isNot);
     assert.isTrue(value.value instanceof ast.StringValue);
@@ -271,8 +270,8 @@ exports.testLikeCondition = function() {
 };
 
 exports.testCondition = function() {
-    var options = {"startRule": "condition"};
-    var value = Parser.parse("User.id", options);
+    const options = {"startRule": "condition"};
+    let value = Parser.parse("User.id", options);
     assert.isTrue(value instanceof ast.Condition);
     assert.isTrue(value.left instanceof ast.Ident);
     assert.strictEqual(value.right, null);
@@ -282,15 +281,15 @@ exports.testCondition = function() {
 };
 
 exports.testNotCondition  = function() {
-    var options = {"startRule": "condition"};
-    var value = Parser.parse("not Author.id = 1", options);
+    const options = {"startRule": "condition"};
+    const value = Parser.parse("not Author.id = 1", options);
     assert.isTrue(value instanceof ast.NotCondition);
     assert.isTrue(value.value instanceof ast.Condition);
 };
 
 exports.testExpression = function() {
-    var options = {"startRule": "expression"};
-    var value = Parser.parse("Author.id = 1", options);
+    const options = {"startRule": "expression"};
+    let value = Parser.parse("Author.id = 1", options);
     assert.isTrue(value instanceof ast.Expression);
     assert.isNotNull(value.andConditions);
     assert.isTrue(value.andConditions instanceof ast.ConditionList);
@@ -305,12 +304,12 @@ exports.testExpression = function() {
     value = Parser.parse("Author.id = 1 and (Author.id = 2 or Author.id = 3 or Author.id = 4)", options);
     assert.strictEqual(value.andConditions.conditions.length, 2);
     assert.isNull(value.orConditions);
-    var conditionList = value.andConditions.conditions;
+    const conditionList = value.andConditions.conditions;
     assert.isTrue(conditionList[0] instanceof ast.Condition);
     assert.isTrue(conditionList[1] instanceof ast.Condition);
     assert.isTrue(conditionList[1].left instanceof ast.Expression);
     assert.isNull(conditionList[1].right);
-    var expression = conditionList[1].left;
+    const expression = conditionList[1].left;
     assert.isNull(expression.andConditions);
     assert.isTrue(expression.orConditions instanceof ast.ConditionList);
     assert.strictEqual(expression.orConditions.conditions.length, 3);
@@ -330,8 +329,8 @@ exports.testExpression = function() {
 };
 
 exports.testOrderBy = function() {
-    var options = {"startRule": "order"};
-    var value = Parser.parse("Author.id", options);
+    const options = {"startRule": "order"};
+    let value = Parser.parse("Author.id", options);
     assert.isTrue(value instanceof ast.OrderBy);
     assert.isTrue(value.value instanceof ast.Expression);
     Parser.parse("min(Author.id)", options);
@@ -349,8 +348,8 @@ exports.testOrderBy = function() {
 };
 
 exports.testOrderByClause = function() {
-    var options = {"startRule": "orderByClause"};
-    var value = Parser.parse("order by Author.id", options);
+    const options = {"startRule": "orderByClause"};
+    let value = Parser.parse("order by Author.id", options);
     assert.isTrue(value instanceof ast.OrderByClause);
     assert.strictEqual(value.list.length, 1);
     assert.isTrue(value.list[0] instanceof ast.OrderBy);
@@ -359,8 +358,8 @@ exports.testOrderByClause = function() {
 };
 
 exports.testGroupByClause = function() {
-    var options = {"startRule": "groupByClause"};
-    var value = Parser.parse("group by Author.id", options);
+    const options = {"startRule": "groupByClause"};
+    let value = Parser.parse("group by Author.id", options);
     assert.isTrue(value instanceof ast.GroupByClause);
     assert.strictEqual(value.list.length, 1);
     assert.isTrue(value.list[0] instanceof ast.Ident);
@@ -369,12 +368,12 @@ exports.testGroupByClause = function() {
 };
 
 exports.testHavingClause = function() {
-    var options = {"startRule": "havingClause"};
-    var value = Parser.parse("having Author.id > 10", options);
+    const options = {"startRule": "havingClause"};
+    let value = Parser.parse("having Author.id > 10", options);
     assert.isTrue(value instanceof ast.HavingClause);
     assert.isTrue(value.value instanceof ast.Expression);
     assert.strictEqual(value.value.andConditions.conditions.length, 1);
-    var condition = value.value.andConditions.conditions[0];
+    let condition = value.value.andConditions.conditions[0];
     assert.isTrue(condition.left instanceof ast.Ident);
     assert.isTrue(condition.right instanceof ast.Comparison);
     value = Parser.parse("having max(Author.id) > 10", options);
@@ -384,21 +383,21 @@ exports.testHavingClause = function() {
     // multiple having conditions
     value = Parser.parse("having max(Author.id) > 10 and min(Author.id) < 20", options);
     assert.strictEqual(value.value.andConditions.conditions.length, 2);
-    for each (let condition in value.value.andConditions.conditions) {
+    value.value.andConditions.conditions.forEach(function(condition) {
         assert.isTrue(condition.left instanceof ast.Aggregation);
-    }
+    });
 };
 
 exports.testWhereClause = function() {
-    var options = {"startRule": "whereClause"};
-    var value = Parser.parse("where Author.id > 10", options);
+    const options = {"startRule": "whereClause"};
+    const value = Parser.parse("where Author.id > 10", options);
     assert.isTrue(value instanceof ast.WhereClause);
     assert.isTrue(value.value instanceof ast.Expression);
 };
 
 exports.testFromClause = function() {
-    var options = {"startRule": "fromClause"};
-    var value = Parser.parse("from Author", options);
+    const options = {"startRule": "fromClause"};
+    let value = Parser.parse("from Author", options);
     assert.isTrue(value instanceof ast.FromClause);
     assert.isTrue(value.list[0] instanceof ast.Entity);
     assert.strictEqual(value.list.length, 1);
@@ -408,8 +407,8 @@ exports.testFromClause = function() {
 };
 
 exports.testSelectClause = function() {
-    var options = {"startRule": "selectClause"};
-    var value = Parser.parse("select User.id", options);
+    const options = {"startRule": "selectClause"};
+    let value = Parser.parse("select User.id", options);
     assert.isTrue(value instanceof ast.SelectClause);
     assert.strictEqual(value.list.length, 1);
     // multiple idents
@@ -430,8 +429,8 @@ exports.testSelectClause = function() {
 };
 
 exports.testJoinClause = function() {
-    var options = {"startRule": "joinClause"};
-    var value = Parser.parse("join Book on Author.id = Book.author", options);
+    const options = {"startRule": "joinClause"};
+    let value = Parser.parse("join Book on Author.id = Book.author", options);
     assert.isTrue(value instanceof ast.JoinClause);
     assert.strictEqual(value.list.length, 1);
     assert.isTrue(value.list[0] instanceof ast.InnerJoin);
@@ -441,8 +440,8 @@ exports.testJoinClause = function() {
 };
 
 exports.testInnerJoin = function() {
-    var options = {"startRule": "innerJoin"};
-    var value = Parser.parse("inner join Book on Author.id = Book.author", options);
+    const options = {"startRule": "innerJoin"};
+    let value = Parser.parse("inner join Book on Author.id = Book.author", options);
     assert.isTrue(value instanceof ast.InnerJoin);
     assert.isTrue(value.entity instanceof ast.Entity);
     assert.isTrue(value.predicate instanceof ast.Expression);
@@ -456,8 +455,8 @@ exports.testInnerJoin = function() {
 };
 
 exports.testOuterJoin = function() {
-    var options = {"startRule": "outerJoin"};
-    var value = Parser.parse("left outer join Book on Author.id = Book.author", options);
+    const options = {"startRule": "outerJoin"};
+    let value = Parser.parse("left outer join Book on Author.id = Book.author", options);
     assert.isTrue(value instanceof ast.OuterJoin);
     assert.strictEqual(value.side, "LEFT");
     assert.isTrue(value.entity instanceof ast.Entity);
@@ -467,8 +466,8 @@ exports.testOuterJoin = function() {
 };
 
 exports.testRangeClause = function() {
-    var options = {"startRule": "rangeClause"};
-    var value = Parser.parse("limit 100", options);
+    const options = {"startRule": "rangeClause"};
+    let value = Parser.parse("limit 100", options);
     assert.isTrue(value instanceof ast.RangeClause);
     assert.strictEqual(value.limit, 100);
     assert.strictEqual(value.offset, 0);
@@ -492,17 +491,17 @@ exports.testRangeClause = function() {
 };
 
 exports.testModifier = function() {
-    var options = {"startRule": "selectClause"};
-    for each (let modifier in ["distinct", "all"]) {
+    const options = {"startRule": "selectClause"};
+    ["distinct", "all"].forEach(function(modifier) {
         let value = Parser.parse("select " + modifier + " a", options);
         assert.isTrue(value instanceof ast.SelectClause);
         assert.strictEqual(value.modifier, modifier.toUpperCase());
-    }
+    });
 };
 
 exports.testSubSelect = function() {
-    var options = {"startRule": "condition"};
-    var value = Parser.parse("Author.salary > all(select avg(Author.salary) from Author)", options);
+    const options = {"startRule": "condition"};
+    const value = Parser.parse("Author.salary > all(select avg(Author.salary) from Author)", options);
     assert.isTrue(value.left instanceof ast.Ident);
     assert.isTrue(value.right instanceof ast.Comparison);
     assert.isTrue(value.right.value instanceof ast.SubSelect);

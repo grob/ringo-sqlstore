@@ -1,13 +1,13 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var constants = require("../lib/constants");
-var utils = require("./utils");
-var store = null;
-var Book = null;
-var Author = null;
+const {Store, Cache} = require("../lib/main");
+const constants = require("../lib/constants");
+const utils = require("./utils");
+let store = null;
+let Book = null;
+let Author = null;
 
 const MAPPING_BOOK = {
     "properties": {
@@ -30,10 +30,10 @@ const MAPPING_BOOK = {
 
 function populate(nrOfBooks) {
     store.beginTransaction();
-    for (var i=0; i<nrOfBooks; i+=1) {
-        var nr = i + 1;
-        var authorId = (i % 2) + 1;
-        var book = new Book({
+    for (let i=0; i<nrOfBooks; i+=1) {
+        let nr = i + 1;
+        let authorId = (i % 2) + 1;
+        let book = new Book({
             "title": "Book " + nr,
             "authorId": authorId,
             "available": (i % 2) === 0
@@ -41,7 +41,6 @@ function populate(nrOfBooks) {
         book.save();
     }
     store.commitTransaction();
-    return;
 };
 
 exports.setUp = function() {
@@ -73,7 +72,7 @@ exports.testBasics = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of all books"
     });
     // "books" collection is null as long as author is transient
@@ -82,15 +81,14 @@ exports.testBasics = function() {
     // after persisting "books" collection is existing and populated at first access
     assert.strictEqual(author.books.length, 11);
     // iteration tests
-    for (var i=0; i<author.books.length; i+=1) {
+    for (let i=0; i<author.books.length; i+=1) {
         assert.strictEqual(author.books.get(i).id, i + 1);
     }
-    var cnt = 0;
-    for each (var book in author.books) {
+    let cnt = author.books.reduce(function(cnt, book) {
         assert.isTrue(book instanceof Book);
         assert.strictEqual(book.id, cnt + 1);
-        cnt += 1;
-    }
+        return cnt + 1;
+    }, 0);
     assert.strictEqual(cnt, author.books.length);
     cnt = 0;
     author.books.forEach(function(book, idx) {
@@ -115,13 +113,12 @@ exports.testBasics = function() {
     assert.isTrue(author.books.every(function(book) {
         return book instanceof Book;
     }));
-    var ids = author.books.map(function(book) {
+    const ids = author.books.map(function(book) {
         return book.id;
     });
     ids.forEach(function(id, idx) {
         assert.strictEqual(id, idx + 1);
     });
-    return;
 };
 
 exports.testWithQueryParameter = function() {
@@ -141,7 +138,7 @@ exports.testWithQueryParameter = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    let author = new Author({
         "name": "Author of half of the books"
     });
     author.save();
@@ -172,7 +169,7 @@ exports.testWithForeignProperty = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books"
     });
     assert.isNull(author.books);
@@ -181,7 +178,6 @@ exports.testWithForeignProperty = function() {
     assert.strictEqual(author.books.length, 6);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0).id, 11);
-    return;
 };
 
 /**
@@ -204,7 +200,7 @@ exports.testWithLocalAndForeignProperty = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books",
         "realId": 2 // mimick other author
     });
@@ -214,7 +210,6 @@ exports.testWithLocalAndForeignProperty = function() {
     assert.strictEqual(author.books.length, 5);
     // due to ordering first book is the last one
     assert.strictEqual(author.books.get(0).id, 10);
-    return;
 };
 
 exports.testAggressiveLoading = function() {
@@ -233,14 +228,14 @@ exports.testAggressiveLoading = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     author.save();
     assert.strictEqual(author.books.length, 6);
-    for each (let book in author.books.all) {
+    author.books.all.forEach(function(book) {
         assert.isNotNull(book._entity);
-    }
+    });
 };
 
 exports.testReloadInTransaction = function() {
@@ -257,13 +252,13 @@ exports.testReloadInTransaction = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books"
     });
     author.save();
 
     store.beginTransaction();
-    var book = new Book({
+    const book = new Book({
         "title": "New Book",
         "authorId": 1,
         "available": true
@@ -286,7 +281,7 @@ exports.testReloadInTransaction = function() {
     // the store's cache
     store.commitTransaction();
     // after commit the ids of the above collection is stored in cache
-    var cachedIds = store.entityCache.get(author.books._cacheKey);
+    const cachedIds = store.entityCache.get(author.books._cacheKey);
     assert.strictEqual(cachedIds, author.books.ids);
     // after commit the change is visible to other threads too
     assert.strictEqual(spawn(function() {
@@ -308,7 +303,7 @@ exports.testInvalidateInTransaction = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books"
     });
     author.save();
@@ -317,7 +312,7 @@ exports.testInvalidateInTransaction = function() {
     assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
 
     store.beginTransaction();
-    var book = new Book({
+    const book = new Book({
         "title": "New Book 2",
         "authorId": 1,
         "available": true
@@ -347,7 +342,7 @@ exports.testRollbackWithoutReload = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books"
     });
     author.save();
@@ -355,7 +350,7 @@ exports.testRollbackWithoutReload = function() {
     assert.strictEqual(author.books.length, 51);
     assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
     store.beginTransaction();
-    var book = new Book({
+    const book = new Book({
         "title": "New Book 2",
         "authorId": 1,
         "available": true
@@ -388,7 +383,7 @@ exports.testRollbackWithReload = function() {
         }
     });
     store.syncTables();
-    var author = new Author({
+    const author = new Author({
         "name": "Author of just a bunch of books"
     });
     author.save();
@@ -396,7 +391,7 @@ exports.testRollbackWithReload = function() {
     assert.strictEqual(author.books.length, 51);
     assert.strictEqual(author.books.ids, store.entityCache.get(author.books._cacheKey));
     store.beginTransaction();
-    var book = author.books.get(10);
+    const book = author.books.get(10);
     book.remove();
     author.books.invalidate();
     assert.strictEqual(author.books._state, constants.STATE_UNLOADED);

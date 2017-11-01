@@ -1,15 +1,15 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var Store = require("../../lib/store");
-var utils = require("../utils");
-var Parser = require("../../lib/query/parser");
-var dataTypes = require("../../lib/datatypes/all");
-var dialects = require("../../lib/dialects/all");
-var store = null;
-var Author = null;
-var Book = null;
+const Store = require("../../lib/store");
+const utils = require("../utils");
+const Parser = require("../../lib/query/parser");
+const dataTypes = require("../../lib/datatypes/all");
+const dialects = require("../../lib/dialects/all");
+let store = null;
+let Author = null;
+let Book = null;
 
 const MAPPING_AUTHOR = {
     "table": "T_AUTHOR",
@@ -42,8 +42,8 @@ const MAPPING_BOOK = {
     }
 };
 
-var generateSql = function(store, tree) {
-    var generator = new store.dialect.SqlGenerator(store);
+const generateSql = function(store, tree) {
+    const generator = new store.dialect.SqlGenerator(store);
     return {
         "sql": tree.accept(generator),
         "params": generator.params
@@ -62,41 +62,42 @@ exports.tearDown = function() {
     store.close();
 };
 
-var testQueries = function(queries, options) {
-    for each (let {query, sql, values} in queries) {
-        let tree;
+const testQueries = function(queries, options) {
+    queries.forEach(function({query, sql, values}) {
+        let tree = null;
         try {
             tree = Parser.parse(query, options || {});
         } catch (e) {
             console.error("Parsing query '" + query + "' failed, reason:", e);
-            continue;
         }
-        let generator = new store.dialect.SqlGenerator(store);
-        let resultSql = tree.accept(generator);
-        let params = generator.params;
-        if (typeof(sql) === "object" && !!sql) {
-            sql = sql[store.dialect.type] || sql.common;
+        if (tree !== null) {
+            let generator = new store.dialect.SqlGenerator(store);
+            let resultSql = tree.accept(generator);
+            let params = generator.params;
+            if (typeof(sql) === "object" && !!sql) {
+                sql = sql[store.dialect.type] || sql.common;
+            }
+            assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
+            if (values) {
+                assert.deepEqual(params, values, "Query: " + query);
+            }
         }
-        assert.strictEqual(resultSql, getExpectedSql(sql), "Query: " + query);
-        if (values) {
-            assert.deepEqual(params, values, "Query: " + query);
-        }
-    }
+    });
 };
 
-var getExpectedSql = function(str) {
+const getExpectedSql = function(str) {
     return str.replace(/\$(\w+)(?:\.(\w+))?/g, function(match, table, property) {
-        var mapping = store.getEntityMapping(table);
+        const mapping = store.getEntityMapping(table);
         if (!property) {
             return store.dialect.quote(mapping.tableName, mapping.schemaName);
         }
-        var propMapping = mapping.getMapping(property);
+        const propMapping = mapping.getMapping(property);
         return store.dialect.quote(propMapping.column, mapping.tableName);
     });
 };
 
 exports.testExpression = function() {
-    var queries = [
+    const queries = [
         {
             "query": "Author.id",
             "sql": "$Author.id"
@@ -125,7 +126,7 @@ exports.testExpression = function() {
 };
 
 exports.testSelectClause = function() {
-    var queries = [
+    const queries = [
         {
             "query": "select Author from Author",
             "sql": "SELECT $Author.id FROM $Author"
@@ -157,7 +158,7 @@ exports.testSelectClause = function() {
 };
 
 exports.testAggregation = function() {
-    var queries = [
+    const queries = [
         {
             "query": "select max(Author.id) from Author",
             "sql": "SELECT MAX($Author.id) FROM $Author"
@@ -192,7 +193,7 @@ exports.testAggregation = function() {
 };
 
 exports.testWhereClause = function() {
-    var queries = [
+    const queries = [
         // testing default entity
         {
             "query": "from Author where Author.id = 1",
@@ -220,7 +221,7 @@ exports.testWhereClause = function() {
 };
 
 exports.testParenthesis = function() {
-    var queries = [
+    const queries = [
         {
             "query": "Author.id = 1",
             "sql": "$Author.id = ?"
@@ -271,7 +272,7 @@ exports.testParenthesis = function() {
 };
 
 exports.testBetweenCondition = function() {
-    var queries = [
+    const queries = [
         {
             "query": "between 1 and 10",
             "sql": "BETWEEN ? AND ?",
@@ -293,7 +294,7 @@ exports.testBetweenCondition = function() {
 };
 
 exports.testIsNullCondition = function() {
-    var queries = [
+    const queries = [
         {
             "query": "is null",
             "sql": "IS NULL"
@@ -308,7 +309,7 @@ exports.testIsNullCondition = function() {
 };
 
 exports.testInCondition = function() {
-    var queries = [
+    const queries = [
         {
             "query": "in (1,2,3)",
             "sql": "IN (?, ?, ?)",
@@ -344,7 +345,7 @@ exports.testInCondition = function() {
 };
 
 exports.testLikeCondition = function() {
-    var queries = [
+    const queries = [
         {
             "query": "like 'John%'",
             "sql": "LIKE ?",
@@ -367,7 +368,7 @@ exports.testLikeCondition = function() {
 
 exports.testNotCondition  = function() {
 
-    var queries = [
+    const queries = [
         {
             "query": "not Author.id = 1",
             "sql": "NOT $Author.id = ?",
@@ -379,7 +380,7 @@ exports.testNotCondition  = function() {
 };
 
 exports.testExistsCondition = function() {
-    var queries = [
+    const queries = [
         {
             "query": "exists (from Author)",
             "sql": "EXISTS (SELECT $Author.id FROM $Author)"
@@ -397,7 +398,7 @@ exports.testExistsCondition = function() {
 };
 
 exports.testOperand = function() {
-    var queries = [
+    const queries = [
         {
             "query": "select Author.id || ' - ' || Author.name as key from Author",
             "sql": {
@@ -410,7 +411,7 @@ exports.testOperand = function() {
 };
 
 exports.testOrderByClause = function() {
-    var queries = [
+    const queries = [
         {
             "query": "order by Author.id",
             "sql": "ORDER BY $Author.id ASC"
@@ -453,7 +454,7 @@ exports.testOrderByClause = function() {
 };
 
 exports.testGroupByClause = function() {
-    var queries = [
+    const queries = [
         {
             "query": "group by Author.name",
             "sql": "GROUP BY $Author.name"
@@ -468,7 +469,7 @@ exports.testGroupByClause = function() {
 };
 
 exports.testHavingClause = function() {
-    var queries = [
+    const queries = [
         {
             "query": "having Author.id > 10",
             "sql": "HAVING $Author.id > ?",
@@ -490,7 +491,7 @@ exports.testHavingClause = function() {
 };
 
 exports.testFromClause = function() {
-    var queries = [
+    const queries = [
         {
             "query": "from Author",
             "sql": "FROM $Author"
@@ -509,7 +510,7 @@ exports.testFromClause = function() {
 };
 
 exports.testInnerJoin = function() {
-    var queries = [
+    const queries = [
         {
             "query": "inner join Book on Author.id = Book.author",
             "sql": "INNER JOIN $Book ON $Author.id = $Book.author"
@@ -524,7 +525,7 @@ exports.testInnerJoin = function() {
 };
 
 exports.testOuterJoin = function() {
-    var queries = [
+    const queries = [
         {
             "query": "left outer join Book on Author.id = Book.author",
             "sql": "LEFT OUTER JOIN $Book ON $Author.id = $Book.author"
@@ -539,7 +540,7 @@ exports.testOuterJoin = function() {
 };
 
 exports.testNamedParameter = function() {
-    var queries = [
+    const queries = [
         {
             "query": "Book.id = :id",
             "sql": "$Book.id = ?",
@@ -560,7 +561,7 @@ exports.testNamedParameter = function() {
 };
 
 exports.testStorableAsNamedParameter = function() {
-    var queries = [
+    const queries = [
         {
             "query": "Book = :book",
             "sql": "$Book.id = ?",
@@ -571,7 +572,7 @@ exports.testStorableAsNamedParameter = function() {
 };
 
 exports.testSelectExpression = function() {
-    var queries = [
+    const queries = [
         {
             "query": "Author.id",
             "sql": "$Author.id"
@@ -604,11 +605,11 @@ exports.testSelectExpression = function() {
 };
 
 exports.testAliases = function() {
-    var mapping = Author.mapping;
-    var idColumn = store.dialect.quote(mapping.getMapping("id").column);
-    var authorIdColumn = store.dialect.quote(Book.mapping.getMapping("author").column);
-    var nameColumn = store.dialect.quote(mapping.getMapping("name").column);
-    var queries = [
+    const mapping = Author.mapping;
+    const idColumn = store.dialect.quote(mapping.getMapping("id").column);
+    const authorIdColumn = store.dialect.quote(Book.mapping.getMapping("author").column);
+    const nameColumn = store.dialect.quote(mapping.getMapping("name").column);
+    const queries = [
         {
             "query": "select a.id as authorId from Author as a",
             "sql": "SELECT a." + idColumn + " FROM $Author a"
@@ -642,7 +643,7 @@ exports.testAliases = function() {
 };
 
 exports.testEntities = function() {
-    var queries = [
+    const queries = [
         {
             "query": "select id from Author",
             "sql": "SELECT $Author.id FROM $Author"
@@ -680,8 +681,8 @@ exports.testEntities = function() {
 };
 
 exports.testSubSelect = function() {
-    var queries = [];
-    for each (let range in ["", "all", "any", "some"]) {
+    const queries = [];
+    ["", "all", "any", "some"].forEach(function(range) {
         queries.push({
             "query": "from Author where Author.id = " + range +
                     "(select avg(Author.id) from Author)",
@@ -689,12 +690,12 @@ exports.testSubSelect = function() {
                     (range ? range.toUpperCase() + " " : "") +
                     "(SELECT AVG($Author.id) FROM $Author)"
         })
-    }
+    });
     testQueries(queries);
 };
 
 exports.testComplexQueries = function() {
-    var queries = [
+    const queries = [
         {
             "query": "select Author.name, count(Book.id) from Author, Book where Book.author = Author.id group by Author.id order by Author.name",
             "sql": "SELECT $Author.name, COUNT($Book.id) FROM $Author, $Book WHERE $Book.author = $Author.id GROUP BY $Author.id ORDER BY $Author.name ASC"
@@ -704,75 +705,75 @@ exports.testComplexQueries = function() {
 };
 
 exports.testOffset = function() {
-    var tree = Parser.parse("select Author from Author offset 10");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    let tree = Parser.parse("select Author from Author offset 10");
+    let sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, 10);
 
-    var {sql, params} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
+    let generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
     // parameter value as offset
     tree = Parser.parse("select Author from Author offset :offset");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlOffset(sqlBuf, "?");
-    var {sql, params} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
-    assert.strictEqual(params.length, 1);
-    assert.strictEqual(params[0], "offset");
+    generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
+    assert.strictEqual(generated.params.length, 1);
+    assert.strictEqual(generated.params[0], "offset");
 };
 
 exports.testLimit = function() {
-    var tree = Parser.parse("select Author from Author limit 100");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    let tree = Parser.parse("select Author from Author limit 100");
+    let sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, 100);
 
-    var {sql} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
+    let generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
     // parameter value as limit
     tree = Parser.parse("select Author from Author limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlLimit(sqlBuf, "?");
-    var {sql, params} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
-    assert.strictEqual(params.length, 1);
-    assert.strictEqual(params[0], "limit");
+    generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
+    assert.strictEqual(generated.params.length, 1);
+    assert.strictEqual(generated.params[0], "limit");
 };
 
 exports.testRange = function() {
-    var tree = Parser.parse("select Author from Author offset 10 limit 100");
-    var sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
+    let tree = Parser.parse("select Author from Author offset 10 limit 100");
+    let sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
 
-    var {sql} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
+    let generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
     // reverse offset/limit definition
     tree = Parser.parse("select Author from Author limit 100 offset 10");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, 10, 100);
-    var {sql} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
+    generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
     // parameter value as offset/limit
     tree = Parser.parse("select Author from Author offset :offset limit :limit");
     sqlBuf = [getExpectedSql("SELECT $Author.id FROM $Author")];
     store.dialect.addSqlRange(sqlBuf, "?", "?");
-    var {sql, params} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
-    assert.strictEqual(params.length, 2);
-    assert.strictEqual(params[0], "limit");
-    assert.strictEqual(params[1], "offset");
+    generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
+    assert.strictEqual(generated.params.length, 2);
+    assert.strictEqual(generated.params[0], "limit");
+    assert.strictEqual(generated.params[1], "offset");
     tree = Parser.parse("select Author from Author limit :limit offset :offset");
-    var {sql, params} = generateSql(store, tree);
-    assert.strictEqual(sql, sqlBuf.join(""));
-    assert.strictEqual(params[0], "limit");
-    assert.strictEqual(params[1], "offset");
+    generated = generateSql(store, tree);
+    assert.strictEqual(generated.sql, sqlBuf.join(""));
+    assert.strictEqual(generated.params[0], "limit");
+    assert.strictEqual(generated.params[1], "offset");
 };
 
 exports.testSelectModifier = function() {
-    var mapping = Author.mapping;
-    var idColumn = store.dialect.quote(mapping.getMapping("id").column);
-    var tree = Parser.parse("select distinct a from Author as a");
-    var expectedSql = getExpectedSql("SELECT DISTINCT a." + idColumn +
+    const mapping = Author.mapping;
+    const idColumn = store.dialect.quote(mapping.getMapping("id").column);
+    let tree = Parser.parse("select distinct a from Author as a");
+    let expectedSql = getExpectedSql("SELECT DISTINCT a." + idColumn +
             " FROM $Author a");
-    var {sql} = generateSql(store, tree);
+    let {sql} = generateSql(store, tree);
     assert.strictEqual(sql, expectedSql);
     tree = Parser.parse("select all a from Author as a");
     expectedSql = getExpectedSql("SELECT ALL a." + idColumn +
@@ -782,12 +783,12 @@ exports.testSelectModifier = function() {
 };
 
 exports.testIssue32 = function() {
-    var Notification = store.defineEntity("Notification", {"properties": {}});
-    var query = "from Notification where Notification.id > :id";
-    var expectedSql = getExpectedSql("SELECT $Notification.id FROM $Notification WHERE $Notification.id > ?");
+    const Notification = store.defineEntity("Notification", {"properties": {}});
+    const query = "from Notification where Notification.id > :id";
+    const expectedSql = getExpectedSql("SELECT $Notification.id FROM $Notification WHERE $Notification.id > ?");
     try {
-        var tree = Parser.parse(query);
-        var {sql} = generateSql(store, tree);
+        const tree = Parser.parse(query);
+        const {sql} = generateSql(store, tree);
         assert.strictEqual(sql, expectedSql);
     } finally {
         utils.drop(store, Notification);

@@ -1,17 +1,17 @@
-var term = require("ringo/term");
-var assert = require("assert");
-var {Worker} = require("ringo/worker");
-var {Semaphore} = require("ringo/concurrent");
+const term = require("ringo/term");
+const assert = require("assert");
+const {Worker} = require("ringo/worker");
+const {Semaphore} = require("ringo/concurrent");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("../test/utils");
+const {Store, Cache} = require("../lib/main");
+const utils = require("../test/utils");
 
-var store = null;
-var connectionPool = null;
-var Author = null;
-var maxAuthors = 1000;
+let store = null;
+let connectionPool = null;
+let Author = null;
+const maxAuthors = 1000;
 
-var MAPPING_AUTHOR = {
+const MAPPING_AUTHOR = {
     // "schema": "TEST",
     "table": "author",
     "id": {
@@ -52,12 +52,12 @@ exports.start = function(cnt, maxWorkers) {
     cnt || (cnt = 100);
     maxWorkers = maxWorkers || (maxWorkers = 10);
 
-    var semaphore = new Semaphore();
-    var workers = new Array(maxWorkers);
-    var workerMillis = new Array(maxWorkers);
-    var workerMsPerQuery = new Array(maxWorkers);
+    const semaphore = new Semaphore();
+    const workers = new Array(maxWorkers);
+    const workerMillis = new Array(maxWorkers);
+    const workerMsPerQuery = new Array(maxWorkers);
     for (let i=0; i<maxWorkers; i+=1) {
-        var worker = new Worker(module.resolve("./query.concurrent.worker"));
+        let worker = new Worker(module.resolve("./query.concurrent.worker"));
         worker.onmessage = function(event) {
             workerMillis[event.data.workerNr] = event.data.millis;
             workerMsPerQuery[event.data.workerNr] = event.data.msPerQuery;
@@ -71,8 +71,8 @@ exports.start = function(cnt, maxWorkers) {
     }
     term.writeln("Setup", maxWorkers, "workers");
 
-    var queryCache = new Cache(10);
-    var start = Date.now();
+    const queryCache = new Cache(10);
+    const start = Date.now();
     workers.forEach(function(worker, idx) {
         worker.postMessage({
             "workerNr": idx,
@@ -84,13 +84,13 @@ exports.start = function(cnt, maxWorkers) {
         }, true);
     });
     semaphore.wait(maxWorkers);
-    var totalMillis = Date.now() - start;
+    const totalMillis = Date.now() - start;
     term.writeln(maxWorkers, "workers finished");
-    var workerMillisAvg = workerMillis.reduce(function(prev, current) {
+    const workerMillisAvg = workerMillis.reduce(function(prev, current) {
             return prev + current;
         }, 0) / maxWorkers;
-    var millisPerQuery = workerMillisAvg / cnt;
-    var queriesPerSec = (1000 / millisPerQuery).toFixed(2);
+    const millisPerQuery = workerMillisAvg / cnt;
+    const queriesPerSec = (1000 / millisPerQuery).toFixed(2);
     term.writeln(term.GREEN, totalMillis + "ms, ", maxWorkers, "workers,", cnt, "queries/worker,",
             millisPerQuery.toFixed(2) + "ms/query,", queriesPerSec, "queries/sec", term.RESET);
     //term.writeln("----------- AVG:", workerMillisAvg.toFixed(2));

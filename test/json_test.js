@@ -1,12 +1,12 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
-var store = null;
-var Author = null;
-var Book = null;
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
+let store = null;
+let Author = null;
+let Book = null;
 
 const MAPPING_AUTHOR = {
     "properties": {
@@ -46,14 +46,13 @@ exports.tearDown = function() {
 
 
 exports.testStringify = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
-    var book = new Book({
+    author.latestBook = new Book({
         "title": "Testing Ringo SQLstore",
         "author": author
     });
-    author.latestBook = book;
     assert.strictEqual(JSON.stringify(author), '{"id":null,"name":"John Doe"}');
     author.save();
     assert.strictEqual(JSON.stringify(author), '{"id":1,"name":"John Doe"}');

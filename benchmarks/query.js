@@ -1,14 +1,14 @@
-var term = require("ringo/term");
-var assert = require("assert");
+const term = require("ringo/term");
+const assert = require("assert");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("../test/utils");
+const {Store, Cache} = require("../lib/main");
+const utils = require("../test/utils");
 
-var store = null;
-var Author = null;
-var maxAuthors = 1000;
+let store = null;
+let Author = null;
+const maxAuthors = 1000;
 
-var MAPPING_AUTHOR = {
+const MAPPING_AUTHOR = {
     // "schema": "TEST",
     "table": "author",
     "id": {
@@ -48,7 +48,7 @@ exports.tearDown = function() {
 
 exports.start = function(cnt) {
     cnt || (cnt = 10000);
-    var start = Date.now();
+    const start = Date.now();
     for (let i=0; i<cnt; i+=1) {
         let id = ((Math.random() * maxAuthors) | 0) + 1;
         let author = store.query("select * from Author where id = :id", {
@@ -56,6 +56,6 @@ exports.start = function(cnt) {
         })[0];
         assert.strictEqual(author.id, id);
     }
-    var millis = Date.now() - start;
+    const millis = Date.now() - start;
     term.writeln(term.GREEN, millis, "ms for", cnt, "queries,", millis / cnt + "ms/query", term.RESET);
 };

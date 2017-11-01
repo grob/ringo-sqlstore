@@ -1,13 +1,13 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../../lib/main");
-var utils = require("../utils");
-var store = null;
-var Author = null;
-var Book = null;
-var Relation = null;
+const {Store, Cache} = require("../../lib/main");
+const utils = require("../utils");
+let store = null;
+let Author = null;
+let Book = null;
+let Relation = null;
 
 const MAPPING_AUTHOR = {
     "id": {
@@ -55,26 +55,26 @@ const MAPPING_RELATION = {
     }
 };
 
-var populate = function() {
+const populate = function() {
     store.beginTransaction();
-    var authors = [];
-    var books = [];
-    for (var i=1; i<3; i+=1) {
-        var author = new Author({
+    const authors = [];
+    const books = [];
+    for (let i=1; i<3; i+=1) {
+        let author = new Author({
             "name": "Author " + i
         });
         author.save();
         authors.push(author);
-        var book = new Book({
+        let book = new Book({
             "title": "Book " + i
         });
         book.save();
         books.push(book);
     }
-    var relations = [];
+    const relations = [];
     books.forEach(function(book) {
         authors.forEach(function(author, idx) {
-            var relation = new Relation({
+            const relation = new Relation({
                 "book": book,
                 "author": author,
                 "isEditor": idx % 2 === 0
@@ -101,9 +101,9 @@ exports.tearDown = function() {
 };
 
 exports.testInnerJoinQuery = function() {
-    var [authors, books] = populate();
+    const [authors, books] = populate();
     // all books by author 1
-    var result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
+    let result = store.query("from Book inner join Relation on Relation.book = Book.id where Relation.author = 1");
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].id, books[0].id);
     assert.strictEqual(result[1].id, books[1].id);
@@ -117,8 +117,8 @@ exports.testInnerJoinQuery = function() {
 };
 
 exports.testMultipleJoins = function() {
-    var [authors, books] = populate();
-    var result = store.query("from Book b " +
+    const [authors, books] = populate();
+    const result = store.query("from Book b " +
             "join Relation r on r.book = b.id " +
             "join Author a on r.author = a.id " +
             "where a.id = 1");

@@ -1,13 +1,13 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
-var store = null;
-var Author = null;
-var Book = null;
-var Relation = null;
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
+let store = null;
+let Author = null;
+let Book = null;
+let Relation = null;
 
 const MAPPING_AUTHOR = {
     "id": {
@@ -84,24 +84,24 @@ exports.tearDown = function() {
 
 exports.testSimpleCollection = function() {
     store.beginTransaction();
-    var authors = [];
-    var books = [];
-    for (var i=1; i<3; i+=1) {
-        var author = new Author({
+    const authors = [];
+    const books = [];
+    for (let i=1; i<3; i+=1) {
+        let author = new Author({
             "name": "Author " + i
         });
         author.save();
         authors.push(author);
-        var book = new Book({
+        let book = new Book({
             "title": "Book " + i
         });
         book.save();
         books.push(book);
     }
-    var relations = [];
+    const relations = [];
     books.forEach(function(book) {
         authors.forEach(function(author, idx) {
-            var relation = new Relation({
+            const relation = new Relation({
                 "book": book,
                 "author": author
             });
@@ -110,35 +110,34 @@ exports.testSimpleCollection = function() {
         });
     })
     store.commitTransaction();
-    var book = Book.get(1);
+    const book = Book.get(1);
     assert.isNotNull(book);
     assert.strictEqual(book.authors.length, 2);
     assert.strictEqual(book.authors.get(0).id, authors[0].id);
     assert.strictEqual(book.authors.get(1).id, authors[1].id);
-    var author = Author.get(2);
+    const author = Author.get(2);
     assert.isNotNull(author);
     assert.strictEqual(author.books.length, 2);
     assert.strictEqual(author.books.get(0).id, books[0].id);
     assert.strictEqual(author.books.get(1).id, books[1].id);
-    return;
 };
 
 exports.testAdditionalCriteria = function() {
     store.beginTransaction();
-    var authors = [];
-    for (var i=1; i<=2; i+=1) {
-        var author = new Author({
+    const authors = [];
+    for (let i=1; i<=2; i+=1) {
+        let author = new Author({
             "name": "Author " + i
         });
         author.save();
         authors.push(author);
     }
-    var book = new Book({
-        "title": "Book " + i
+    let book = new Book({
+        "title": "Book " + authors.length
     });
     book.save();
     authors.forEach(function(author, idx) {
-        var relation = new Relation({
+        const relation = new Relation({
             "book": book,
             "author": author,
             "isEditor": idx % 2 === 0
@@ -146,11 +145,10 @@ exports.testAdditionalCriteria = function() {
         relation.save();
     });
     store.commitTransaction();
-    var book = Book.get(1);
+    book = Book.get(1);
     assert.strictEqual(book.authors.length, 2);
     assert.strictEqual(book.editors.length, 1);
     assert.equal(book.editors.get(0).id, Author.get(1).id);
-    return;
 };
 
 

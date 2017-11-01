@@ -1,10 +1,10 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../../lib/main");
-var config = require("../config");
-var utils = require("../utils");
+const {Store, Cache} = require("../../lib/main");
+const config = require("../config");
+const utils = require("../utils");
 
 const MAPPING_EVENT_JSON = {
     "properties": {
@@ -20,7 +20,7 @@ const MAPPING_EVENT_JSONB = {
     }
 };
 
-var store, Event, EventB;
+let store, Event, EventB;
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(config.postgresql));
@@ -35,11 +35,11 @@ exports.tearDown = function() {
 };
 
 exports.testSaveObject = function() {
-    var event = new Event({
+    const event = new Event({
         "slug": "some event",
         "data": { "propertyString": "event1", "propertyNumber": 12345 }
     });
-    var eventb = new EventB({
+    const eventb = new EventB({
         "slug": "some event",
         "data": { "propertyString": "event2", "propertyNumber": 67890 }
     });
@@ -56,7 +56,7 @@ exports.testSaveObject = function() {
 };
 
 exports.testGetSetNull = function() {
-    var values = [null, undefined];
+    const values = [null, undefined];
     for each (let value in values) {
         let event = new Event({
             "slog": "some event",
@@ -71,7 +71,7 @@ exports.testGetSetNull = function() {
 exports.testQueryObjects = function() {
     // populate the tables
     store.beginTransaction();
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         let obj = { "title": "event" + i, "num": Math.random() };
         if (i % 2) {
             obj.rating = i;

@@ -1,11 +1,11 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var metaData = require("../lib/database/metadata");
-var schema = require("../lib/database/schema");
-var utils = require("./utils");
+const {Store, Cache} = require("../lib/main");
+const metaData = require("../lib/database/metadata");
+const schema = require("../lib/database/schema");
+const utils = require("./utils");
 
 const MAPPING_AUTHOR = {
     "table": "author",
@@ -34,8 +34,8 @@ const MAPPING_AUTHOR = {
     }
 };
 
-var store = null;
-var Author = null;
+let store = null;
+let Author = null;
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
@@ -49,11 +49,12 @@ exports.tearDown = function() {
 exports.testCreateIndex = function() {
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
-    var conn = store.getConnection();
+    const conn = store.getConnection();
     try {
-        var indexes = metaData.getIndexes(conn, store.dialect, MAPPING_AUTHOR.table);
+        const indexes = metaData.getIndexes(conn, store.dialect, MAPPING_AUTHOR.table);
         assert.strictEqual(Object.keys(indexes).length, 2);
-        for each (let [name, properties] in Iterator(indexes)) {
+        Object.keys(indexes).forEach(function(name) {
+            const properties = indexes[name];
             assert.isTrue(metaData.indexExists(conn, store.dialect, MAPPING_AUTHOR.table, name));
             if (name === "authorname") {
                 assert.isFalse(properties.isUnique);
@@ -77,7 +78,7 @@ exports.testCreateIndex = function() {
                     }
                 ]);
             }
-        }
+        });
     } finally {
         conn.close();
     }
@@ -86,8 +87,8 @@ exports.testCreateIndex = function() {
 exports.testDropIndex = function() {
     Author = store.defineEntity("Author", MAPPING_AUTHOR);
     store.syncTables();
-    var indexName = "authorname";
-    var conn = store.getConnection();
+    const indexName = "authorname";
+    const conn = store.getConnection();
     schema.dropIndex(conn, store.dialect, indexName);
     try {
         let indexes = metaData.getIndexes(conn, store.dialect, MAPPING_AUTHOR.table);

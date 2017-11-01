@@ -1,17 +1,17 @@
-var runner = require("./runner");
-var assert = require("assert");
-var {Worker} = require("ringo/worker");
-var {Semaphore} = require("ringo/concurrent");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const {Worker} = require("ringo/worker");
+const {Semaphore} = require("ringo/concurrent");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var Transaction = require("../lib/transaction");
-var constants = require("../lib/constants");
-var utils = require("./utils");
+const {Store, Cache} = require("../lib/main");
+const Transaction = require("../lib/transaction");
+const constants = require("../lib/constants");
+const utils = require("./utils");
 
-var store = null;
-var Author = null;
-var Book = null;
+let store = null;
+let Author = null;
+let Book = null;
 
 const MAPPING_AUTHOR = {
     "table": "author",
@@ -67,11 +67,11 @@ exports.tearDown = function() {
 };
 
 exports.testCommit = function() {
-    var transaction = store.beginTransaction();
-    var authors = [];
+    const transaction = store.beginTransaction();
+    const authors = [];
     // insert some test objects
-    for (var i=0; i<5; i+=1) {
-        var author = new Author({
+    for (let i=0; i<5; i+=1) {
+        let author = new Author({
             "name": "Author " + (i + 1)
         });
         author.save();
@@ -82,19 +82,18 @@ exports.testCommit = function() {
     store.commitTransaction();
     assert.strictEqual(Author.all().length, 5);
     assert.strictEqual(Object.keys(transaction.inserted).length, 0);
-    return;
 };
 
 exports.testCommitRemove = function() {
-    var transaction = store.beginTransaction();
+    let transaction = store.beginTransaction();
     assert.isNotNull(transaction);
     assert.isFalse(transaction.isDirty());
-    var author = new Author({
+    const author = new Author({
         "name": "Author"
     });
     author.save();
-    var books = [];
-    for (var i=0; i<5; i+=1) {
+    const books = [];
+    for (let i=0; i<5; i+=1) {
         let book = new Book({
             "title": "Book " + (i + 1),
             "author": author
@@ -123,14 +122,14 @@ exports.testCommitRemove = function() {
 
 exports.testBeginTransaction = function() {
     assert.isNull(store.getTransaction());
-    var transaction = store.beginTransaction();
+    let transaction = store.beginTransaction();
     assert.isNotNull(transaction);
     assert.isFalse(transaction.isDirty());
 
-    var authors = [];
+    const authors = [];
     // insert some test objects
-    for (var i=0; i<5; i+=1) {
-        var author = new Author({
+    for (let i=0; i<5; i+=1) {
+        let author = new Author({
             "name": "Author " + (i + 1)
         });
         author.save();
@@ -159,7 +158,7 @@ exports.testBeginTransaction = function() {
     // abort transaction
     store.beginTransaction();
     transaction = store.getTransaction();
-    var author = new Author({
+    const author = new Author({
         "name": "Author " + (authors.length + 1)
     });
     author.save(transaction);
@@ -168,11 +167,10 @@ exports.testBeginTransaction = function() {
     store.abortTransaction();
     assert.isNull(Transaction.getInstance());
     assert.strictEqual(Author.all().length, 0);
-    return;
 };
 
 exports.testMultipleModifications = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe"
     });
     author.save();
@@ -192,12 +190,12 @@ exports.testMultipleModifications = function() {
 };
 
 exports.testConcurrentInserts = function() {
-    var nrOfWorkers = 10;
-    var cnt = 10;
-    var semaphore = new Semaphore();
+    const nrOfWorkers = 10;
+    const cnt = 10;
+    const semaphore = new Semaphore();
 
-    for (var i=0; i<nrOfWorkers; i+=1) {
-        var w = new Worker(module.resolve("./transaction_worker"));
+    for (let i=0; i<nrOfWorkers; i+=1) {
+        let w = new Worker(module.resolve("./transaction_worker"));
         w.onmessage = function(event) {
             semaphore.signal();
         };
@@ -209,12 +207,11 @@ exports.testConcurrentInserts = function() {
     }
     semaphore.tryWait(1000, nrOfWorkers);
     assert.strictEqual(Author.all().length, cnt * nrOfWorkers);
-    return;
 };
 
 exports.testInsertIsolation = function() {
     store.beginTransaction();
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     author.save();
@@ -239,7 +236,7 @@ exports.testInsertIsolation = function() {
 };
 
 exports.testUpdateIsolation = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     author.save();
@@ -268,7 +265,7 @@ exports.testUpdateIsolation = function() {
 };
 
 exports.testRemoveIsolation = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     author.save();
@@ -289,14 +286,14 @@ exports.testRemoveIsolation = function() {
 };
 
 exports.testCommitEvent = function() {
-    var mods = null;
+    let mods = null;
     store.addListener("commit", function(data) {
         mods = data;
     });
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
-    var book = new Book({
+    const book = new Book({
         "title": "Book",
         "author": author
     });
@@ -326,13 +323,13 @@ exports.testCommitEvent = function() {
 };
 
 exports.testOnSave = function() {
-    var calledOnSave = 0;
+    let calledOnSave = 0;
 
     Author.prototype.onSave = function() {
         calledOnSave += 1;
     };
 
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe"
     });
 
@@ -355,8 +352,8 @@ exports.testOnSave = function() {
 };
 
 exports.testOnRemove = function() {
-    var name = "John Doe";
-    var calledOnRemove = false;
+    const name = "John Doe";
+    let calledOnRemove = false;
 
     Author.prototype.onRemove = function() {
         calledOnRemove = true;
@@ -364,7 +361,7 @@ exports.testOnRemove = function() {
         assert.strictEqual(this.name, name);
     };
 
-    var author = new Author({
+    const author = new Author({
         "name": name
     });
     author.save();

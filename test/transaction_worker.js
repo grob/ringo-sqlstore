@@ -1,11 +1,11 @@
-var authors = [];
+const authors = [];
 
 function onmessage(event) {
-    var workerNr = event.data.workerNr;
-    var cnt = event.data.cnt;
-    var Author = event.data.Author;
-    for (var i=0; i<cnt; i+=1) {
-        var author = new Author({
+    const workerNr = event.data.workerNr;
+    const cnt = event.data.cnt;
+    const Author = event.data.Author;
+    for (let i=0; i<cnt; i+=1) {
+        let author = new Author({
             "name": "Author " + (i + 1)
         });
         author.save();

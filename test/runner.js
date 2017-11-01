@@ -1,25 +1,25 @@
-var logging = require("ringo/logging");
+const logging = require("ringo/logging");
 logging.setConfig(getResource("./log4j.properties"));
-var system = require("system");
-var {Parser} = require("ringo/args");
-var config = require("./config");
+const system = require("system");
+const {Parser} = require("ringo/args");
+const config = require("./config");
 
 // use the -t option to change the default database
 // possible options: postgresql, oracle, mysql, h2
-var database = "h2";
+let database = "h2";
 
-var getDbProps = exports.getDbProps = function() {
+const getDbProps = exports.getDbProps = function() {
     return config[database];
 };
 
-var set = exports.set = function(name) {
+const set = exports.set = function(name) {
     database = name;
 };
 
-var setDatabase = exports.setDatabase = function(args) {
-    var parser = new Parser();
+const setDatabase = exports.setDatabase = function(args) {
+    const parser = new Parser();
     parser.addOption("t", "type", "type", "The database type to connect to");
-    var opts = parser.parse(args);
+    const opts = parser.parse(args);
     if (opts.type) {
         if (config[opts.type] == undefined) {
             console.error("Database connection '" + opts.type +
@@ -31,7 +31,7 @@ var setDatabase = exports.setDatabase = function(args) {
     return args;
 };
 
-var run = exports.run = function(scope, args) {
-    var remainingArgs = setDatabase(Array.slice(args, 1));
+const run = exports.run = function(scope, args) {
+    const remainingArgs = setDatabase(Array.slice(args, 1));
     return require('test').run(scope, remainingArgs[0]);
 };

@@ -1,20 +1,20 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
-var strings = require("ringo/utils/strings");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
+const strings = require("ringo/utils/strings");
 
-var Store = require("../lib/store");
-var dbMetaData = require("../lib/database/metadata");
-var dialects = require("../lib/dialects/all");
-var utils = require("./utils");
+const Store = require("../lib/store");
+const dbMetaData = require("../lib/database/metadata");
+const dialects = require("../lib/dialects/all");
+const utils = require("./utils");
 
-var store = null;
-var Model = null;
-var ParentModel = null;
+let store = null;
+let Model = null;
+let ParentModel = null;
 
-var getColumnMetaData = function(store, mapping, propertName) {
-    var propMapping = mapping.getMapping(propertName);
-    var conn = store.getConnection();
+const getColumnMetaData = function(store, mapping, propertName) {
+    const propMapping = mapping.getMapping(propertName);
+    const conn = store.getConnection();
     try {
         return dbMetaData.getColumns(conn, store.dialect, mapping.tableName,
                         null, propMapping.column)[0] || null;
@@ -23,8 +23,8 @@ var getColumnMetaData = function(store, mapping, propertName) {
     }
 };
 
-var getIndexInfo = function(mapping, isUnique) {
-    var conn = store.getConnection();
+const getIndexInfo = function(mapping, isUnique) {
+    const conn = store.getConnection();
     try {
         return dbMetaData.getIndexes(conn, store.dialect, mapping.tableName,
                 null, isUnique === true, true);
@@ -90,7 +90,7 @@ exports.testUnique = function() {
     });
     store.syncTables();
     // check table index metadata
-    var indexInfo = getIndexInfo(Model.mapping, true);
+    const indexInfo = getIndexInfo(Model.mapping, true);
     assert.isTrue(Object.keys(indexInfo).some(function(key) {
         let index = indexInfo[key];
         return index.isUnique === true && index.columns.some(function(column) {
@@ -98,7 +98,7 @@ exports.testUnique = function() {
         });
     }));
     // functional test
-    var props = {"name": "John Doe"};
+    const props = {"name": "John Doe"};
     new Model(props).save();
     assert.throws(function() {
         new Model(props).save();
@@ -142,7 +142,7 @@ exports.testPrecisionScale = function() {
         }
     });
     store.syncTables();
-    var metaData = getColumnMetaData(store, Model.mapping, "doublep");
+    let metaData = getColumnMetaData(store, Model.mapping, "doublep");
     assert.strictEqual(metaData.length, 6);
     assert.strictEqual(metaData.scale, 0);
     metaData = getColumnMetaData(store, Model.mapping, "doubleps");
@@ -151,7 +151,7 @@ exports.testPrecisionScale = function() {
 };
 
 exports.testTypes = function() {
-    var mapping = {
+    const mapping = {
         "table": "typetest",
         "properties": {
             "typeInteger": {
@@ -216,7 +216,7 @@ exports.testTypes = function() {
     }
      */
 
-    var props = {
+    const props = {
         "typeInteger": 12345678,
         "typeLong": 12345678910,
         "typeShort": 12345,
@@ -232,12 +232,13 @@ exports.testTypes = function() {
         "typeBinary": "test".toByteArray(),
         "typeText": strings.repeat("abcdefghij", 10000)
     };
-    var model = new Model(props);
+    let model = new Model(props);
     model.save();
 
     // read values
     model = Model.get(1);
-    for each (let [key, definition] in Iterator(mapping.properties)) {
+    Object.keys(mapping.properties).forEach(function(key) {
+        const definition = mapping.properties[key];
         let value = model[key];
         let expected = props[key];
         switch (definition.type) {
@@ -264,7 +265,7 @@ exports.testTypes = function() {
             default:
                 assert.strictEqual(value, expected);
         }
-    }
+    });
 };
 
 //start the test runner if we're called directly from command line

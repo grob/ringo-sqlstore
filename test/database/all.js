@@ -1,5 +1,5 @@
-var runner = require("../runner");
-var system = require("system");
+const runner = require("../runner");
+const system = require("system");
 
 exports.testSchema = require("./schema_test");
 

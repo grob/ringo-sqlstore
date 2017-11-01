@@ -1,13 +1,13 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
 
-var store = null;
-var Book = null;
-var Author = null;
+let store = null;
+let Book = null;
+let Author = null;
 
 const MAPPING_AUTHOR = {
     "properties": {
@@ -42,18 +42,18 @@ exports.setUp = function() {
 
 exports.tearDown = function() {
     utils.drop(store, Author, Book);
-    var conn = store.getConnection();
+    const conn = store.getConnection();
     store.close();
 };
 
 exports.testStorablePersisting = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Foo"
     });
     assert.isNull(author.books);
     // create a book with above author and persist it
     // Note: persisting the book also persists it's author
-    var book = new Book({
+    let book = new Book({
         "title": "My Book",
         "author": author,
         "available": true
@@ -84,16 +84,15 @@ exports.testStorablePersisting = function() {
     assert.strictEqual(author.books.length, 0);
     author.books.invalidate();
     assert.strictEqual(author.books.length, 1);
-    return;
 };
 
 exports.testCollectionInvalidation = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Foo"
     });
     author.save();
     assert.strictEqual(author.books.length, 0);
-    var book = new Book({
+    const book = new Book({
         "title": "Server-side JS made easy",
         "author": author,
         "available": true
@@ -111,7 +110,7 @@ exports.testCollectionInvalidation = function() {
     // this must lead to removal of the cached collection
     author = Author.get(1);
     assert.strictEqual(author.books.length, 1);
-    var cacheKey = author.books._cacheKey;
+    const cacheKey = author.books._cacheKey;
     assert.isTrue(store.entityCache.containsKey(cacheKey));
     // assert.strictEqual(author.books._state, Collection.)
     author.remove();
@@ -119,10 +118,10 @@ exports.testCollectionInvalidation = function() {
 };
 
 exports.testStorableRemoval = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Foo"
     });
-    var book = new Book({
+    const book = new Book({
         "title": "Server-side JS made easy",
         "author": author,
         "available": true
@@ -143,7 +142,6 @@ exports.testStorableRemoval = function() {
     author.books.invalidate();
     assert.strictEqual(author.books.length, 0);
     assert.strictEqual(Author.get(1).books.length, 0);
-    return;
 };
 
 //start the test runner if we're called directly from command line

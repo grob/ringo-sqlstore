@@ -1,13 +1,13 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
-var store = null;
-var Author = null;
-var Book = null;
-var Editor = null;
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
+let store = null;
+let Author = null;
+let Book = null;
+let Editor = null;
 
 const MAPPING_AUTHOR = {
     "properties": {
@@ -53,10 +53,10 @@ exports.tearDown = function() {
 };
 
 exports.testAssignObject = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
-    var book = new Book({
+    const book = new Book({
         "title": "Book 1",
         "author": author
     });
@@ -66,7 +66,7 @@ exports.testAssignObject = function() {
     assert.strictEqual(book.author.id, author.id);
     assert.strictEqual(author, book.author);
     // create different book author and assign it as the book's author
-    var authorTwo = new Author({
+    const authorTwo = new Author({
         "name": "Mr. Foo-Bar"
     });
     book.author = authorTwo;
@@ -86,7 +86,7 @@ exports.testAssignObject = function() {
 
 exports.testAssignWrongObject = function() {
     // non-entity
-    var book = new Book({
+    const book = new Book({
         "title": "Book 1",
         "author": {}
     });
@@ -94,10 +94,9 @@ exports.testAssignWrongObject = function() {
         book.save();
     });
     // different entity type
-    var editor = new Editor({
+    book.author = new Editor({
         "name": "Jane Doe"
     });
-    book.author = editor;
     assert.throws(function() {
         book.save();
     });
@@ -108,8 +107,8 @@ exports.testAssignLazyLoaded = function() {
         "name": "John Doe"
     })).save();
     // re-get author from db, but don't access any properties of
-    var author = Author.get(1);
-    var book = new Book({
+    const author = Author.get(1);
+    const book = new Book({
         "title": "foo",
         "author": author
     });
@@ -120,10 +119,10 @@ exports.testAssignLazyLoaded = function() {
 };
 
 exports.testSimpleCircularReference = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe"
     });
-    var book = new Book({
+    let book = new Book({
         "title": "foo",
         "author": author
     });

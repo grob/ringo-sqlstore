@@ -1,17 +1,17 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store} = require("../../lib/main");
-var dbSchema = require("../../lib/database/schema");
-var metaData = require("../../lib/database/metadata");
-var dbUtils = require("../../lib/database/utils");
-var utils = require("../utils");
+const {Store} = require("../../lib/main");
+const dbSchema = require("../../lib/database/schema");
+const metaData = require("../../lib/database/metadata");
+const dbUtils = require("../../lib/database/utils");
+const utils = require("../utils");
 
-var store = null;
-var conn = null;
-var tableName = null;
-var sequenceName = null;
+let store = null;
+let conn = null;
+let tableName = null;
+let sequenceName = null;
 
 exports.setUp = function() {
     store = new Store(Store.initConnectionPool(runner.getDbProps()));
@@ -31,7 +31,7 @@ exports.tearDown = function() {
 
 exports.testTable = function() {
     tableName = "t_test";
-    var columns = [
+    const columns = [
         {
             "column": "tst_id",
             "type": "long"
@@ -41,11 +41,11 @@ exports.testTable = function() {
             "type": "string"
         }
     ];
-    var primaryKeys = ["tst_id"];
-    var result = dbSchema.createTable(conn, store.dialect,
+    const primaryKeys = ["tst_id"];
+    const result = dbSchema.createTable(conn, store.dialect,
                     null, tableName, columns, primaryKeys);
     assert.isTrue(result);
-    var tables = metaData.getTables(conn, store.dialect);
+    const tables = metaData.getTables(conn, store.dialect);
     assert.strictEqual(tables.length, 1);
     assert.strictEqual(tables[0].name, tableName);
     assert.isTrue(metaData.tableExists(conn, store.dialect, tableName));
@@ -58,9 +58,9 @@ exports.testSequence = function() {
         return;
     }
     sequenceName = "test_id";
-    var result = dbSchema.createSequence(conn, store.dialect, sequenceName);
+    const result = dbSchema.createSequence(conn, store.dialect, sequenceName);
     assert.isTrue(result);
-    var sequences = metaData.getSequences(conn, store.dialect);
+    const sequences = metaData.getSequences(conn, store.dialect);
     assert.strictEqual(sequences.length, 1);
     assert.strictEqual(sequences[0].name, sequenceName);
     assert.isTrue(metaData.sequenceExists(conn, store.dialect, sequenceName));
@@ -70,7 +70,7 @@ exports.testSequence = function() {
 
 exports.testTruncateTable = function() {
     tableName = "t_test";
-    var columns = [
+    const columns = [
         {
             "column": "tst_id",
             "type": "long"
@@ -80,8 +80,8 @@ exports.testTruncateTable = function() {
             "type": "string"
         }
     ];
-    var primaryKeys = ["tst_id"];
-    var result = dbSchema.createTable(conn, store.dialect,
+    const primaryKeys = ["tst_id"];
+    const result = dbSchema.createTable(conn, store.dialect,
                     null, tableName, columns, primaryKeys);
     assert.isTrue(result);
     dbUtils.executeUpdate(conn, [
@@ -89,7 +89,7 @@ exports.testTruncateTable = function() {
         " (", store.dialect.quote("tst_id"), ", ", store.dialect.quote("tst_name"),
         ") values (1, 'test')"
     ].join(""));
-    var collector = function(resultSet) {
+    const collector = function(resultSet) {
         resultSet.next();
         return resultSet.getInt(1);
     };
@@ -103,9 +103,9 @@ exports.testTruncateTable = function() {
 exports.testResetSequence = function() {
     if (store.dialect.hasSequenceSupport) {
         sequenceName = "test_id";
-        var result = dbSchema.createSequence(conn, store.dialect, sequenceName);
+        const result = dbSchema.createSequence(conn, store.dialect, sequenceName);
         assert.isTrue(result);
-        var collector = function(resultSet) {
+        const collector = function(resultSet) {
             resultSet.next();
             return resultSet.getInt(1);
         };

@@ -1,5 +1,5 @@
-var runner = require("./runner");
-var system = require("system");
+const runner = require("./runner");
+const system = require("system");
 
 exports.testCollectionManyToMany = require("./collection_manytomany_test");
 exports.testCollection = require("./collection_test");

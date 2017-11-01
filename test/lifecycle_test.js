@@ -1,14 +1,14 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
-var Key = require("../lib/key");
-var constants = require("../lib/constants");
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
+const Key = require("../lib/key");
+const constants = require("../lib/constants");
 
-var store = null;
-var Author = null;
+let store = null;
+let Author = null;
 
 const MAPPING_AUTHOR = {
     // "schema": "TEST",
@@ -44,7 +44,7 @@ exports.tearDown = function() {
 };
 
 exports.testInternalProps = function() {
-    var author = new Author();
+    const author = new Author();
     assert.strictEqual(author._props.constructor, Object);
     assert.isFalse(author._props.hasOwnProperty("name"));
     assert.strictEqual(author._entity.constructor, Object);
@@ -65,13 +65,13 @@ exports.testInternalProps = function() {
     // setting the name property stores the new value in the _props object
     author.name = "Jane Foo";
     assert.isTrue(author._props.hasOwnProperty("name"));
-    var mapping = author.constructor.mapping;
+    const mapping = author.constructor.mapping;
     assert.strictEqual(author._entity[mapping.getMapping("name").column], "John Doe");
     assert.strictEqual(author._props.name, "Jane Foo");
 };
 
 exports.testLifecycle = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe"
     });
     assert.strictEqual(author._state, constants.STATE_TRANSIENT);
@@ -94,7 +94,7 @@ exports.testLifecycle = function() {
 };
 
 exports.testAlreadyRemoved = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     author.save();
@@ -112,7 +112,7 @@ exports.testAlreadyRemoved = function() {
 };
 
 exports.testMultipleRemoval = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe"
     });
     author.save();

@@ -1,16 +1,16 @@
-var term = require("ringo/term");
+const term = require("ringo/term");
 
-var Store = require("../lib/store");
-var utils = require("../test/utils");
-var Parser = require("../lib/query/parser");
-var SqlGenerator = require("../lib/query/sqlgenerator");
-var SQL = "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.name order by Author.name";
-var store = null;
-var Author = null;
-var Book = null;
-var ast = null;
+const Store = require("../lib/store");
+const utils = require("../test/utils");
+const Parser = require("../lib/query/parser");
+const SqlGenerator = require("../lib/query/sqlgenerator");
+const SQL = "select Author.name as author, count(Book.id) as cnt from Author, Book where Book.author = Author.id group by Author.name order by Author.name";
+let store = null;
+let Author = null;
+let Book = null;
+let ast = null;
 
-var MAPPING_AUTHOR = {
+const MAPPING_AUTHOR = {
     "table": "author",
     "id": {
         "column": "author_id",
@@ -29,7 +29,7 @@ var MAPPING_AUTHOR = {
     }
 };
 
-var MAPPING_BOOK = {
+const MAPPING_BOOK = {
     "table": "book",
     "id": {
         "column": "book_id",
@@ -67,10 +67,10 @@ exports.tearDown = function() {
 
 exports.start = function(cnt) {
     cnt || (cnt = 100000);
-    var start = Date.now();
+    const start = Date.now();
     for (let i=0; i<cnt; i+=1) {
         SqlGenerator.generate(store, ast);
     }
-    var millis = Date.now() - start;
+    const millis = Date.now() - start;
     term.writeln(term.GREEN, millis, "ms for", cnt, "selectors,", millis / cnt + "ms/selector", term.RESET);
 };

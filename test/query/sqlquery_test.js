@@ -1,11 +1,11 @@
-var runner = require("../runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("../runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../../lib/main");
-var utils = require("../utils");
-var store = null;
-var Author = null;
+const {Store, Cache} = require("../../lib/main");
+const utils = require("../utils");
+let store = null;
+let Author = null;
 
 const MAPPING_AUTHOR = {
     "table": "T_AUTHOR",
@@ -20,7 +20,7 @@ const MAPPING_AUTHOR = {
     }
 };
 
-var populate = function(cnt) {
+const populate = function(cnt) {
     for (let i=1; i<=cnt; i+=1) {
         (new Author({
             "name": "Author " + i
@@ -41,9 +41,9 @@ exports.tearDown = function() {
 
 exports.testSqlQuery = function() {
     populate(10);
-    var queryStr = ["select", store.dialect.quote("AUTHOR_ID") + ",",
+    let queryStr = ["select", store.dialect.quote("AUTHOR_ID") + ",",
         store.dialect.quote("AUTHOR_NAME"), "from", store.dialect.quote("T_AUTHOR")].join(" ");
-    var result = store.sqlQuery(queryStr);
+    let result = store.sqlQuery(queryStr);
     assert.strictEqual(result.length, 10);
     for (let i=1; i<=10; i+=1) {
         let obj = result[i - 1];
@@ -58,10 +58,10 @@ exports.testSqlQuery = function() {
 
 exports.testResultPropertyNames = function() {
     populate(10);
-    var queryStr = ["select", store.dialect.quote("AUTHOR_ID"), "as", store.dialect.quote("id") + ",",
+    const queryStr = ["select", store.dialect.quote("AUTHOR_ID"), "as", store.dialect.quote("id") + ",",
         store.dialect.quote("AUTHOR_NAME"), "as", store.dialect.quote("name"),
         "from", store.dialect.quote("T_AUTHOR")].join(" ");
-    var result = store.sqlQuery(queryStr);
+    const result = store.sqlQuery(queryStr);
     assert.strictEqual(result.length, 10);
     for (let i=1; i<=10; i+=1) {
         let obj = result[i - 1];
@@ -72,10 +72,10 @@ exports.testResultPropertyNames = function() {
 
 exports.testParameters = function() {
     populate(10);
-    var queryStr = ["select", store.dialect.quote("AUTHOR_NAME"), "as", store.dialect.quote("name"),
+    const queryStr = ["select", store.dialect.quote("AUTHOR_NAME"), "as", store.dialect.quote("name"),
         "from", store.dialect.quote("T_AUTHOR"),
         "where", store.dialect.quote("AUTHOR_ID"), "IN (?, ?, ?)"].join(" ");
-    var result = store.sqlQuery(queryStr, [1, 2, 3]);
+    const result = store.sqlQuery(queryStr, [1, 2, 3]);
     assert.strictEqual(result.length, 3);
     result.forEach(function(obj, idx) {
         assert.strictEqual(obj.name, "Author " + (idx + 1));

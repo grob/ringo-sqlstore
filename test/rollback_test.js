@@ -1,12 +1,12 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store, Cache} = require("../lib/main");
-var utils = require("./utils");
-var constants = require("../lib/constants");
-var store = null;
-var Author = null;
+const {Store, Cache} = require("../lib/main");
+const utils = require("./utils");
+const constants = require("../lib/constants");
+let store = null;
+let Author = null;
 
 const MAPPING_AUTHOR = {
     "properties": {
@@ -31,7 +31,7 @@ exports.tearDown = function() {
 };
 
 exports.testInsertRollback = function() {
-    var author = new Author({
+    const author = new Author({
         "name": "John Doe"
     });
     assert.throws(function() {
@@ -50,8 +50,8 @@ exports.testInsertRollback = function() {
 
 exports.testInsertRollbackWithTransaction = function() {
     // FIXME: how to force a transaction.commit() to fail?
-    var transaction = store.beginTransaction();
-    var author = new Author({
+    const transaction = store.beginTransaction();
+    const author = new Author({
         "name": "John Doe",
         "isAlive": true
     });
@@ -66,7 +66,7 @@ exports.testInsertRollbackWithTransaction = function() {
 };
 
 exports.testUpdateRollback = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe",
         "isAlive": true
     });
@@ -86,14 +86,14 @@ exports.testUpdateRollback = function() {
     // but the modified property stays the same
     assert.isNull(author.isAlive);
     // make sure the cached entity object is not affected by the change above
-    var cachedEntity = store.entityCache.get(author._cacheKey);
+    const cachedEntity = store.entityCache.get(author._cacheKey);
     assert.isTrue(cachedEntity[Author.mapping.getMapping("isAlive").column]);
     author = Author.get(1);
     assert.isTrue(author.isAlive);
 };
 
 exports.testUpdateRollbackWithTransaction = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe",
         "isAlive": true
     });
@@ -103,7 +103,7 @@ exports.testUpdateRollbackWithTransaction = function() {
     assert.strictEqual(author._state, constants.STATE_CLEAN);
     // open transaction
     author = Author.get(1);
-    var transaction = store.beginTransaction();
+    const transaction = store.beginTransaction();
     author.isAlive = false;
     author.save();
     assert.strictEqual(author._state, constants.STATE_CLEAN);
@@ -113,14 +113,14 @@ exports.testUpdateRollbackWithTransaction = function() {
     // but the modified property stays the same
     assert.isFalse(author.isAlive);
     // make sure the cached entity object is not affected by the changes above
-    var cachedEntity = store.entityCache.get(author._cacheKey);
+    const cachedEntity = store.entityCache.get(author._cacheKey);
     assert.isTrue(cachedEntity[Author.mapping.getMapping("isAlive").column]);
     author = Author.get(1);
     assert.isTrue(author.isAlive);
 };
 
 exports.testRemoveRollback = function() {
-    var author = new Author({
+    let author = new Author({
         "name": "John Doe",
         "isAlive": true
     });
@@ -136,7 +136,7 @@ exports.testRemoveRollback = function() {
     assert.strictEqual(author._state, constants.STATE_CLEAN);
     assert.strictEqual(author.name, "Jane Foo");
     // make sure the cached entity object is not affected by the changes above
-    var cachedEntity = store.entityCache.get(author._cacheKey);
+    const cachedEntity = store.entityCache.get(author._cacheKey);
     assert.strictEqual(cachedEntity[Author.mapping.getMapping("name").column], "John Doe");
     author = Author.get(1);
     assert.strictEqual(author.name, "John Doe");

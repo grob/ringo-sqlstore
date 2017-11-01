@@ -1,15 +1,15 @@
-var runner = require("./runner");
-var assert = require("assert");
-var system = require("system");
+const runner = require("./runner");
+const assert = require("assert");
+const system = require("system");
 
-var {Store} = require("../lib/main");
-var Key = require("../lib/key");
-var utils = require("./utils");
-var strings = require("ringo/utils/strings.js");
-var metaData = require("../lib/database/metadata");
+const {Store} = require("../lib/main");
+const Key = require("../lib/key");
+const utils = require("./utils");
+const strings = require("ringo/utils/strings.js");
+const metaData = require("../lib/database/metadata");
 
-var store = null;
-var Author = null;
+let store = null;
+let Author = null;
 
 const MAPPING_AUTHOR = {
     "table": "t_author",
@@ -42,7 +42,7 @@ exports.tearDown = function() {
 };
 
 exports.testKey = function() {
-    var key = new Key("Author", 1);
+    const key = new Key("Author", 1);
     assert.strictEqual(key.type, "Author");
     assert.strictEqual(key.id, 1);
     // trying to overwrite id must throw an error
@@ -53,14 +53,14 @@ exports.testKey = function() {
 
 exports.testSyncTables = function() {
     try {
-        var conn = store.getConnection();
+        const conn = store.getConnection();
         metaData.tableExists(conn, store.dialect, MAPPING_AUTHOR.table);
         if (store.dialect.hasSequenceSupport) {
             metaData.sequenceExists(conn, store.dialect, MAPPING_AUTHOR.id.sequence);
         }
-        var columns = metaData.getColumns(conn, store.dialect, MAPPING_AUTHOR.table);
+        const columns = metaData.getColumns(conn, store.dialect, MAPPING_AUTHOR.table);
         assert.strictEqual(columns.length, 2);
-        var names = columns.reduce(function(arr, column) {
+        const names = columns.reduce(function(arr, column) {
             arr.push(column.name);
             return arr;
         }, []);
@@ -75,8 +75,8 @@ exports.testSyncTables = function() {
 
 exports.testCRUD = function() {
     // create
-    var name = "John Doe";
-    var author = new Author({
+    let name = "John Doe";
+    let author = new Author({
         "name": name,
         "state": "famous"
     });
@@ -112,7 +112,7 @@ exports.testCRUD = function() {
 };
 
 exports.testNullProps = function() {
-    var author = new Author();
+    let author = new Author();
     assert.isNull(author.name);
     author.save();
     author = Author.get(1);

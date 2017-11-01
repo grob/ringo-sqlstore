@@ -1,18 +1,18 @@
-var term = require("ringo/term");
+const term = require("ringo/term");
 
-var Key = require("../lib/key");
+const Key = require("../lib/key");
 
-var setUp = exports.setUp = function() {};
+const setUp = exports.setUp = function() {};
 
 exports.tearDown = function() {};
 
-var start = exports.start = function(cnt) {
+const start = exports.start = function(cnt) {
     cnt || (cnt = 1000000);
-    var start = Date.now();
-    var result = [];
+    const start = Date.now();
+    const result = [];
     for (let i=0; i<cnt; i+=1) {
         result.push(new Key("Author"));
     }
-    var millis = Date.now() - start;
+    const millis = Date.now() - start;
     term.writeln(term.GREEN, millis, "ms for", cnt, "instantiations,", millis / cnt + "ms/instantiation", term.RESET);
 }

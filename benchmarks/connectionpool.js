@@ -1,10 +1,10 @@
-var term = require("ringo/term");
-var assert = require("assert");
-var {Worker} = require("ringo/worker");
-var {Semaphore} = require("ringo/concurrent");
-var {init} = require("../lib/connectionpool");
+const term = require("ringo/term");
+const assert = require("assert");
+const {Worker} = require("ringo/worker");
+const {Semaphore} = require("ringo/concurrent");
+const {init} = require("../lib/connectionpool");
 
-var connectionPool = null;
+let connectionPool = null;
 
 exports.setUp = function(dbProps) {
      connectionPool = init(dbProps);
@@ -19,12 +19,12 @@ exports.start = function(cnt, maxWorkers) {
     maxWorkers = maxWorkers || (maxWorkers = 100);
 
     term.writeln("Using", connectionPool.getDriverClassName());
-    var semaphore = new Semaphore();
-    var workers = new Array(maxWorkers);
-    var workerMillis = new Array(maxWorkers);
-    var workerMsPerGet = new Array(maxWorkers);
+    const semaphore = new Semaphore();
+    const workers = new Array(maxWorkers);
+    const workerMillis = new Array(maxWorkers);
+    const workerMsPerGet = new Array(maxWorkers);
     for (let i=0; i<maxWorkers; i+=1) {
-        var worker = new Worker(module.resolve("./connectionpool.worker"));
+        let worker = new Worker(module.resolve("./connectionpool.worker"));
         worker.onmessage = function(event) {
             workerMillis[event.data.workerNr] = event.data.millis;
             workerMsPerGet[event.data.workerNr] = event.data.msPerGet;
@@ -47,11 +47,11 @@ exports.start = function(cnt, maxWorkers) {
     });
     semaphore.wait(maxWorkers);
     term.writeln(maxWorkers, "workers finished");
-    var workerMillisAvg = workerMillis.reduce(function(prev, current) {
+    const workerMillisAvg = workerMillis.reduce(function(prev, current) {
             return prev + current;
         }, 0) / maxWorkers;
-    var millisPerGet = workerMillisAvg / cnt;
-    var connsPerSec = (1000 / millisPerGet).toFixed(2);
+    const millisPerGet = workerMillisAvg / cnt;
+    const connsPerSec = (1000 / millisPerGet).toFixed(2);
     term.writeln(term.GREEN, maxWorkers, "workers,", cnt, "connections/worker,",
             millisPerGet.toFixed(2) + "ms/connection,", connsPerSec, "connections/sec", term.RESET);
 };
