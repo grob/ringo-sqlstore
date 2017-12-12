@@ -6,7 +6,7 @@ const Store = require("../../lib/store");
 const utils = require("../utils");
 const Parser = require("../../lib/query/parser");
 const dataTypes = require("../../lib/datatypes/all");
-const dialects = require("../../lib/dialects/all");
+
 let store = null;
 let Author = null;
 let Book = null;
@@ -606,25 +606,26 @@ exports.testSelectExpression = function() {
 
 exports.testAliases = function() {
     const mapping = Author.mapping;
-    const idColumn = store.dialect.quote(mapping.getMapping("id").column);
-    const authorIdColumn = store.dialect.quote(Book.mapping.getMapping("author").column);
+    const authorIdColumn = store.dialect.quote(mapping.getMapping("id").column);
+    const bookIdColumn = store.dialect.quote(Book.mapping.getMapping("id").column);
+    const authorColumn = store.dialect.quote(Book.mapping.getMapping("author").column);
     const nameColumn = store.dialect.quote(mapping.getMapping("name").column);
     const queries = [
         {
             "query": "select a.id as authorId from Author as a",
-            "sql": "SELECT a." + idColumn + " FROM $Author a"
+            "sql": "SELECT a." + authorIdColumn + " FROM $Author a"
         },
         {
             "query": "select count(a.id) as authorId from Author as a",
-            "sql": "SELECT COUNT(a." + idColumn + ") FROM $Author a"
+            "sql": "SELECT COUNT(a." + authorIdColumn + ") FROM $Author a"
         },
         {
             "query": "select author from Author as author",
-            "sql": "SELECT author." + idColumn + " FROM $Author author"
+            "sql": "SELECT author." + authorIdColumn + " FROM $Author author"
         },
         {
             "query": "select author.* from Author as author",
-            "sql": "SELECT author." + idColumn + ", author." + nameColumn + " FROM $Author author"
+            "sql": "SELECT author." + authorIdColumn + ", author." + nameColumn + " FROM $Author author"
         },
         {
             "query": "select Author.* as author from Author",
@@ -632,11 +633,17 @@ exports.testAliases = function() {
         },
         {
             "query": "from Author as author",
-            "sql": "SELECT author." + idColumn + " FROM $Author author"
+            "sql": "SELECT author." + authorIdColumn + " FROM $Author author"
         },
         {
             "query": "from Author as a inner join Book as b on a.id = b.author",
-            "sql": "SELECT a." + idColumn + " FROM $Author a INNER JOIN $Book b ON a." + idColumn + " = b." + authorIdColumn
+            "sql": "SELECT a." + authorIdColumn + " FROM $Author a INNER JOIN $Book b " +
+                    "ON a." + authorIdColumn + " = b." + authorColumn
+        },
+        {
+            "query": "from Author a where exists(from Book b where b.author = a)",
+            "sql": "SELECT a." + authorIdColumn + " FROM $Author a WHERE EXISTS " +
+                    "(SELECT b." + bookIdColumn + " FROM $Book b WHERE b." + authorColumn + " = a." + authorIdColumn + ")"
         }
     ];
     testQueries(queries);
@@ -793,6 +800,18 @@ exports.testIssue32 = function() {
     } finally {
         utils.drop(store, Notification);
     }
+};
+
+exports.testCollectorsSubSelects = function() {
+    const queries = [
+        "from Author where exists (from Book where author = author)"
+    ];
+    queries.forEach(function(query) {
+        const generator = new store.dialect.SqlGenerator(store);
+        const tree = Parser.parse(query);
+        tree.accept(generator);
+        assert.strictEqual(generator.collectors.length, 1);
+    });
 };
 
 //start the test runner if we're called directly from command line

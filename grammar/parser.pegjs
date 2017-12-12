@@ -164,7 +164,7 @@ condition =
         return new ast.NotCondition(c);
     }
     / EXISTS LPAREN s:select RPAREN {
-        return new ast.ExistsCondition(s);
+        return new ast.ExistsCondition(new ast.SubSelect(s));
     }
     / left:operand right:condition_rhs? {
         return new ast.Condition(left, right || null);
