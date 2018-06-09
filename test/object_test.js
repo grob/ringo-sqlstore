@@ -4,6 +4,7 @@ const system = require("system");
 
 const {Store, Cache} = require("../lib/main");
 const utils = require("./utils");
+const constants = require("../lib/constants");
 let store = null;
 let Author = null;
 let Book = null;
@@ -141,6 +142,45 @@ exports.testSimpleCircularReference = function() {
     assert.strictEqual(author.latestBook.id, book.id);
     assert.strictEqual(author.latestBook.author.id, author.id);
     assert.strictEqual(book.author.id, author.id);
+};
+
+exports.testRemoveAndSetMappedObject = function() {
+    const author = new Author({
+        "name": "John Doe"
+    });
+    const book = new Book({
+        "title": "foo",
+        "author": author
+    });
+    book.save();
+    assert.strictEqual(Author.all().length, 1);
+    assert.strictEqual(Book.all().length, 1);
+    // open transaction, remove and re-set author property
+    store.beginTransaction();
+    book.author.remove();
+    // book's state is still clean, it's author property still holds a reference
+    // to the removed author object
+    assert.strictEqual(book._state, constants.STATE_CLEAN);
+    assert.isNotNull(book.author);
+    assert.strictEqual(book.author.id, author.id);
+    assert.strictEqual(Author.all().length, 0);
+    // but when re-fetching the book object it has a null author
+    assert.isNull(Book.get(book.id).author);
+    // now re-set author property - this marks the book as dirty, holding a
+    // reference to the transient new author object
+    book.author = new Author({
+        "name": "Jane Doe"
+    });
+    assert.strictEqual(book._state, constants.STATE_DIRTY);
+    assert.strictEqual(Author.all().length, 0);
+    assert.isNotNull(book.author);
+    assert.isNull(book.author.id);
+    book.save();
+    store.commitTransaction();
+    assert.strictEqual(book._state, constants.STATE_CLEAN);
+    assert.strictEqual(book.author._state, constants.STATE_CLEAN);
+    assert.strictEqual(Author.all().length, 1);
+    assert.strictEqual(Book.get(book.id).author.id, author.id + 1);
 };
 
 //start the test runner if we're called directly from command line
