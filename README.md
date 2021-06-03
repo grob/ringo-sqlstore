@@ -1,3 +1,5 @@
+**Note:** If you just need PostgreSQL you might want to have a look at [ringo-pgclient](https://github.com/grob/ringo-pgclient).
+
 # About Ringo SQLstore
 
 Ringo SQLstore is a lightweight ORM/storage implementation for [RingoJS](https://ringojs.org/). It uses JDBC for communication with databases. Current features are:
