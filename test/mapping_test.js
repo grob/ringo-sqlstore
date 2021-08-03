@@ -2,6 +2,7 @@ const runner = require("./runner");
 const assert = require("assert");
 const system = require("system");
 const strings = require("ringo/utils/strings");
+const {toByteArray} = require("binary");
 
 const Store = require("../lib/store");
 const dbMetaData = require("../lib/database/metadata");
@@ -229,7 +230,7 @@ exports.testTypes = function() {
         "typeDate": new Date(2010, 7, 11, 0, 0, 0, 0),
         "typeTime": new Date(1970, 0, 1, 17, 36, 4, 723),
         "typeTimestamp": new Date(2010, 7, 11, 36, 4, 23, 723),
-        "typeBinary": "test".toByteArray(),
+        "typeBinary": toByteArray("test"),
         "typeText": strings.repeat("abcdefghij", 10000)
     };
     let model = new Model(props);
